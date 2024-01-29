@@ -1,0 +1,44 @@
+{
+  "name": "template",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": ">16.17.1"
+  },
+  "scripts": {
+    "start": "ts-node -r tsconfig-paths/register app/server.ts",
+    "dev": "ts-node-dev -r tsconfig-paths/register app/server.ts",
+    "lint": "eslint **/*.ts",
+    "lint:fix": "eslint --fix **/*.ts",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "4.17.1",
+    "http-errors": "^2.0.0",
+    "joi": "^17.10.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.5.0",
+    "morgan": "1.10.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.6.0",
+    "@commitlint/config-conventional": "^18.6.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.11.10",
+    "eslint": "^8.56.0",
+    "eslint-plugin-import": "2.25.3",
+    "eslint-plugin-node": "^11.1.0",
+    "husky": "^9.0.6",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.3.3"
+  }
+}
