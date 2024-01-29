@@ -1,7 +1,7 @@
 import Joi from 'joi'
 import { Schema, model } from 'mongoose'
 
-// import { handleSaveError, runValidateAtUpdate } from './hooks.js'
+// import { handleSaveError, runValidateAtUpdate } from './hooks'
 
 const genreList = ['fantastic', 'love story']
 const releaseYearRegexp = /^\d{4}$/
@@ -61,6 +61,4 @@ export const movieUpdateFavoriteSchema = Joi.object({
   favorite: Joi.boolean().required()
 })
 
-const Movie = model('movie', movieSchema)
-
-export default Movie
+export const Movie = model('movie', movieSchema)

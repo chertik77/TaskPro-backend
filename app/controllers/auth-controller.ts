@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
-import User from 'models/User'
+import { User } from 'models/User'
 
 const JWT_SECRET = '4271136EE6185D15943C8ABF2AB75'
 
@@ -64,10 +64,10 @@ export const signin = async (
 }
 
 export const getCurrent = (req: Request, res: Response) => {
-  const { name, email } = req.user
+  const { username, email } = req.user
 
   res.json({
-    name,
+    username,
     email
   })
 }

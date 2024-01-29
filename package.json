@@ -8,8 +8,8 @@
   "scripts": {
     "start": "ts-node -r tsconfig-paths/register app/server.ts",
     "dev": "ts-node-dev -r tsconfig-paths/register app/server.ts",
-    "lint": "eslint **/*.ts",
-    "lint:fix": "eslint --fix **/*.ts",
+    "lint": "eslint app/**/*.ts",
+    "lint:fix": "eslint --fix app/**/*.ts",
     "prepare": "husky"
   },
   "dependencies": {
@@ -32,9 +32,10 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.10",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
     "eslint": "^8.56.0",
     "eslint-plugin-import": "2.25.3",
-    "eslint-plugin-node": "^11.1.0",
     "husky": "^9.0.6",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",

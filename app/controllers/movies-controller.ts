@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
-import Movie from 'models/Movie'
+import { Movie } from 'models/Movie'
 
 export const getAll = async (req: Request, res: Response) => {
   const { _id: owner } = req.user

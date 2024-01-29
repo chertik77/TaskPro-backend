@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
-import User from 'models/User'
+import { User } from 'models/User'
 
 const JWT_SECRET = '4271136EE6185D15943C8ABF2AB75'
 
@@ -24,7 +24,7 @@ export const authenticate = async (
     if (!user || !user.accessToken) {
       return next(new createHttpError.Unauthorized())
     }
-    req.user = user
+    req.user = user.toObject()
     next()
   } catch {
     return next(new createHttpError.Unauthorized())
