@@ -3,7 +3,7 @@ import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
 import { User } from 'models/User'
 
-const JWT_SECRET = '4271136EE6185D15943C8ABF2AB75'
+const { JWT_SECRET } = process.env
 
 export const authenticate = async (
   req: Request,
