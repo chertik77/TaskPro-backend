@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs'
+import bcrypt from 'bcrypt'
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'

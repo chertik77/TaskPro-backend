@@ -1,9 +1,9 @@
-import { object, string } from 'joi'
+import Joi from 'joi'
 import isEmail from 'validator/lib/isEmail'
 
-export const signupSchema = object({
-  name: string().required(),
-  email: string()
+export const signupSchema = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string()
     .required()
     .custom((value, helper) => {
       if (!isEmail(value)) {
@@ -11,11 +11,11 @@ export const signupSchema = object({
       }
       return value
     }),
-  password: string().min(8).required()
+  password: Joi.string().min(8).required()
 })
 
-export const signinSchema = object({
-  email: string()
+export const signinSchema = Joi.object({
+  email: Joi.string()
     .required()
     .custom((value, helper) => {
       if (!isEmail(value)) {
@@ -23,9 +23,9 @@ export const signinSchema = object({
       }
       return value
     }),
-  password: string().min(8).required()
+  password: Joi.string().min(8).required()
 })
 
-export const refreshTokenSchema = object({
-  refreshToken: string().required()
+export const refreshTokenSchema = Joi.object({
+  refreshToken: Joi.string().required()
 })
