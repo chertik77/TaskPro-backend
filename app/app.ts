@@ -38,7 +38,7 @@ app.use('/api/auth', authRouter)
 app.use('/api/movies', moviesRouter)
 
 app.use((_: Request, res: Response) => {
-  res.status(404).json({ message: 'Not found' })
+  res.status(404).json({ message: 'Not foundd' })
 })
 
 app.use(
