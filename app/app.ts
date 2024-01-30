@@ -7,7 +7,7 @@ import express, {
 } from 'express'
 import logger from 'morgan'
 
-import { authRouter } from './routes/api/auth-router'
+import { authRouter } from './routes/api/auth'
 import { moviesRouter } from './routes/api/movies-router'
 
 export type CustomError = Error & {
@@ -19,8 +19,19 @@ export const app = express()
 
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',')
+
 app.use(logger(formatsLogger))
-app.use(cors())
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      allowedOrigins?.indexOf(origin as string) !== -1
+        ? cb(null, true)
+        : cb(new Error('Not allowed by CORS'))
+    }
+  })
+)
+
 app.use(express.json())
 
 app.use('/api/auth', authRouter)
