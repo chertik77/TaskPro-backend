@@ -2,7 +2,7 @@ declare namespace Express {
   export interface Request {
     user: {
       _id: string
-      username: string
+      name: string
       email: string
     }
   }

@@ -22,11 +22,13 @@ export const signup = async (
   const newUser = await User.create({
     ...req.body,
     password: hashPassword
-  }).then()
+  })
 
   res.status(201).json({
-    username: newUser.username,
-    email: newUser.email
+    user: {
+      name: newUser.name,
+      email: newUser.email
+    }
   })
 }
 
@@ -38,82 +40,45 @@ export const signin = async (
   const { email, password } = req.body
   const user = await User.findOne({ email })
   if (!user) {
-    return next(new createHttpError.Conflict('Email or password invalid'))
+    return next(new createHttpError.Unauthorized('Email or password invalid'))
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password)
   if (!passwordCompare) {
-    return next(new createHttpError.Conflict('Email already exist'))
-  }
-
-  const { _id: id } = user
-
-  const payload = {
-    id
+    return next(new createHttpError.Unauthorized('Email or password invalid'))
   }
 
   if (!JWT_SECRET) {
     throw new Error('JWT_SECRET is not defined')
   }
 
-  const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '15m' })
-  const refreshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' })
-  await User.findByIdAndUpdate(id, { accessToken, refreshToken })
+  const { _id: id } = user
+  const token = jwt.sign({ id }, JWT_SECRET, { expiresIn: '1d' })
+  const activeUser = await User.findByIdAndUpdate(id, { token })
 
   res.json({
-    accessToken,
-    refreshToken
+    token,
+    user: {
+      name: activeUser?.name,
+      email: activeUser?.email
+    }
   })
 }
 
 export const getCurrent = (req: Request, res: Response) => {
-  const { username, email } = req.user
+  const { name, email } = req.user
 
   res.json({
-    username,
+    name,
     email
   })
 }
 
 export const signout = async (req: Request, res: Response) => {
   const { _id } = req.user
-  await User.findByIdAndUpdate(_id, { accessToken: '', refreshToken: '' })
+  await User.findByIdAndUpdate(_id, { token: '' })
 
-  res.json({
+  res.status(204).json({
     message: 'Signout success'
   })
-}
-
-export const refresh = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { refreshToken } = req.body
-
-  if (!JWT_SECRET) {
-    throw new Error('JWT_SECRET is not defined')
-  }
-
-  try {
-    const { id } = jwt.verify(refreshToken, JWT_SECRET) as jwt.JwtPayload
-    const user = await User.findOne({ refreshToken })
-    if (!user) {
-      return next(new createHttpError.Forbidden())
-    }
-    const payload = { id }
-    const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '15m' })
-    const newRefreshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' })
-    await User.findByIdAndUpdate(id, {
-      accessToken,
-      refreshToken: newRefreshToken
-    })
-
-    res.json({
-      accessToken,
-      refreshToken: newRefreshToken
-    })
-  } catch {
-    return next(new createHttpError.Forbidden())
-  }
 }

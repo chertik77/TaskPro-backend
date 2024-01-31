@@ -6,7 +6,7 @@ const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
 const userSchema = new Schema(
   {
-    username: {
+    name: {
       type: String,
       required: true
     },
@@ -21,11 +21,9 @@ const userSchema = new Schema(
       minlength: 6,
       required: true
     },
-    accessToken: {
-      type: String
-    },
-    refreshToken: {
-      type: String
+    token: {
+      type: String,
+      default: ''
     }
   },
   { versionKey: false, timestamps: true }

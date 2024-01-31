@@ -11,17 +11,17 @@ export const authenticate = async (
   next: NextFunction
 ) => {
   const { authorization = '' } = req.headers
-  const [bearer, accessToken] = authorization.split(' ')
+  const [bearer, token] = authorization.split(' ')
   if (bearer !== 'Bearer') {
     return next(new createHttpError.Unauthorized())
   }
 
   try {
-    const { id } = jwt.verify(accessToken, JWT_SECRET as string) as {
+    const { id } = jwt.verify(token, JWT_SECRET as string) as {
       id: string
     }
     const user = await User.findById(id)
-    if (!user || !user.accessToken) {
+    if (!user || !user.token || token !== user.token) {
       return next(new createHttpError.Unauthorized())
     }
     req.user = user.toObject()
