@@ -57,7 +57,7 @@ export const signin = async (
   const activeUser = await User.findByIdAndUpdate(id, { token })
 
   res.json({
-    token: activeUser?.token,
+    token,
     user: {
       username: activeUser?.username,
       email: activeUser?.email
