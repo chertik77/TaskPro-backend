@@ -14,7 +14,7 @@ export const signup = async (
   const { email, password } = req.body
   const user = await User.findOne({ email })
   if (user) {
-    return next(new createHttpError.Conflict('Email already exist'))
+    return next(createHttpError(409, 'Email already exist'))
   }
 
   const hashPassword = await bcrypt.hash(password, 10)
@@ -39,21 +39,19 @@ export const signin = async (
 ) => {
   const { email, password } = req.body
   const user = await User.findOne({ email })
+
   if (!user) {
-    return next(new createHttpError.Unauthorized('Email or password invalid'))
+    return next(createHttpError(401, 'Email or password invalid'))
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password)
-  if (!passwordCompare) {
-    return next(new createHttpError.Unauthorized('Email or password invalid'))
-  }
 
-  if (!JWT_SECRET) {
-    throw new Error('JWT_SECRET is not defined')
+  if (!passwordCompare) {
+    return next(createHttpError(401, 'Email or password invalid'))
   }
 
   const { _id: id } = user
-  const token = jwt.sign({ id }, JWT_SECRET, { expiresIn: '1d' })
+  const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, { expiresIn: '1d' })
   const activeUser = await User.findByIdAndUpdate(id, { token })
 
   res.json({

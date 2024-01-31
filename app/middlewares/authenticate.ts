@@ -13,7 +13,7 @@ export const authenticate = async (
   const { authorization = '' } = req.headers
   const [bearer, token] = authorization.split(' ')
   if (bearer !== 'Bearer') {
-    return next(new createHttpError.Unauthorized())
+    return next(createHttpError(401))
   }
 
   try {
@@ -22,11 +22,11 @@ export const authenticate = async (
     }
     const user = await User.findById(id)
     if (!user || !user.token || token !== user.token) {
-      return next(new createHttpError.Unauthorized())
+      return next(createHttpError(401))
     }
     req.user = user.toObject()
     next()
   } catch {
-    return next(new createHttpError.Unauthorized())
+    return next(createHttpError(401))
   }
 }

@@ -7,7 +7,7 @@ export const validateBody = (schema: Schema) => {
     const { error } = schema.validate(req.body)
 
     if (error) {
-      return next(new createHttpError.BadRequest(error.message))
+      return next(createHttpError(400, error.message))
     }
 
     next()

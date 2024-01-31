@@ -6,7 +6,7 @@ export const isValidId = (req: Request, _: Response, next: NextFunction) => {
   const { id } = req.params
 
   if (!isValidObjectId(id)) {
-    return next(new createHttpError.NotFound(`${id} not valid id`))
+    return next(createHttpError(404, `${id} not valid id`))
   }
 
   next()
