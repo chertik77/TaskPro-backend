@@ -26,7 +26,7 @@ export const signup = async (
 
   res.status(201).json({
     user: {
-      username: newUser.username,
+      name: newUser.name,
       email: newUser.email
     }
   })
@@ -59,17 +59,17 @@ export const signin = async (
   res.json({
     token,
     user: {
-      username: activeUser?.username,
+      name: activeUser?.name,
       email: activeUser?.email
     }
   })
 }
 
 export const getCurrent = (req: Request, res: Response) => {
-  const { username, email } = req.user
+  const { name, email } = req.user
 
   res.json({
-    username,
+    name,
     email
   })
 }

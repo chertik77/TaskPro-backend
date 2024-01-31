@@ -2,7 +2,7 @@ import Joi from 'joi'
 import isEmail from 'validator/lib/isEmail'
 
 export const signupSchema = Joi.object({
-  username: Joi.string().required(),
+  name: Joi.string().required(),
   email: Joi.string()
     .required()
     .custom((value, helper) => {
