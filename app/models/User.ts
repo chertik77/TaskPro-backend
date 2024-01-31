@@ -21,11 +21,9 @@ const userSchema = new Schema(
       minlength: 6,
       required: true
     },
-    accessToken: {
-      type: String
-    },
-    refreshToken: {
-      type: String
+    token: {
+      type: String,
+      default: ''
     }
   },
   { versionKey: false, timestamps: true }
