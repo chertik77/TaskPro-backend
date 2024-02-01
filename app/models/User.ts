@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose'
 
-// import { handleSaveError, runValidateAtUpdate } from './hooks'
+import { handleSaveError, runValidateAtUpdate } from './hooks'
 
 const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
@@ -29,10 +29,10 @@ const userSchema = new Schema(
   { versionKey: false, timestamps: true }
 )
 
-// userSchema.post('save', handleSaveError)
+userSchema.post('save', handleSaveError)
 
-// userSchema.pre('findOneAndUpdate', runValidateAtUpdate)
+userSchema.pre('findOneAndUpdate', runValidateAtUpdate)
 
-// userSchema.post('findOneAndUpdate', handleSaveError)
+userSchema.post('findOneAndUpdate', handleSaveError)
 
 export const User = model('user', userSchema)
