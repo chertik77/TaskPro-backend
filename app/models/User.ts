@@ -2,7 +2,9 @@ import { Schema, model } from 'mongoose'
 
 // import { handleSaveError, runValidateAtUpdate } from './hooks'
 
-const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+const passwordPattern = /^[a-zA-Z0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/]+$/
+const userTheme = ['light', 'violet', 'dark']
 
 const userSchema = new Schema(
   {
@@ -12,14 +14,24 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      match: emailRegexp,
+      match: emailPattern,
       unique: true,
       required: true
     },
     password: {
       type: String,
-      minlength: 6,
+      match: passwordPattern,
+      minlength: 8,
+      maxlength: 64,
       required: true
+    },
+    userTheme: {
+      type: String,
+      enum: userTheme,
+      default: 'light'
+    },
+    avatarURL: {
+      type: String
     },
     token: {
       type: String,
