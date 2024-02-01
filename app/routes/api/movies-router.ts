@@ -9,7 +9,7 @@ import { validateBody } from 'decorators/validateBody'
 import express from 'express'
 import { authenticate } from 'middlewares/authenticate'
 import { isValidId } from 'middlewares/isValidId'
-import * as movieSchemas from 'models/Movie'
+import * as movieSchemas from '@/models/Board'
 
 const movieAddValidate = validateBody(movieSchemas.movieAddSchema)
 const movieUpdateFavoriteValidate = validateBody(

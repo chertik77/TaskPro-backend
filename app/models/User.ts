@@ -1,8 +1,9 @@
 import { Schema, model } from 'mongoose'
+import isEmail from 'validator/lib/isEmail'
 
 import { handleSaveError, runValidateAtUpdate } from './hooks'
 
-const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+const userTheme = ['light', 'violet', 'dark']
 
 const userSchema = new Schema(
   {
@@ -12,14 +13,26 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      match: emailRegexp,
+      validate: (value: string) => {
+        if (!isEmail(value)) {
+          throw new Error('Email is not valid')
+        }
+      },
       unique: true,
       required: true
     },
     password: {
       type: String,
-      minlength: 6,
+      minlength: 8,
       required: true
+    },
+    userTheme: {
+      type: String,
+      enum: userTheme,
+      default: 'light'
+    },
+    avatarURL: {
+      type: String
     },
     token: {
       type: String,
