@@ -2,7 +2,7 @@ import Joi from 'joi'
 import isEmail from 'validator/lib/isEmail'
 
 export const signupSchema = Joi.object({
-  name: Joi.string().required(),
+  name: Joi.string().required().min(5),
   email: Joi.string()
     .required()
     .custom((value, helper) => {
@@ -26,6 +26,13 @@ export const signinSchema = Joi.object({
   password: Joi.string().min(8).required()
 })
 
-export const refreshTokenSchema = Joi.object({
-  refreshToken: Joi.string().required()
+export const editUserSchema = Joi.object({
+  name: Joi.string().min(5),
+  email: Joi.string().custom((value, helper) => {
+    if (!isEmail(value)) {
+      return helper.message({ message: 'email is invalid' })
+    }
+    return value
+  }),
+  password: Joi.string().min(8)
 })

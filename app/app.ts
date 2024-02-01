@@ -6,13 +6,12 @@ import express, {
   type Response
 } from 'express'
 import logger from 'morgan'
-
 import { authRouter } from './routes/api/auth'
 import { moviesRouter } from './routes/api/movies-router'
 
 export type CustomError = Error & {
-  status: number
-  code: number
+  status?: number
+  code?: number
 }
 
 export const app = express()

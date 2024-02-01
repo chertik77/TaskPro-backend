@@ -1,12 +1,20 @@
 import Joi from 'joi'
-import { Schema, model } from 'mongoose'
-
-// import { handleSaveError, runValidateAtUpdate } from './hooks'
+import { ObjectId, Schema, model } from 'mongoose'
+import { runValidateAtUpdate } from './hooks'
 
 const genreList = ['fantastic', 'love story']
 const releaseYearRegexp = /^\d{4}$/
 
-const movieSchema = new Schema(
+interface User extends Document {
+  title: string
+  director: string
+  favorite?: string
+  genre: string
+  releaseYear: string
+  owner: ObjectId
+}
+
+const movieSchema = new Schema<User>(
   {
     title: {
       type: String,
@@ -39,11 +47,16 @@ const movieSchema = new Schema(
   { versionKey: false, timestamps: true }
 )
 
-// movieSchema.post('save', handleSaveError)
+// movieSchema.post('save', function (error, _, next) {
+//   error.status = 400
+//   next()
+// })
 
-// movieSchema.pre('findOneAndUpdate', runValidateAtUpdate)
+movieSchema.pre('findOneAndUpdate', runValidateAtUpdate)
 
-// movieSchema.post('findOneAndUpdate', handleSaveError)
+// movieSchema.post('findOneAndUpdate', function (error) {
+//   handleSaveError
+// })
 
 export const movieAddSchema = Joi.object({
   title: Joi.string().required().messages({
