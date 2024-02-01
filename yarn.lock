@@ -393,7 +393,7 @@
     "@types/range-parser" "*"
     "@types/send" "*"
 
-"@types/express@^4.17.21":
+"@types/express@*", "@types/express@^4.17.21":
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/@types/express/-/express-4.17.21.tgz#c26d4a151e60efe0084b23dc3369ebc631ed192d"
   integrity sha512-ejlPM315qwLpaQlQDTjPdsUFSc6ZsP4AN6AlWnogPjQ7CVi7PYF3YVz+CY3jE2pwYf7E/7HlDAN0rV2GxTG0HQ==
@@ -500,6 +500,14 @@
   version "0.0.30"
   resolved "https://registry.yarnpkg.com/@types/strip-json-comments/-/strip-json-comments-0.0.30.tgz#9aa30c04db212a9a0649d6ae6fd50accc40748a1"
   integrity sha512-7NQmHra/JILCd1QqpSzl8+mJRc8ZHz3uDm8YV1Ks9IhK0epEiTw8aIErbvH9PI+6XbqhyIQy3462nEsn7UVzjQ==
+
+"@types/swagger-ui-express@^4.1.6":
+  version "4.1.6"
+  resolved "https://registry.yarnpkg.com/@types/swagger-ui-express/-/swagger-ui-express-4.1.6.tgz#d0929e3fabac1a96a8a9c6c7ee8d42362c5cdf48"
+  integrity sha512-UVSiGYXa5IzdJJG3hrc86e8KdZWLYxyEsVoUI4iPXc7CO4VZ3AfNP8d/8+hrDRIqz+HAaSMtZSqAsF3Nq2X/Dg==
+  dependencies:
+    "@types/express" "*"
+    "@types/serve-static" "*"
 
 "@types/validator@^13.11.8":
   version "13.11.8"
@@ -3343,6 +3351,18 @@ supports-preserve-symlinks-flag@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
+
+swagger-ui-dist@>=5.0.0:
+  version "5.11.2"
+  resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-5.11.2.tgz#b423e820928df703586ff58f80b09ffcf2434e08"
+  integrity sha512-jQG0cRgJNMZ7aCoiFofnoojeSaa/+KgWaDlfgs8QN+BXoGMpxeMVY5OEnjq4OlNvF3yjftO8c9GRAgcHlO+u7A==
+
+swagger-ui-express@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/swagger-ui-express/-/swagger-ui-express-5.0.0.tgz#7a00a18dd909574cb0d628574a299b9ba53d4d49"
+  integrity sha512-tsU9tODVvhyfkNSvf03E6FAk+z+5cU3lXAzMy6Pv4av2Gt2xA0++fogwC4qo19XuFf6hdxevPuVCSKFuMHJhFA==
+  dependencies:
+    swagger-ui-dist ">=5.0.0"
 
 tar@^6.1.11:
   version "6.2.0"

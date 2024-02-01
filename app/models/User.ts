@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose'
 
-// import { handleSaveError, runValidateAtUpdate } from './hooks'
+import { handleSaveError, runValidateAtUpdate } from './hooks'
 
 const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 const passwordPattern = /^[a-zA-Z0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/]+$/
@@ -41,10 +41,10 @@ const userSchema = new Schema(
   { versionKey: false, timestamps: true }
 )
 
-// userSchema.post('save', handleSaveError)
+userSchema.post('save', handleSaveError)
 
-// userSchema.pre('findOneAndUpdate', runValidateAtUpdate)
+userSchema.pre('findOneAndUpdate', runValidateAtUpdate)
 
-// userSchema.post('findOneAndUpdate', handleSaveError)
+userSchema.post('findOneAndUpdate', handleSaveError)
 
 export const User = model('user', userSchema)
