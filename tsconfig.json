@@ -10,7 +10,8 @@
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true
+    "strict": true,
+    "resolveJsonModule": true
   },
   "include": ["./app/**/*"],
   "files": ["declarations.d.ts"]
