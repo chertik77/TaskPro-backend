@@ -1,18 +1,18 @@
 import type { NextFunction, Request, Response } from 'express'
+import { Board } from '@/models/Board'
 import createHttpError from 'http-errors'
-import { Movie } from 'models/Movie'
-import { User } from '@/models/User'
 
 export const getAll = async (req: Request, res: Response) => {
   const { _id: owner } = req.user
-  const page = Number(req.query.page) || 1
-  const limit = Number(req.query.limit) || 10
-  const skip = (page - 1) * limit
-  const result = await Movie.find({ owner }, '-createdAt -updatedAt', {
-    skip,
-    limit
-  }).populate('owner', 'name email')
-  res.json(result)
+
+  const boards = await Board.find({ owner }).populate('owner', [
+    'name',
+    'email',
+    'avatarURL',
+    'userTheme'
+  ])
+
+  res.json(boards)
 }
 
 export const getById = async (
@@ -20,20 +20,41 @@ export const getById = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { id } = req.params
-  const result = await Movie.findById(id)  // треба замінити модель Movie
+  const { _id: owner } = req.user
+  const { boardName: title } = req.params
 
-  if (!result) {
-    return next(new createHttpError.NotFound(`Movie with id=${id} not found`))
+  const board = await Board.findOne({ title, owner }).populate('owner', [
+    'name',
+    'email',
+    'avatarURL',
+    'userTheme'
+  ])
+
+  if (!board) {
+    return next(createHttpError(404, `Board ${title} not found`))
   }
 
-  res.json(result)
+  res.json(board)
 }
 
-export const add = async (req: Request, res: Response) => {
+export const add = async (req: Request, res: Response, next: NextFunction) => {
   const { _id: owner } = req.user
-  const result = await Movie.create({ ...req.body, owner }) // треба замінити модель Movie
-  res.status(201).json(result)
+  const { title } = req.body
+
+  const board = await Board.findOne({ title, owner })
+  if (board) {
+    return next(createHttpError(409, 'Board with the same name already exists'))
+  }
+
+  const newBoard = await Board.create({ ...req.body, owner })
+  const expandedBoard = await newBoard.populate('owner', [
+    'name',
+    'email',
+    'avatarURL',
+    'userTheme'
+  ])
+
+  res.status(201).json(expandedBoard)
 }
 
 export const updateById = async (
@@ -41,42 +62,46 @@ export const updateById = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { id } = req.params
-  const result = await Movie.findByIdAndUpdate(id, req.body, { new: true }) // треба замінити модель Movie
+  const { _id: owner } = req.user
+  const { boardName: title } = req.params
+  const { title: newTitle } = req.body
 
-  if (!result) {
-    return next(new createHttpError.NotFound(`Movie with id=${id} not found`))
+  if (newTitle && newTitle !== title) {
+    const board = await Board.findOne({ title: newTitle, owner })
+    if (board) {
+      return next(
+        createHttpError(409, 'Board with the same name already exists')
+      )
+    }
   }
 
-  res.json(result)
+  const updatedBoard = await Board.findOneAndUpdate(
+    { title, owner },
+    req.body
+  ).populate('owner', ['name', 'email', 'avatarURL', 'userTheme'])
+
+  if (!updatedBoard) {
+    return next(createHttpError(404, `Board ${title} not found`))
+  }
+
+  res.json(updatedBoard)
 }
 
-export const deleteById = async (
+export const removeById = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { id } = req.params
-  const result = await Movie.findByIdAndDelete(id) // треба замінити модель Movie
+  const { _id: owner } = req.user
+  const { boardName: title } = req.params
 
-  if (!result) {
-    return next(new createHttpError.NotFound(`Movie with id=${id} not found`))
+  const removedBoard = await Board.findOneAndRemove({ title, owner })
+
+  if (!removedBoard) {
+    return next(createHttpError(404, `Board ${title} not found`))
   }
 
-  res.json({ message: 'Delete success' })
-}
-
-// Add controller function for theme
-
-export const changeTheme = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { _id } = req.user
-  const result = await User.findByIdAndUpdate(_id, req.body, { new: true }) // змінити модель User
-  if (!result) {
-    return next(new createHttpError.NotFound(`?`))
-  }
-  res.json(result)
+  res.json({
+    message: `Board ${title} deleted`
+  })
 }

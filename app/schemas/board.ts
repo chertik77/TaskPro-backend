@@ -7,8 +7,8 @@ export const editThemeSchema = Joi.object({
 
 export const addNewBoardSchema = Joi.object({
   title: Joi.string().min(3).required(),
-  icon: Joi.string(),
-  background: Joi.string()
+  icon: Joi.string().required(),
+  background: Joi.string().required()
 })
 
 export const editBoardSchema = Joi.object({

@@ -8,16 +8,13 @@ const boardSchema = new Schema(
       unique: true,
       required: true
     },
-    iconName: {
+    icon: {
       type: String,
       required: true
     },
-    backgroundImage: {
-      cloudinaryId: {
-        type: String,
-        required: true
-      },
-      default: null
+    background: {
+      type: String,
+      required: true
     },
     owner: {
       type: Schema.Types.ObjectId,
