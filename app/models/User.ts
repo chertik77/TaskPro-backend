@@ -1,6 +1,5 @@
 import { Schema, model } from 'mongoose'
 import isEmail from 'validator/lib/isEmail'
-
 import { handleSaveError, runValidateAtUpdate } from './hooks'
 
 const userTheme = ['light', 'violet', 'dark']

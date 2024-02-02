@@ -1,33 +1,5 @@
-import Joi from 'joi'
 import { Schema, model } from 'mongoose'
-
-// import { handleSaveError, runValidateAtUpdate } from './hooks'
-
-const priorityList = ['Low', 'Medium', 'High', 'Without priority']
-
-const taskSchema = new Schema({
-  title: String,
-  description: String,
-  priority: {
-    type: String,
-    enum: priorityList,
-    default: 'Without priority'
-  },
-  deadline: Date,
-  column: {
-    type: Schema.Types.ObjectId,
-    ref: 'сolumn',
-    required: true
-  }
-})
-
-const columnSchema = new Schema({
-  title: {
-    type: String,
-    required: true
-  },
-  tasks: [taskSchema]
-})
+import { handleSaveError, runValidateAtUpdate } from './hooks'
 
 const boardSchema = new Schema(
   {
@@ -46,7 +18,6 @@ const boardSchema = new Schema(
       },
       default: null
     },
-    columns: [columnSchema],
     owner: {
       type: Schema.Types.ObjectId,
       ref: 'user',
@@ -56,12 +27,10 @@ const boardSchema = new Schema(
   { versionKey: false, timestamps: true }
 )
 
-// movieSchema.post('save', handleSaveError)
+boardSchema.post('save', handleSaveError)
 
-// movieSchema.pre('findOneAndUpdate', runValidateAtUpdate)
+boardSchema.pre('findOneAndUpdate', runValidateAtUpdate)
 
-// movieSchema.post('findOneAndUpdate', handleSaveError)
-
-//додати Joi схеми
+boardSchema.post('findOneAndUpdate', handleSaveError)
 
 export const Board = model('board', boardSchema)
