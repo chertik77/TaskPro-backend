@@ -9,9 +9,8 @@ import logger from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 import swaggerDocument from '../swagger.json'
 import { authRouter } from './routes/api/auth'
-// import { moviesRouter } from './routes/api/movies-router'
- import { dashboardRouter } from './routes/api/dashboard-router'
-
+import { dashboardRouter } from './routes/api/dashboard-router'
+import { boardRouter } from './routes/api/board-routers'
 
 export type CustomError = Error & {
   status?: number
@@ -28,9 +27,8 @@ app.use(express.json())
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use('/api/auth', authRouter)
-// app.use('/api/movies', moviesRouter)
-app.use('/api/dashboard/:name', dashboardRouter)
-
+app.use('/api/dashboard', dashboardRouter)
+app.use('/api/dashboard/:boardName', boardRouter)
 
 app.use((_: Request, res: Response) => {
   res.status(404).json({ message: 'Not found' })

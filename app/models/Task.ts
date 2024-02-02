@@ -16,6 +16,11 @@ export const taskSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'сolumn',
     required: true
+  },
+  board: {
+    type: String,
+    ref: 'board',
+    required: true
   }
 })
 

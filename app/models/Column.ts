@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose'
-import { taskSchema } from './Task'
 import { handleSaveError, runValidateAtUpdate } from './hooks'
 
 const columnSchema = new Schema({
@@ -11,8 +10,7 @@ const columnSchema = new Schema({
     type: String,
     ref: 'board',
     required: true
-  },
-  tasks: [taskSchema]
+  }
 })
 
 columnSchema.post('save', handleSaveError)
