@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
-import { Board } from '@/models/Board'
 import createHttpError from 'http-errors'
+import { Board } from '@/models/Board'
 
 export const getAll = async (req: Request, res: Response) => {
   const { _id: owner } = req.user
@@ -15,27 +15,27 @@ export const getAll = async (req: Request, res: Response) => {
   res.json(boards)
 }
 
-export const getById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { _id: owner } = req.user
-  const { boardName: title } = req.params
+// export const getById = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   const { _id: owner } = req.user
+//   const { boardName: title } = req.params
 
-  const board = await Board.findOne({ title, owner }).populate('owner', [
-    'name',
-    'email',
-    'avatarURL',
-    'userTheme'
-  ])
+//   const board = await Board.findOne({ title, owner }).populate('owner', [
+//     'name',
+//     'email',
+//     'avatarURL',
+//     'userTheme'
+//   ])
 
-  if (!board) {
-    return next(createHttpError(404, `Board ${title} not found`))
-  }
+//   if (!board) {
+//     return next(createHttpError(404, `Board ${title} not found`))
+//   }
 
-  res.json(board)
-}
+//   res.json(board)
+// }
 
 export const add = async (req: Request, res: Response, next: NextFunction) => {
   const { _id: owner } = req.user

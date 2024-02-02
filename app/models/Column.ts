@@ -1,17 +1,25 @@
 import { Schema, model } from 'mongoose'
 import { handleSaveError, runValidateAtUpdate } from './hooks'
 
-const columnSchema = new Schema({
-  title: {
-    type: String,
-    required: true
+const columnSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true
+    },
+    board: {
+      type: String,
+      ref: 'board',
+      required: true
+    },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      required: true
+    }
   },
-  board: {
-    type: String,
-    ref: 'board',
-    required: true
-  }
-})
+  { versionKey: false, timestamps: true }
+)
 
 columnSchema.post('save', handleSaveError)
 
