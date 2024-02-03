@@ -9,7 +9,7 @@ import logger from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 import swaggerDocument from '../swagger.json'
 import { authRouter } from './routes/api/auth'
-import { dashboardRouter } from './routes/api/dashboard-router'
+import { dashboardRouter } from './routes/api/dashboard'
 
 export type CustomError = Error & {
   status?: number

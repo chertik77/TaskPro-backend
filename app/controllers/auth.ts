@@ -3,6 +3,7 @@ import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
 import { User } from 'models/User'
+import cloudinary from 'utils/cloudinary'
 
 const { JWT_SECRET } = process.env
 
@@ -69,6 +70,67 @@ export const getCurrent = (req: Request, res: Response) => {
   res.json({
     name,
     email
+  })
+}
+
+export const update = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { _id } = req.user
+  const { email } = req.body
+
+  let avatar = null
+
+  if (req.file) {
+    const extArr = ['jpeg', 'png']
+
+    const fileMimetype = req.file.mimetype.split('/')
+    const ext = fileMimetype[fileMimetype.length - 1]
+
+    if (!extArr.includes(ext)) {
+      return next(
+        createHttpError(400, 'File must have .jpeg or .png extension')
+      )
+    }
+
+    avatar = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'TaskPro/user_avatars'
+    })
+
+    const userById = await User.findById(_id)
+    if (userById && userById.avatarURL && userById.avatarURL.publicId) {
+      await cloudinary.uploader.destroy(userById.avatarURL.publicId, {
+        type: 'upload',
+        resource_type: 'image'
+      })
+    }
+  }
+
+  if (email) {
+    const userById = await User.findById(_id)
+    const userByEmail = await User.findOne({ email })
+    if (userByEmail && userById?.email !== email) {
+      return next(createHttpError(409, 'Email already exist'))
+    }
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(_id, {
+    ...req.body,
+    avatarURL: {
+      url: avatar?.url,
+      publicId: avatar?.public_id
+    }
+  })
+
+  res.json({
+    user: {
+      name: updatedUser?.name,
+      email: updatedUser?.email,
+      userTheme: updatedUser?.userTheme,
+      avatarURL: updatedUser?.avatarURL
+    }
   })
 }
 

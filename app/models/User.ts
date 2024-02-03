@@ -31,7 +31,14 @@ const userSchema = new Schema(
       default: 'light'
     },
     avatarURL: {
-      type: String
+      url: {
+        type: String,
+        default: ''
+      },
+      publicId: {
+        type: String,
+        default: ''
+      }
     },
     token: {
       type: String,

@@ -1,13 +1,13 @@
 import express from 'express'
 import { authenticate } from 'middlewares/authenticate'
-import { validateBody } from 'decorators/validateBody'
 import { isValidId } from 'middlewares/isValidId'
+import { validateBody } from 'decorators/validateBody'
 import { addNewBoardSchema, editBoardSchema } from 'schemas/board'
 import { addColumnSchema, editColumnSchema } from 'schemas/column'
 import { addNewTaskSchema, editTaskSchema } from 'schemas/task'
-import * as dashboardController from 'controllers/dashboard-controller'
-import * as columnController from 'controllers/column-controller'
-import * as taskController from 'controllers/task-controller'
+import * as dashboardController from 'controllers/dashboard'
+import * as columnController from 'controllers/column'
+import * as taskController from 'controllers/task'
 
 export const dashboardRouter = express.Router()
 
