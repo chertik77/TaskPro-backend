@@ -12,7 +12,10 @@ export const getAll = async (req: Request, res: Response) => {
     'userTheme'
   ])
 
-  res.json(boards)
+  res.json({
+    total: boards.length,
+    boards
+  })
 }
 
 // export const getById = async (
@@ -87,7 +90,7 @@ export const updateById = async (
   res.json(updatedBoard)
 }
 
-export const removeById = async (
+export const deleteById = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -95,9 +98,9 @@ export const removeById = async (
   const { _id: owner } = req.user
   const { boardName: title } = req.params
 
-  const removedBoard = await Board.findOneAndRemove({ title, owner })
+  const deletedBoard = await Board.findOneAndDelete({ title, owner })
 
-  if (!removedBoard) {
+  if (!deletedBoard) {
     return next(createHttpError(404, `Board ${title} not found`))
   }
 

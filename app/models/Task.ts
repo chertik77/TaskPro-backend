@@ -5,17 +5,26 @@ const priorityList = ['Low', 'Medium', 'High', 'Without priority']
 
 export const taskSchema = new Schema(
   {
-    title: String,
-    description: String,
+    title: {
+      type: String,
+      required: true
+    },
+    description: {
+      type: String,
+      required: true
+    },
     priority: {
       type: String,
       enum: priorityList,
       default: 'Without priority'
     },
-    deadline: Date,
+    deadline: {
+      type: Date,
+      required: true
+    },
     column: {
       type: Schema.Types.ObjectId,
-      ref: 'сolumn',
+      ref: 'column',
       required: true
     },
     board: {

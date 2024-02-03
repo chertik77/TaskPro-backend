@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import { Column } from '@/models/Column'
+import { Board } from '@/models/Board'
 
 export const getAll = async (req: Request, res: Response) => {
   const { _id: owner } = req.user
@@ -13,7 +14,10 @@ export const getAll = async (req: Request, res: Response) => {
     'userTheme'
   ])
 
-  res.json(columns)
+  res.json({
+    total: columns.length,
+    columns
+  })
 }
 
 // export const getById = async (
@@ -38,9 +42,14 @@ export const getAll = async (req: Request, res: Response) => {
 //   res.json(board)
 // }
 
-export const add = async (req: Request, res: Response) => {
+export const add = async (req: Request, res: Response, next: NextFunction) => {
   const { _id: owner } = req.user
   const { boardName: board } = req.params
+
+  const isCurrentBoard = await Board.findOne({ title: board, owner })
+  if (!isCurrentBoard) {
+    return next(createHttpError(404, `Board ${board} not found`))
+  }
 
   const newColumn = await Column.create({ ...req.body, board, owner })
   const expandedColumn = await newColumn.populate('owner', [
@@ -73,7 +82,7 @@ export const updateById = async (
   res.json(updatedColumn)
 }
 
-export const removeById = async (
+export const deleteById = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -81,9 +90,9 @@ export const removeById = async (
   const { _id: owner } = req.user
   const { boardName: board, columnId: _id } = req.params
 
-  const removedColumn = await Column.findOneAndRemove({ _id, board, owner })
+  const deletedColumn = await Column.findOneAndDelete({ _id, board, owner })
 
-  if (!removedColumn) {
+  if (!deletedColumn) {
     return next(createHttpError(404, 'Column not found'))
   }
 
