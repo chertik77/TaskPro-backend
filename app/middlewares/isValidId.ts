@@ -3,10 +3,24 @@ import createHttpError from 'http-errors'
 import { isValidObjectId } from 'mongoose'
 
 export const isValidId = (req: Request, _: Response, next: NextFunction) => {
-  const { id } = req.params
+  const { columnId, taskId, newColumnId } = req.params
 
-  if (!isValidObjectId(id)) {
-    return next(createHttpError(404, `${id} not valid id`))
+  if (columnId) {
+    if (!isValidObjectId(columnId)) {
+      return next(createHttpError(404, `${columnId} not valid id`))
+    }
+  }
+
+  if (taskId) {
+    if (!isValidObjectId(taskId)) {
+      return next(createHttpError(404, `${taskId} not valid id`))
+    }
+  }
+
+  if (newColumnId) {
+    if (!isValidObjectId(newColumnId)) {
+      return next(createHttpError(404, `${newColumnId} not valid id`))
+    }
   }
 
   next()

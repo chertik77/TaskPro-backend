@@ -1,19 +1,15 @@
 import { Schema, model } from 'mongoose'
 import { handleSaveError, runValidateAtUpdate } from './hooks'
 
-const boardSchema = new Schema(
+const columnSchema = new Schema(
   {
     title: {
       type: String,
-      unique: true,
       required: true
     },
-    icon: {
+    board: {
       type: String,
-      required: true
-    },
-    background: {
-      type: String,
+      ref: 'board',
       required: true
     },
     owner: {
@@ -25,10 +21,10 @@ const boardSchema = new Schema(
   { versionKey: false, timestamps: true }
 )
 
-boardSchema.post('save', handleSaveError)
+columnSchema.post('save', handleSaveError)
 
-boardSchema.pre('findOneAndUpdate', runValidateAtUpdate)
+columnSchema.pre('findOneAndUpdate', runValidateAtUpdate)
 
-boardSchema.post('findOneAndUpdate', handleSaveError)
+columnSchema.post('findOneAndUpdate', handleSaveError)
 
-export const Board = model('board', boardSchema)
+export const Column = model('column', columnSchema)

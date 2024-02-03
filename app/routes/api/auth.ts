@@ -17,4 +17,6 @@ authRouter.post('/signin', validateBody(signinSchema), signin)
 
 authRouter.get('/current', authenticate, getCurrent)
 
+authRouter.patch('/user') // Edit user
+
 authRouter.post('/signout', authenticate, signout)

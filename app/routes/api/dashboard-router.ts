@@ -1,71 +1,54 @@
-import {
-  add,
-  deleteById,
-  getAll,
-  getById,
-  updateById,changeTheme
-} from 'controllers/dashboard-controller'
-
 import express from 'express'
 import { authenticate } from 'middlewares/authenticate'
-
 import { validateBody } from 'decorators/validateBody'
-import * as movieSchemas from 'models/Movie' //замінити схему
-
 import { isValidId } from 'middlewares/isValidId'
-
-const movieAddValidate = validateBody(movieSchemas.movieAddSchema) //замінити схему
-
-const movieUpdateFavoriteValidate = validateBody(
-  movieSchemas.movieUpdateFavoriteSchema) // треба замінити схему
+import { addNewBoardSchema, editBoardSchema } from 'schemas/board'
+import { addColumnSchema, editColumnSchema } from 'schemas/column'
+import { addNewTaskSchema, editTaskSchema } from 'schemas/task'
+import * as dashboardController from 'controllers/dashboard-controller'
+import * as columnController from 'controllers/column-controller'
+import * as taskController from 'controllers/task-controller'
 
 export const dashboardRouter = express.Router()
 
 dashboardRouter.use(authenticate)
 
-dashboardRouter.get('/',authenticate, getAll)
+// Dashboard
+dashboardRouter.patch('/') // Switch theme
 
-dashboardRouter.post('/', authenticate,movieAddValidate, add)
+dashboardRouter.post('/help') // Send email 'Need help'
 
+// Boards
+dashboardRouter.get('/', dashboardController.getAll) // Get all boards
 
-dashboardRouter.get('/:boardName',authenticate, isValidId, getById)
+// dashboardRouter.get('/:boardName', dashboardController.getById) // Get board for boardName
 
+dashboardRouter.post('/', validateBody(addNewBoardSchema), dashboardController.add) // Add new board
 
-dashboardRouter.patch('/:boardName',authenticate,
-  isValidId,
-  movieUpdateFavoriteValidate,
-  updateById
-)
+dashboardRouter.patch('/:boardName', validateBody(editBoardSchema), dashboardController.updateById) // Edit board
 
-dashboardRouter.delete('/:boardName',authenticate, isValidId, deleteById)
+dashboardRouter.delete('/:boardName', dashboardController.deleteById) // Delete board
 
+// Columns
+dashboardRouter.get('/:boardName/', columnController.getAll) // Get all columns of the board
 
-// Add route functions for columns
-dashboardRouter.post('/:boardName',authenticate, movieAddValidate, add)
+// dashboardRouter.get('/:boardName/:columnId', isValidId, columnController.getById) // Get column for id
 
-dashboardRouter.patch('/:boardName/:columnId', authenticate,isValidId, updateById)
+dashboardRouter.post('/:boardName/', validateBody(addColumnSchema), columnController.add) // Add new column
 
-dashboardRouter.delete('/:boardName/:columnId',authenticate, isValidId, deleteById)
+dashboardRouter.patch('/:boardName/:columnId', isValidId, validateBody(editColumnSchema), columnController.updateById) // Edit column
 
+dashboardRouter.delete('/:boardName/:columnId', isValidId, columnController.deleteById) // Delete column
 
-// Add route functions for tasks
-dashboardRouter.post('/:boardName/:columnId',authenticate, movieAddValidate, //add
-)
+// Tasks
+dashboardRouter.get('/:boardName/tasks', taskController.getAll) // Get all tasks of the board
 
-dashboardRouter.patch('/:boardName/:columnId/:taskId',authenticate, isValidId, //updateById
-)
+// dashboardRouter.get('/:boardName/:columnId/:taskId') // Get task for id
 
-dashboardRouter.delete('/:boardName/:columnId/:taskId',authenticate, isValidId, //deleteById
-)
+dashboardRouter.post('/:boardName/:columnId/', isValidId, validateBody(addNewTaskSchema), taskController.add) // Add new task
 
+dashboardRouter.patch('/:boardName/:columnId/:taskId', isValidId, validateBody(editTaskSchema), taskController.updateById) // Edit task
 
-// Add route function for edit user
-dashboardRouter.put('/:userId',authenticate, isValidId, movieAddValidate, updateById
-)
+dashboardRouter.delete('/:boardName/:columnId/:taskId', isValidId, taskController.deleteById) // Delete task
 
-
-// Add route function for theme
-dashboardRouter.patch(
-  '/',authenticate, isValidId, changeTheme
-);
-//
+dashboardRouter.patch('/:boardName/:columnId/:taskId/:newColumnId', isValidId, taskController.changeTaskColumn) // Change column for task
