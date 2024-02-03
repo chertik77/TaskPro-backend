@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
-import { Column } from '@/models/Column'
-import { Board } from '@/models/Board'
+import { Column } from 'models/Column'
+import { Board } from 'models/Board'
 
 export const getAll = async (req: Request, res: Response) => {
   const { _id: owner } = req.user

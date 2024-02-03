@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
-import { Board } from '@/models/Board'
+import { Board } from 'models/Board'
 
 export const getAll = async (req: Request, res: Response) => {
   const { _id: owner } = req.user
