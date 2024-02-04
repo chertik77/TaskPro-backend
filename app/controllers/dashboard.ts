@@ -50,13 +50,13 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   const newBoard = await Board.create({ ...req.body, owner })
-  const expandedBoard = await newBoard.populate('owner', [
+  const extendedBoard = await newBoard.populate('owner', [
     'name',
     'email',
     'userTheme'
   ])
 
-  res.status(201).json(expandedBoard)
+  res.status(201).json(extendedBoard)
 }
 
 //! Edit board
