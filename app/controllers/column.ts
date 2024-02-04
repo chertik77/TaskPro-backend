@@ -40,7 +40,8 @@ export const updateById = async (
 
   const updatedColumn = await Column.findOneAndUpdate(
     { _id, board, owner },
-    req.body
+    req.body,
+    { fields: '-columns' }
   )
 
   if (!updatedColumn) {
