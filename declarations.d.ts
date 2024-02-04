@@ -4,6 +4,8 @@ declare namespace Express {
       _id: string
       name: string
       email: string
+      avatarURL: object
+      userTheme: string
     }
   }
 }

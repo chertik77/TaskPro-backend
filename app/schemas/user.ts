@@ -7,7 +7,7 @@ export const signupSchema = Joi.object({
     .required()
     .custom((value, helper) => {
       if (!isEmail(value)) {
-        return helper.message({ message: 'email is invalid' })
+        return helper.message({ custom: 'email is invalid' })
       }
       return value
     }),
@@ -19,7 +19,7 @@ export const signinSchema = Joi.object({
     .required()
     .custom((value, helper) => {
       if (!isEmail(value)) {
-        return helper.message({ message: 'email is invalid' })
+        return helper.message({ custom: 'email is invalid' })
       }
       return value
     }),
@@ -30,7 +30,7 @@ export const editUserSchema = Joi.object({
   name: Joi.string().min(5),
   email: Joi.string().custom((value, helper) => {
     if (!isEmail(value)) {
-      return helper.message({ message: 'email is invalid' })
+      return helper.message({ custom: 'email is invalid' })
     }
     return value
   }),

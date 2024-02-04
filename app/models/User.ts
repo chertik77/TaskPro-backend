@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 import isEmail from 'validator/lib/isEmail'
 import { handleSaveError, runValidateAtUpdate } from './hooks'
 
-const userTheme = ['light', 'violet', 'dark']
+const userTheme = ['light', 'dark', 'system', 'violet']
 
 const userSchema = new Schema(
   {
@@ -31,7 +31,14 @@ const userSchema = new Schema(
       default: 'light'
     },
     avatarURL: {
-      type: String
+      url: {
+        type: String,
+        default: ''
+      },
+      publicId: {
+        type: String,
+        default: ''
+      }
     },
     token: {
       type: String,
