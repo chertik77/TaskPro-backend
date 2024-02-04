@@ -166,7 +166,7 @@ export const update = async (
 }
 
 //! Sing out
-export const signout = async (req: Request, res: Response) => {
+export const logout = async (req: Request, res: Response) => {
   const { _id } = req.user
   await User.findByIdAndUpdate(_id, { token: '' })
 
