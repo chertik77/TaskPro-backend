@@ -2,7 +2,7 @@ import Joi from 'joi'
 import isEmail from 'validator/lib/isEmail'
 
 export const editThemeSchema = Joi.object({
-  theme: Joi.string().valid('light', 'dark', 'system', 'violet')
+  userTheme: Joi.string().valid('light', 'dark', 'system', 'violet')
 })
 
 export const addNewBoardSchema = Joi.object({
@@ -21,7 +21,7 @@ export const needHelpSchema = Joi.object({
   email: Joi.string()
     .custom((value, helper) => {
       if (!isEmail(value)) {
-        return helper.message({ message: 'email is invalid' })
+        return helper.message({ custom: 'email is invalid' })
       }
       return value
     })

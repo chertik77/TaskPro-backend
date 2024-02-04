@@ -2,7 +2,7 @@ import express from 'express'
 import { authenticate } from 'middlewares/authenticate'
 import { isValidId } from 'middlewares/isValidId'
 import { validateBody } from 'decorators/validateBody'
-import { addNewBoardSchema, editBoardSchema } from 'schemas/board'
+import * as boardSchema from 'schemas/board'
 import { addColumnSchema, editColumnSchema } from 'schemas/column'
 import { addNewTaskSchema, editTaskSchema } from 'schemas/task'
 import * as dashboardController from 'controllers/dashboard'
@@ -23,9 +23,9 @@ dashboardRouter.get('/', dashboardController.getAll) // Get all boards
 
 // dashboardRouter.get('/:boardName', dashboardController.getById) // Get board for boardName
 
-dashboardRouter.post('/', validateBody(addNewBoardSchema), dashboardController.add) // Add new board
+dashboardRouter.post('/', validateBody(boardSchema.addNewBoardSchema), dashboardController.add) // Add new board
 
-dashboardRouter.patch('/:boardName', validateBody(editBoardSchema), dashboardController.updateById) // Edit board
+dashboardRouter.patch('/:boardName', validateBody(boardSchema.editBoardSchema), dashboardController.updateById) // Edit board
 
 dashboardRouter.delete('/:boardName', dashboardController.deleteById) // Delete board
 

@@ -7,6 +7,7 @@ import cloudinary from 'utils/cloudinary'
 
 const { JWT_SECRET } = process.env
 
+//! Sing up
 export const signup = async (
   req: Request,
   res: Response,
@@ -20,27 +21,43 @@ export const signup = async (
 
   const hashPassword = await bcrypt.hash(password, 10)
 
-  const newUser = await User.create({
+  await User.create({
     ...req.body,
-    password: hashPassword
+    password: hashPassword,
+    avatarURL: {
+      url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png'
+    }
   })
 
+  const newUser = await User.findOne({ email })
+  if (!newUser) {
+    return next(createHttpError(404, `User not found`))
+  }
+
+  const { _id: id } = newUser
+  const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, { expiresIn: '1d' })
+  const activeUser = await User.findByIdAndUpdate(id, { token })
+
   res.status(201).json({
+    token: activeUser?.token,
     user: {
-      name: newUser.name,
-      email: newUser.email
+      name: activeUser?.name,
+      email: activeUser?.email,
+      avatarURL: activeUser?.avatarURL,
+      userTheme: activeUser?.userTheme
     }
   })
 }
 
+//! Sing in
 export const signin = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const { email, password } = req.body
-  const user = await User.findOne({ email })
 
+  const user = await User.findOne({ email })
   if (!user) {
     return next(createHttpError(401, 'Email or password invalid'))
   }
@@ -56,23 +73,31 @@ export const signin = async (
   const activeUser = await User.findByIdAndUpdate(id, { token })
 
   res.json({
-    token,
+    token: activeUser?.token,
     user: {
       name: activeUser?.name,
-      email: activeUser?.email
+      email: activeUser?.email,
+      avatarURL: activeUser?.avatarURL,
+      userTheme: activeUser?.userTheme
     }
   })
 }
 
+//! Get current
 export const getCurrent = (req: Request, res: Response) => {
-  const { name, email } = req.user
+  const { name, email, avatarURL, userTheme } = req.user
 
   res.json({
-    name,
-    email
+    user: {
+      name,
+      email,
+      avatarURL,
+      userTheme
+    }
   })
 }
 
+//! Edit user
 export const update = async (
   req: Request,
   res: Response,
@@ -116,13 +141,19 @@ export const update = async (
     }
   }
 
-  const updatedUser = await User.findByIdAndUpdate(_id, {
-    ...req.body,
-    avatarURL: {
-      url: avatar?.url,
-      publicId: avatar?.public_id
-    }
-  })
+  let updatedUser
+
+  if (avatar) {
+    updatedUser = await User.findByIdAndUpdate(_id, {
+      ...req.body,
+      avatarURL: {
+        url: avatar.url,
+        publicId: avatar.public_id
+      }
+    })
+  } else {
+    updatedUser = await User.findByIdAndUpdate(_id, req.body)
+  }
 
   res.json({
     user: {
@@ -134,11 +165,10 @@ export const update = async (
   })
 }
 
+//! Sing out
 export const signout = async (req: Request, res: Response) => {
   const { _id } = req.user
   await User.findByIdAndUpdate(_id, { token: '' })
 
-  res.status(204).json({
-    message: 'Signout success'
-  })
+  res.status(204).json({})
 }
