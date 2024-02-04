@@ -1,7 +1,8 @@
 import { Schema, model } from 'mongoose'
+import { taskSchema } from './Task'
 import { handleSaveError, runValidateAtUpdate } from './hooks'
 
-const columnSchema = new Schema(
+export const columnSchema = new Schema(
   {
     title: {
       type: String,
@@ -16,7 +17,8 @@ const columnSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'user',
       required: true
-    }
+    },
+    tasks: [taskSchema]
   },
   { versionKey: false, timestamps: true }
 )
