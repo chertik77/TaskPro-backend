@@ -21,7 +21,7 @@ dashboardRouter.post('/help') // Send email 'Need help'
 //! Boards
 dashboardRouter.get('/', dashboardController.getAll) // Get all boards
 
-dashboardRouter.get('/:boardName') // Get board for boardName
+dashboardRouter.get('/:boardName', dashboardController.getById) // Get board for boardName
 
 dashboardRouter.post('/', validateBody(boardSchema.addNewBoardSchema), dashboardController.add) // Add new board
 

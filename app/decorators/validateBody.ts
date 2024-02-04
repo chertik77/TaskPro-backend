@@ -6,7 +6,7 @@ export const validateBody = (schema: Schema) => {
   const func = (req: Request, _: Response, next: NextFunction) => {
     const { length } = Object.keys(req.body)
     if (!length && !req.file) {
-      return next(createHttpError(400, 'Any data not found'))
+      return next(createHttpError(400, 'missing fields'))
     }
 
     const { error } = schema.validate(req.body)

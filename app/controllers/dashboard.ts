@@ -8,7 +8,7 @@ export const getAll = async (req: Request, res: Response) => {
 
   const boards = await Board.find({ owner }, '-columns -background').populate(
     'owner',
-    ['name', 'email', 'avatarURL', 'userTheme']
+    ['name', 'email', 'userTheme']
   )
 
   res.json({
@@ -29,7 +29,6 @@ export const getById = async (
   const board = await Board.findOne({ title, owner }).populate('owner', [
     'name',
     'email',
-    'avatarURL',
     'userTheme'
   ])
 
@@ -54,7 +53,6 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
   const expandedBoard = await newBoard.populate('owner', [
     'name',
     'email',
-    'avatarURL',
     'userTheme'
   ])
 
@@ -82,8 +80,9 @@ export const updateById = async (
 
   const updatedBoard = await Board.findOneAndUpdate(
     { title, owner },
-    req.body
-  ).populate('owner', ['name', 'email', 'avatarURL', 'userTheme'])
+    req.body,
+    { fields: '-columns' }
+  ).populate('owner', ['name', 'email', 'userTheme'])
 
   if (!updatedBoard) {
     return next(createHttpError(404, `Board ${title} not found`))
