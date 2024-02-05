@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import { transport } from 'utils/nodemailer'
 import { Board } from 'models/Board'
+import { User } from 'models/User'
 
 const { SEND_EMAIL_FROM, SEND_EMAIL_TO } = process.env
 
@@ -133,5 +134,72 @@ export const sendEmail = async (req: Request, res: Response) => {
 
   res.json({
     message: `Email sent`
+  })
+}
+
+//! Switch theme
+export const switchTheme = async (
+  req: Request,
+  res: Response
+) => {
+  const { _id } = req.user
+  const { userTheme } = req.body
+
+  let editedUser
+
+  const user = await User.findById(_id)
+  if (!user?.avatarURL?.publicId) {
+    switch (userTheme) {
+      case 'light':
+        editedUser = await User.findByIdAndUpdate(_id, {
+          ...req.body,
+          avatarURL: {
+            url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png',
+            publicId: ''
+          }
+        })
+        break
+
+      case 'dark':
+        editedUser = await User.findByIdAndUpdate(_id, {
+          ...req.body,
+          avatarURL: {
+            url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_dark.png',
+            publicId: ''
+          }
+        })
+        break
+
+      case 'violet':
+        editedUser = await User.findByIdAndUpdate(_id, {
+          ...req.body,
+          avatarURL: {
+            url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_violet.png',
+            publicId: ''
+          }
+        })
+        break
+
+      default:
+        editedUser = await User.findByIdAndUpdate(_id, {
+          ...req.body,
+          avatarURL: {
+            url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png',
+            publicId: ''
+          }
+        })
+        break
+    }
+  } else {
+    editedUser = await User.findByIdAndUpdate(_id, req.body)
+  }
+
+  res.json({
+    user: {
+      name: editedUser?.name,
+      email: editedUser?.email,
+      userTheme: editedUser?.userTheme,
+      avatarURL: editedUser?.avatarURL
+    }
   })
 }
