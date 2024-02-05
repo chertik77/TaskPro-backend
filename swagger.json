@@ -1,15 +1,27 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "version": "1.0.0",
+    "version": "2.0.0",
     "title": "Task Pro"
   },
-  "consumes": ["application/json"],
+  "consumes": ["application/json", "multipart/form-data"],
   "produces": ["application/json"],
   "servers": [{ "url": "https://final-project-backend-wdid.onrender.com" }],
   "tags": [
     {
       "name": "Auth"
+    },
+    {
+      "name": "Dashboard"
+    },
+    {
+      "name": "Board"
+    },
+    {
+      "name": "Column"
+    },
+    {
+      "name": "Task"
     }
   ],
   "paths": {
@@ -34,7 +46,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "$ref": "#/components/schemas/RegistrationAndLoginResponse"
                 }
               }
             }
@@ -45,7 +57,7 @@
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "Invalid request body"
+                  "message": "missing fields"
                 }
               }
             }
@@ -67,7 +79,7 @@
     "/api/auth/signin": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Sign in user",
+        "summary": "Login user",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -85,7 +97,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoginResponse"
+                  "$ref": "#/components/schemas/RegistrationAndLoginResponse"
                 }
               }
             }
@@ -96,7 +108,7 @@
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "Invalid request body"
+                  "message": "missing fields"
                 }
               }
             }
@@ -108,38 +120,6 @@
                 "type": "object",
                 "example": {
                   "message": "Email or password invalid"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-     "/api/auth/signout": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Sign out user",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
-        "responses": {
-          "204": {
-            "description": "No Content",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Signout success"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
                 }
               }
             }
@@ -159,8 +139,112 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CurrentResponse"
+                  "$ref": "#/components/schemas/CurrentAndEditUserResponse"
                 }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/user": {
+      "patch": {
+        "tags": ["Auth"],
+        "summary": "Edit user info",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentAndEditUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "missing fields"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Provided email already exists"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logout user",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {}
               }
             }
           },
@@ -199,12 +283,20 @@
           }
         }
       },
-      "RegistrationResponse": {
+      "RegistrationAndLoginResponse": {
         "type": "object",
         "properties": {
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YjhmNGE2YjJmZjY4MDU5MDk0YzMyYSIsImlhdCI6MTcwNjYyMDA4OCwiZXhwIjoxNzA2NjIwOTg4fQ.StzrXFqK2u4JR0SmtvYJ_aqbebkHRQb3-6NU5Amiwuc"
+          },
           "user": {
             "type": "object",
             "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
               "name": {
                 "type": "string",
                 "example": "John Doe"
@@ -212,6 +304,23 @@
               "email": {
                 "type": "string",
                 "format": "email"
+              },
+              "avatarURL": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "example": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg"
+                  },
+                  "publicId": {
+                    "type": "string",
+                    "example": "avatars/nsd6alpowmw3ska"
+                  }
+                }
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
               }
             }
           }
@@ -231,16 +340,16 @@
           }
         }
       },
-      "LoginResponse": {
+      "CurrentAndEditUserResponse": {
         "type": "object",
         "properties": {
-          "token": {
-            "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YjhmNGE2YjJmZjY4MDU5MDk0YzMyYSIsImlhdCI6MTcwNjYyMDA4OCwiZXhwIjoxNzA2NjIwOTg4fQ.StzrXFqK2u4JR0SmtvYJ_aqbebkHRQb3-6NU5Amiwuc"
-          },
           "user": {
             "type": "object",
             "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
               "name": {
                 "type": "string",
                 "example": "John Doe"
@@ -248,12 +357,29 @@
               "email": {
                 "type": "string",
                 "format": "email"
+              },
+              "avatarURL": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "example": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg"
+                  },
+                  "publicId": {
+                    "type": "string",
+                    "example": "avatars/nsd6alpowmw3ska"
+                  }
+                }
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
               }
             }
           }
         }
       },
-      "CurrentResponse": {
+      "EditUserRequest": {
         "type": "object",
         "properties": {
           "name": {
@@ -263,6 +389,10 @@
           "email": {
             "type": "string",
             "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "example": "qwerty123"
           }
         }
       }

@@ -196,6 +196,7 @@ export const switchTheme = async (
 
   res.json({
     user: {
+      _id: editedUser?._id,
       name: editedUser?.name,
       email: editedUser?.email,
       userTheme: editedUser?.userTheme,

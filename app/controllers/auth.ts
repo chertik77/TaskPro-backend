@@ -41,6 +41,7 @@ export const signup = async (
   res.status(201).json({
     token: activeUser?.token,
     user: {
+      _id: activeUser?._id,
       name: activeUser?.name,
       email: activeUser?.email,
       avatarURL: activeUser?.avatarURL,
@@ -75,6 +76,7 @@ export const signin = async (
   res.json({
     token: activeUser?.token,
     user: {
+      _id: activeUser?._id,
       name: activeUser?.name,
       email: activeUser?.email,
       avatarURL: activeUser?.avatarURL,
@@ -85,10 +87,11 @@ export const signin = async (
 
 //! Get current
 export const getCurrent = (req: Request, res: Response) => {
-  const { name, email, avatarURL, userTheme } = req.user
+  const { _id, name, email, avatarURL, userTheme } = req.user
 
   res.json({
     user: {
+      _id,
       name,
       email,
       avatarURL,
@@ -184,6 +187,7 @@ export const update = async (
 
   res.json({
     user: {
+      _id: updatedUser?._id,
       name: updatedUser?.name,
       email: updatedUser?.email,
       userTheme: updatedUser?.userTheme,
