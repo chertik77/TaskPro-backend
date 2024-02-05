@@ -13,7 +13,7 @@ import { dashboardRouter } from './routes/api/dashboard'
 
 export type CustomError = Error & {
   status?: number
-  code?: number
+  code?: number | string
 }
 
 export const app = express()
@@ -34,6 +34,10 @@ app.use((_: Request, res: Response) => {
 
 app.use(
   (err: CustomError, _: Request, res: Response, __: NextFunction): void => {
+    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      err.status = 400
+    }
+
     const { status = 500, message = 'Server error' } = err
     res.status(status).json({ message })
   }

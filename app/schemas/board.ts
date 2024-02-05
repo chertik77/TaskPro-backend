@@ -2,7 +2,7 @@ import Joi from 'joi'
 import isEmail from 'validator/lib/isEmail'
 
 export const editThemeSchema = Joi.object({
-  userTheme: Joi.string().valid('light', 'dark', 'system', 'violet')
+  userTheme: Joi.string().valid('light', 'dark', 'violet')
 })
 
 export const addNewBoardSchema = Joi.object({
