@@ -1,6 +1,9 @@
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
+import { transport } from 'utils/nodemailer'
 import { Board } from 'models/Board'
+
+const { SEND_EMAIL_FROM, SEND_EMAIL_TO } = process.env
 
 //! Get all boards
 export const getAll = async (req: Request, res: Response) => {
@@ -108,5 +111,27 @@ export const deleteById = async (
 
   res.json({
     message: `Board ${title} deleted`
+  })
+}
+
+//! Need help email
+export const sendEmail = async (req: Request, res: Response) => {
+  const { email, comment } = req.body
+
+  const emailBody = {
+    from: SEND_EMAIL_FROM,
+    to: SEND_EMAIL_TO,
+    subject: 'Need help',
+    html: `
+    <div>
+     <h4>email: ${email}<h4/>
+     <p>${comment}<p/>
+    <div/>`
+  }
+
+  await transport.sendMail(emailBody)
+
+  res.json({
+    message: `Email sent`
   })
 }
