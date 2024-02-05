@@ -3,6 +3,22 @@ import createHttpError from 'http-errors'
 import { Column } from 'models/Column'
 import { Board } from 'models/Board'
 
+//! Get all columns
+export const getAll = async (req: Request, res: Response) => {
+  const { _id: owner } = req.user
+  const { boardName: board } = req.params
+
+  const columns = await Column.find({ board, owner }, '-tasks').populate(
+    'owner',
+    ['name', 'email', 'userTheme']
+  )
+
+  res.json({
+    total: columns.length,
+    columns
+  })
+}
+
 //! Add new column
 export const add = async (req: Request, res: Response, next: NextFunction) => {
   const { _id: owner } = req.user
@@ -41,7 +57,7 @@ export const updateById = async (
   const updatedColumn = await Column.findOneAndUpdate(
     { _id, board, owner },
     req.body,
-    { fields: '-columns' }
+    { fields: '-tasks' }
   )
 
   if (!updatedColumn) {
