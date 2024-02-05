@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose'
+import { columnSchema } from './Column'
 import { handleSaveError, runValidateAtUpdate } from './hooks'
 
 const boardSchema = new Schema(
@@ -20,7 +21,8 @@ const boardSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'user',
       required: true
-    }
+    },
+    columns: [columnSchema]
   },
   { versionKey: false, timestamps: true }
 )

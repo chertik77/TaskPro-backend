@@ -2,15 +2,14 @@ import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import { Board } from 'models/Board'
 
+//! Get all boards
 export const getAll = async (req: Request, res: Response) => {
   const { _id: owner } = req.user
 
-  const boards = await Board.find({ owner }).populate('owner', [
-    'name',
-    'email',
-    'avatarURL',
-    'userTheme'
-  ])
+  const boards = await Board.find({ owner }, '-columns -background').populate(
+    'owner',
+    ['name', 'email', 'userTheme']
+  )
 
   res.json({
     total: boards.length,
@@ -18,28 +17,29 @@ export const getAll = async (req: Request, res: Response) => {
   })
 }
 
-// export const getById = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   const { _id: owner } = req.user
-//   const { boardName: title } = req.params
+//! Get board for boardName
+export const getById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { _id: owner } = req.user
+  const { boardName: title } = req.params
 
-//   const board = await Board.findOne({ title, owner }).populate('owner', [
-//     'name',
-//     'email',
-//     'avatarURL',
-//     'userTheme'
-//   ])
+  const board = await Board.findOne({ title, owner }).populate('owner', [
+    'name',
+    'email',
+    'userTheme'
+  ])
 
-//   if (!board) {
-//     return next(createHttpError(404, `Board ${title} not found`))
-//   }
+  if (!board) {
+    return next(createHttpError(404, `Board ${title} not found`))
+  }
 
-//   res.json(board)
-// }
+  res.json(board)
+}
 
+//! Add new board
 export const add = async (req: Request, res: Response, next: NextFunction) => {
   const { _id: owner } = req.user
   const { title } = req.body
@@ -50,16 +50,16 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   const newBoard = await Board.create({ ...req.body, owner })
-  const expandedBoard = await newBoard.populate('owner', [
+  const extendedBoard = await newBoard.populate('owner', [
     'name',
     'email',
-    'avatarURL',
     'userTheme'
   ])
 
-  res.status(201).json(expandedBoard)
+  res.status(201).json(extendedBoard)
 }
 
+//! Edit board
 export const updateById = async (
   req: Request,
   res: Response,
@@ -80,8 +80,9 @@ export const updateById = async (
 
   const updatedBoard = await Board.findOneAndUpdate(
     { title, owner },
-    req.body
-  ).populate('owner', ['name', 'email', 'avatarURL', 'userTheme'])
+    req.body,
+    { fields: '-columns' }
+  ).populate('owner', ['name', 'email', 'userTheme'])
 
   if (!updatedBoard) {
     return next(createHttpError(404, `Board ${title} not found`))
@@ -90,6 +91,7 @@ export const updateById = async (
   res.json(updatedBoard)
 }
 
+//! Delete board
 export const deleteById = async (
   req: Request,
   res: Response,
