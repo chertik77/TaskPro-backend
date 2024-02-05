@@ -104,9 +104,30 @@ export const update = async (
   next: NextFunction
 ) => {
   const { _id } = req.user
-  const { email } = req.body
+  const { email, password } = req.body
 
-  let avatar = null
+  if (email) {
+    const userByEmail = await User.findOne({ email })
+    if (userByEmail) {
+      return next(createHttpError(409, 'Email already exist'))
+    }
+  }
+
+  let newPassword
+
+  if (password) {
+    const userById = await User.findById(_id)
+    if (userById) {
+      const passwordCompare = await bcrypt.compare(password, userById.password)
+      if (passwordCompare) {
+        return next(createHttpError(400, "It's yours current password"))
+      } else {
+        newPassword = await bcrypt.hash(password, 10)
+      }
+    }
+  }
+
+  let avatar
 
   if (req.file) {
     const extArr = ['jpeg', 'png']
@@ -133,23 +154,29 @@ export const update = async (
     }
   }
 
-  if (email) {
-    const userById = await User.findById(_id)
-    const userByEmail = await User.findOne({ email })
-    if (userByEmail && userById?.email !== email) {
-      return next(createHttpError(409, 'Email already exist'))
-    }
-  }
-
   let updatedUser
 
-  if (avatar) {
+  if (avatar && newPassword) {
+    updatedUser = await User.findByIdAndUpdate(_id, {
+      ...req.body,
+      password: newPassword,
+      avatarURL: {
+        url: avatar.url,
+        publicId: avatar.public_id
+      }
+    })
+  } else if (avatar) {
     updatedUser = await User.findByIdAndUpdate(_id, {
       ...req.body,
       avatarURL: {
         url: avatar.url,
         publicId: avatar.public_id
       }
+    })
+  } else if (newPassword) {
+    updatedUser = await User.findByIdAndUpdate(_id, {
+      ...req.body,
+      password: newPassword
     })
   } else {
     updatedUser = await User.findByIdAndUpdate(_id, req.body)
