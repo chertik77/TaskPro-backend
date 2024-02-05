@@ -6,7 +6,6 @@ import { upload } from 'middlewares/multer'
 import { editUserSchema, signinSchema, signupSchema } from 'schemas/user'
 
 export const authRouter = Router()
-export const uploadFunc = upload.single('avatar')
 
 authRouter.post('/signup', validateBody(signupSchema), authController.signup)
 
@@ -14,6 +13,6 @@ authRouter.post('/signin', validateBody(signinSchema), authController.signin)
 
 authRouter.get('/current', authenticate, authController.getCurrent)
 
-authRouter.patch('/user', authenticate, uploadFunc, validateBody(editUserSchema), authController.update) // Edit user
+authRouter.patch('/user', authenticate, upload.single('avatar'), validateBody(editUserSchema), authController.update) // Edit user
 
 authRouter.post('/logout', authenticate, authController.logout)
