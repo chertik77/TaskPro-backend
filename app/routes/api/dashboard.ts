@@ -16,7 +16,7 @@ dashboardRouter.use(authenticate)
 //! Dashboard
 dashboardRouter.patch('/') // Switch theme
 
-dashboardRouter.post('/help') // Send email 'Need help'
+dashboardRouter.post('/help', validateBody(boardSchema.needHelpSchema), dashboardController.sendEmail) // Send email 'Need help'
 
 //! Boards
 dashboardRouter.get('/', dashboardController.getAll) // Get all boards
