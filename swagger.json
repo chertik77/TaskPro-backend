@@ -942,6 +942,205 @@
           }
         }
       }
+    },
+    "/api/dashboard/:boardName/:columnId/:taskId": {
+      "patch": {
+        "tags": ["Task"],
+        "summary": "Edit task",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "taskId",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditTaskRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditTaskAndChangeColumnResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Task not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Task"],
+        "summary": "Delete task",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "taskId",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Task deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Task not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/:boardName/:columnId/:taskId/:newColumnId": {
+      "patch": {
+        "tags": ["Task"],
+        "summary": "Change column for task",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "taskId",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "newColumnId",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditTaskAndChangeColumnResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Task not found"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1680,6 +1879,98 @@
           "_id": {
             "type": "string",
             "example": "89u0388ea89738bb4520sp87"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EditTaskRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Add documentation"
+          },
+          "description": {
+            "type": "string",
+            "example": "bla bla bla bla"
+          },
+          "priority": {
+            "type": "string",
+            "example": "Without priority"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EditTaskAndChangeColumnResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "89u0388ea89738bb4520sp87"
+          },
+          "title": {
+            "type": "string",
+            "example": "Add documentation"
+          },
+          "description": {
+            "type": "string",
+            "example": "bla bla bla bla"
+          },
+          "priority": {
+            "type": "string",
+            "example": "Without priority"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "column": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "76c0388ea89738bb4520hy65"
+              },
+              "title": {
+                "type": "string",
+                "example": "Done"
+              }
+            }
+          },
+          "board": {
+            "type": "string",
+            "example": "Project"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
           },
           "createdAt": {
             "type": "string",
