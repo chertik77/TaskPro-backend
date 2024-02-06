@@ -4,9 +4,14 @@ import { Column } from 'models/Column'
 import { Board } from 'models/Board'
 
 //! Get all columns
-export const getAll = async (req: Request, res: Response) => {
+export const getAll = async (req: Request, res: Response, next: NextFunction) => {
   const { _id: owner } = req.user
   const { boardName: board } = req.params
+
+  const isCurrentBoard = await Board.findOne({ title: board, owner })
+  if (!isCurrentBoard) {
+    return next(createHttpError(404, `Board ${board} not found`))
+  }
 
   const columns = await Column.find({ board, owner }, '-tasks').populate(
     'owner',

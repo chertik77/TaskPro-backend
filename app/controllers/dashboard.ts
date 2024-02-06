@@ -1,6 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import { transport } from 'utils/nodemailer'
+import { Task } from 'models/Task'
+import { Column } from 'models/Column'
 import { Board } from 'models/Board'
 import { User } from 'models/User'
 
@@ -84,15 +86,40 @@ export const updateById = async (
 
   const updatedBoard = await Board.findOneAndUpdate(
     { title, owner },
-    req.body,
-    { fields: '-columns' }
+    req.body
   ).populate('owner', ['name', 'email', 'userTheme'])
 
   if (!updatedBoard) {
     return next(createHttpError(404, `Board ${title} not found`))
   }
 
-  res.json(updatedBoard)
+  let editedBoard
+
+  if (newTitle) {
+    await Task.updateMany({ board: title, owner }, { board: newTitle })
+    await Column.updateMany(
+      { board: title, owner },
+      { board: newTitle, $set: { 'tasks.$[].board': newTitle } }
+    )
+    await Board.updateMany(
+      { title: newTitle, owner },
+      {
+        $set: {
+          'columns.$[].board': newTitle,
+          'columns.$[].tasks.$[].board': newTitle
+        }
+      }
+    )
+
+    editedBoard = await Board.findOne({ title: newTitle, owner }).populate(
+      'owner',
+      ['name', 'email', 'userTheme']
+    )
+  } else {
+    editedBoard = updatedBoard
+  }
+
+  res.json(editedBoard)
 }
 
 //! Delete board
@@ -138,10 +165,7 @@ export const sendEmail = async (req: Request, res: Response) => {
 }
 
 //! Switch theme
-export const switchTheme = async (
-  req: Request,
-  res: Response
-) => {
+export const switchTheme = async (req: Request, res: Response) => {
   const { _id } = req.user
   const { userTheme } = req.body
 
