@@ -86,7 +86,8 @@ export const updateById = async (
 
   const updatedBoard = await Board.findOneAndUpdate(
     { title, owner },
-    req.body
+    req.body,
+    { fields: '-columns' }
   ).populate('owner', ['name', 'email', 'userTheme'])
 
   if (!updatedBoard) {
@@ -111,10 +112,10 @@ export const updateById = async (
       }
     )
 
-    editedBoard = await Board.findOne({ title: newTitle, owner }).populate(
-      'owner',
-      ['name', 'email', 'userTheme']
-    )
+    editedBoard = await Board.findOne(
+      { title: newTitle, owner },
+      '-columns'
+    ).populate('owner', ['name', 'email', 'userTheme'])
   } else {
     editedBoard = updatedBoard
   }

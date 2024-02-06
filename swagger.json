@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "version": "2.0.0",
+    "version": "2.0.1",
     "title": "Task Pro"
   },
   "consumes": ["application/json", "multipart/form-data"],
@@ -696,6 +696,252 @@
           }
         }
       }
+    },
+    "/api/dashboard/:boardName/columns": {
+      "get": {
+        "tags": ["Column"],
+        "summary": "Get all columns",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllColumnsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board Project not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/:boardName/:columnId": {
+      "patch": {
+        "tags": ["Column"],
+        "summary": "Edit column",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditColumnRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditColumnResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Column not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Column"],
+        "summary": "Delete column",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Column deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Column not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Task"],
+        "summary": "Add new task",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddTaskRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddTaskResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Column not found"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1228,6 +1474,212 @@
           },
           "tasks": {
             "type": "array"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "GetAllColumnsResponse": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "example": "1"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "example": "76c0388ea89738bb4520hy65"
+                },
+                "title": {
+                  "type": "string",
+                  "example": "Done"
+                },
+                "board": {
+                  "type": "string",
+                  "example": "Project"
+                },
+                "owner": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "65c0388ea89738bb0120fed0"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "John Doe"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "userTheme": {
+                      "type": "string",
+                      "example": "light"
+                    }
+                  }
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      },
+      "EditColumnRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Done"
+          }
+        }
+      },
+      "EditColumnResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "76c0388ea89738bb4520hy65"
+          },
+          "title": {
+            "type": "string",
+            "example": "Done"
+          },
+          "board": {
+            "type": "string",
+            "example": "Project"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AddTaskRequest": {
+        "type": "object",
+        "required": ["title", "description", "deadline"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Add documentation"
+          },
+          "description": {
+            "type": "string",
+            "example": "bla bla bla bla"
+          },
+          "priority": {
+            "type": "string",
+            "example": "Without priority"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AddTaskResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Add documentation"
+          },
+          "description": {
+            "type": "string",
+            "example": "bla bla bla bla"
+          },
+          "priority": {
+            "type": "string",
+            "example": "Without priority"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "column": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "76c0388ea89738bb4520hy65"
+              },
+              "title": {
+                "type": "string",
+                "example": "Done"
+              }
+            }
+          },
+          "board": {
+            "type": "string",
+            "example": "Project"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
+          },
+          "_id": {
+            "type": "string",
+            "example": "89u0388ea89738bb4520sp87"
           },
           "createdAt": {
             "type": "string",

@@ -36,7 +36,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
 
   const newColumn = await Column.create({ ...req.body, board, owner })
 
-  await Board.findOneAndUpdate(
+  await Board.updateOne(
     { title: board, owner },
     { $push: { columns: newColumn } }
   )
@@ -69,7 +69,7 @@ export const updateById = async (
     return next(createHttpError(404, 'Column not found'))
   }
 
-  await Board.findOneAndUpdate(
+  await Board.updateOne(
     { title: board, owner, 'columns._id': _id },
     {
       $set: {
@@ -104,7 +104,7 @@ export const deleteById = async (
     return next(createHttpError(404, 'Column not found'))
   }
 
-  await Board.findOneAndUpdate(
+  await Board.updateOne(
     { title: board, owner },
     {
       $pull: { columns: { _id, board, owner } }
