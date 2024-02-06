@@ -52,7 +52,7 @@
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "type": "object",
@@ -103,7 +103,7 @@
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "type": "object",
@@ -197,7 +197,7 @@
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "type": "object",
@@ -290,7 +290,7 @@
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "type": "object",
@@ -369,7 +369,7 @@
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "type": "object",
@@ -433,7 +433,7 @@
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "type": "object",
@@ -450,6 +450,246 @@
                 "type": "object",
                 "example": {
                   "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/:boardName": {
+      "get": {
+        "tags": ["Board"],
+        "summary": "Get board by title",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBoardByTitleResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board Project not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Board"],
+        "summary": "Edit board",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditBoardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board Project not found"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board with the same name already exists"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Board"],
+        "summary": "Delete board",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board Project deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board Project not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Column"],
+        "summary": "Add new column",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddColumnRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddColumnResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board Project not found"
                 }
               }
             }
@@ -618,7 +858,7 @@
                 },
                 "title": {
                   "type": "string",
-                  "example": "To Do"
+                  "example": "Project"
                 },
                 "icon": {
                   "type": "string",
@@ -664,7 +904,7 @@
         "properties": {
           "title": {
             "type": "string",
-            "example": "To Do"
+            "example": "Project"
           },
           "icon": {
             "type": "string",
@@ -681,7 +921,7 @@
         "properties": {
           "title": {
             "type": "string",
-            "example": "To Do"
+            "example": "Project"
           },
           "icon": {
             "type": "string",
@@ -740,6 +980,262 @@
           "comment": {
             "type": "string",
             "example": "Need help"
+          }
+        }
+      },
+      "GetBoardByTitleResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "65c0388ea89738bb0120fed0"
+          },
+          "title": {
+            "type": "string",
+            "example": "Project"
+          },
+          "icon": {
+            "type": "string",
+            "example": "star"
+          },
+          "background": {
+            "type": "string",
+            "example": "default"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "Done"
+                },
+                "board": {
+                  "type": "string",
+                  "example": "Project"
+                },
+                "owner": {
+                  "type": "string",
+                  "example": "65c0388ea89738bb0120fed0"
+                },
+                "tasks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "example": "Add documentation"
+                      },
+                      "description": {
+                        "type": "string",
+                        "example": "bla bla bla bla"
+                      },
+                      "priority": {
+                        "type": "string",
+                        "example": "Without priority"
+                      },
+                      "deadline": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "column": {
+                        "type": "string",
+                        "example": "76c0388ea89738bb4520hy65"
+                      },
+                      "board": {
+                        "type": "string",
+                        "example": "Project"
+                      },
+                      "owner": {
+                        "type": "string",
+                        "example": "65c0388ea89738bb0120fed0"
+                      },
+                      "_id": {
+                        "type": "string",
+                        "example": "89u0388ea89738bb4520sp87"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                },
+                "_id": {
+                  "type": "string",
+                  "example": "76c0388ea89738bb4520hy65"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EditBoardRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Project"
+          },
+          "icon": {
+            "type": "string",
+            "example": "star"
+          },
+          "background": {
+            "type": "string",
+            "example": "default"
+          }
+        }
+      },
+      "EditBoardResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "65c0388ea89738bb0120fed0"
+          },
+          "title": {
+            "type": "string",
+            "example": "Project"
+          },
+          "icon": {
+            "type": "string",
+            "example": "star"
+          },
+          "background": {
+            "type": "string",
+            "example": "default"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AddColumnRequest": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Done"
+          }
+        }
+      },
+      "AddColumnResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Done"
+          },
+          "board": {
+            "type": "string",
+            "example": "Project"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
+          },
+          "_id": {
+            "type": "string",
+            "example": "76c0388ea89738bb4520hy65"
+          },
+          "tasks": {
+            "type": "array"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       }
