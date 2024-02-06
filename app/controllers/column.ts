@@ -4,9 +4,14 @@ import { Column } from 'models/Column'
 import { Board } from 'models/Board'
 
 //! Get all columns
-export const getAll = async (req: Request, res: Response) => {
+export const getAll = async (req: Request, res: Response, next: NextFunction) => {
   const { _id: owner } = req.user
   const { boardName: board } = req.params
+
+  const isCurrentBoard = await Board.findOne({ title: board, owner })
+  if (!isCurrentBoard) {
+    return next(createHttpError(404, `Board ${board} not found`))
+  }
 
   const columns = await Column.find({ board, owner }, '-tasks').populate(
     'owner',
@@ -15,7 +20,7 @@ export const getAll = async (req: Request, res: Response) => {
 
   res.json({
     total: columns.length,
-    columns
+    data: columns
   })
 }
 
@@ -31,7 +36,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
 
   const newColumn = await Column.create({ ...req.body, board, owner })
 
-  await Board.findOneAndUpdate(
+  await Board.updateOne(
     { title: board, owner },
     { $push: { columns: newColumn } }
   )
@@ -64,7 +69,7 @@ export const updateById = async (
     return next(createHttpError(404, 'Column not found'))
   }
 
-  await Board.findOneAndUpdate(
+  await Board.updateOne(
     { title: board, owner, 'columns._id': _id },
     {
       $set: {
@@ -99,7 +104,7 @@ export const deleteById = async (
     return next(createHttpError(404, 'Column not found'))
   }
 
-  await Board.findOneAndUpdate(
+  await Board.updateOne(
     { title: board, owner },
     {
       $pull: { columns: { _id, board, owner } }

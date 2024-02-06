@@ -21,7 +21,7 @@ dashboardRouter.post('/help', validateBody(boardSchema.needHelpSchema), dashboar
 //! Boards
 dashboardRouter.get('/', dashboardController.getAll) // Get all boards
 
-dashboardRouter.get('/:boardName', dashboardController.getById) // Get board for boardName
+dashboardRouter.get('/:boardName', dashboardController.getById) // Get board by title
 
 dashboardRouter.post('/', validateBody(boardSchema.addNewBoardSchema), dashboardController.add) // Add new board
 
@@ -30,7 +30,7 @@ dashboardRouter.patch('/:boardName', validateBody(boardSchema.editBoardSchema), 
 dashboardRouter.delete('/:boardName', dashboardController.deleteById) // Delete board
 
 //! Columns
-dashboardRouter.get('/:boardName/columns', columnController.getAll)
+dashboardRouter.get('/:boardName/columns', columnController.getAll) // Get all columns
 
 dashboardRouter.post('/:boardName', validateBody(addColumnSchema), columnController.add) // Add new column
 

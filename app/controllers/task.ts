@@ -20,7 +20,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
     { _id: column, board, owner },
     { $push: { tasks: newTask } }
   )
-  await Board.findOneAndUpdate(
+  await Board.updateOne(
     { title: board, owner, 'columns._id': columnWithTasks?._id },
     {
       $set: {
@@ -72,7 +72,7 @@ export const updateById = async (
       }
     }
   )
-  await Board.findOneAndUpdate(
+  await Board.updateOne(
     { title: board, owner, 'columns._id': columnWithTasks?._id },
     {
       $set: {
@@ -117,7 +117,7 @@ export const deleteById = async (
     { _id: column, board, owner },
     { $pull: { tasks: { _id, column, board, owner } } }
   )
-  await Board.findOneAndUpdate(
+  await Board.updateOne(
     { title: board, owner, 'columns._id': columnWithTasks?._id },
     {
       $set: {
@@ -160,7 +160,7 @@ export const changeTaskColumn = async (
     { _id: column, board, owner },
     { $pull: { tasks: { _id, column, board, owner } } }
   )
-  await Board.findOneAndUpdate(
+  await Board.updateOne(
     { title: board, owner, 'columns._id': delTaskByOldColId?._id },
     {
       $set: {
@@ -175,7 +175,7 @@ export const changeTaskColumn = async (
     { _id: newColumnId, board, owner },
     { $push: { tasks: task } }
   )
-  await Board.findOneAndUpdate(
+  await Board.updateOne(
     { title: board, owner, 'columns._id': addTaskByNewColId?._id },
     {
       $set: {

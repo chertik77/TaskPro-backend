@@ -1,15 +1,27 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "version": "1.0.0",
+    "version": "2.0.1",
     "title": "Task Pro"
   },
-  "consumes": ["application/json"],
+  "consumes": ["application/json", "multipart/form-data"],
   "produces": ["application/json"],
   "servers": [{ "url": "https://final-project-backend-wdid.onrender.com" }],
   "tags": [
     {
       "name": "Auth"
+    },
+    {
+      "name": "Dashboard"
+    },
+    {
+      "name": "Board"
+    },
+    {
+      "name": "Column"
+    },
+    {
+      "name": "Task"
     }
   ],
   "paths": {
@@ -34,18 +46,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RegistrationResponse"
+                  "$ref": "#/components/schemas/RegistrationAndLoginResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "Invalid request body"
+                  "message": "Custom message from validation library"
                 }
               }
             }
@@ -67,7 +79,7 @@
     "/api/auth/signin": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Sign in user",
+        "summary": "Login user",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -85,18 +97,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoginResponse"
+                  "$ref": "#/components/schemas/RegistrationAndLoginResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "Invalid request body"
+                  "message": "Custom message from validation library"
                 }
               }
             }
@@ -108,38 +120,6 @@
                 "type": "object",
                 "example": {
                   "message": "Email or password invalid"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-     "/api/auth/signout": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Sign out user",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
-        "responses": {
-          "204": {
-            "description": "No Content",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Signout success"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
                 }
               }
             }
@@ -159,7 +139,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CurrentResponse"
+                  "$ref": "#/components/schemas/CurrentAndEditUserResponse"
                 }
               }
             }
@@ -171,6 +151,990 @@
                 "type": "object",
                 "example": {
                   "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/user": {
+      "patch": {
+        "tags": ["Auth"],
+        "summary": "Edit user info",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentAndEditUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Provided email already exists"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logout user",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard": {
+      "patch": {
+        "tags": ["Dashboard"],
+        "summary": "Switch theme",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SwitchThemeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentAndEditUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Board"],
+        "summary": "Get all boards",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllBoardsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Board"],
+        "summary": "Add new board",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddBoardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board with the same name already exists"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/help": {
+      "post": {
+        "tags": ["Dashboard"],
+        "summary": "Send email 'Need help'",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendEmailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Email sent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/:boardName": {
+      "get": {
+        "tags": ["Board"],
+        "summary": "Get board by title",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBoardByTitleResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board Project not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Board"],
+        "summary": "Edit board",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditBoardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board Project not found"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board with the same name already exists"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Board"],
+        "summary": "Delete board",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board Project deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board Project not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Column"],
+        "summary": "Add new column",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddColumnRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddColumnResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board Project not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/:boardName/columns": {
+      "get": {
+        "tags": ["Column"],
+        "summary": "Get all columns",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllColumnsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board Project not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/:boardName/:columnId": {
+      "patch": {
+        "tags": ["Column"],
+        "summary": "Edit column",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditColumnRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditColumnResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Column not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Column"],
+        "summary": "Delete column",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Column deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Column not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Task"],
+        "summary": "Add new task",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddTaskRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddTaskResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Column not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/:boardName/:columnId/:taskId": {
+      "patch": {
+        "tags": ["Task"],
+        "summary": "Edit task",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "taskId",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditTaskRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditTaskAndChangeColumnResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Task not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Task"],
+        "summary": "Delete task",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "taskId",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Task deleted"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Task not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/:boardName/:columnId/:taskId/:newColumnId": {
+      "patch": {
+        "tags": ["Task"],
+        "summary": "Change column for task",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardName",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "taskId",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "newColumnId",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditTaskAndChangeColumnResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Task not found"
                 }
               }
             }
@@ -199,12 +1163,20 @@
           }
         }
       },
-      "RegistrationResponse": {
+      "RegistrationAndLoginResponse": {
         "type": "object",
         "properties": {
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YjhmNGE2YjJmZjY4MDU5MDk0YzMyYSIsImlhdCI6MTcwNjYyMDA4OCwiZXhwIjoxNzA2NjIwOTg4fQ.StzrXFqK2u4JR0SmtvYJ_aqbebkHRQb3-6NU5Amiwuc"
+          },
           "user": {
             "type": "object",
             "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
               "name": {
                 "type": "string",
                 "example": "John Doe"
@@ -212,6 +1184,23 @@
               "email": {
                 "type": "string",
                 "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              },
+              "avatarURL": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "example": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg"
+                  },
+                  "publicId": {
+                    "type": "string",
+                    "example": "avatars/nsd6alpowmw3ska"
+                  }
+                }
               }
             }
           }
@@ -231,16 +1220,16 @@
           }
         }
       },
-      "LoginResponse": {
+      "CurrentAndEditUserResponse": {
         "type": "object",
         "properties": {
-          "token": {
-            "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YjhmNGE2YjJmZjY4MDU5MDk0YzMyYSIsImlhdCI6MTcwNjYyMDA4OCwiZXhwIjoxNzA2NjIwOTg4fQ.StzrXFqK2u4JR0SmtvYJ_aqbebkHRQb3-6NU5Amiwuc"
-          },
           "user": {
             "type": "object",
             "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
               "name": {
                 "type": "string",
                 "example": "John Doe"
@@ -248,12 +1237,29 @@
               "email": {
                 "type": "string",
                 "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              },
+              "avatarURL": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "example": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg"
+                  },
+                  "publicId": {
+                    "type": "string",
+                    "example": "avatars/nsd6alpowmw3ska"
+                  }
+                }
               }
             }
           }
         }
       },
-      "CurrentResponse": {
+      "EditUserRequest": {
         "type": "object",
         "properties": {
           "name": {
@@ -263,6 +1269,716 @@
           "email": {
             "type": "string",
             "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "example": "qwerty123"
+          }
+        }
+      },
+      "SwitchThemeRequest": {
+        "type": "object",
+        "properties": {
+          "userTheme": {
+            "type": "string",
+            "example": "violet"
+          }
+        }
+      },
+      "GetAllBoardsResponse": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "example": "1"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "example": "65c0388ea89738bb0120fed0"
+                },
+                "title": {
+                  "type": "string",
+                  "example": "Project"
+                },
+                "icon": {
+                  "type": "string",
+                  "example": "star"
+                },
+                "owner": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "65c0388ea89738bb0120fed0"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "John Doe"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "userTheme": {
+                      "type": "string",
+                      "example": "light"
+                    }
+                  }
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AddBoardRequest": {
+        "type": "object",
+        "required": ["title", "icon", "background"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Project"
+          },
+          "icon": {
+            "type": "string",
+            "example": "star"
+          },
+          "background": {
+            "type": "string",
+            "example": "default"
+          }
+        }
+      },
+      "AddBoardResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Project"
+          },
+          "icon": {
+            "type": "string",
+            "example": "star"
+          },
+          "background": {
+            "type": "string",
+            "example": "default"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
+          },
+          "_id": {
+            "type": "string",
+            "example": "65c0388ea89738bb0120fed0"
+          },
+          "columns": {
+            "type": "array"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SendEmailRequest": {
+        "type": "object",
+        "required": ["name", "comment"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "comment": {
+            "type": "string",
+            "example": "Need help"
+          }
+        }
+      },
+      "GetBoardByTitleResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "65c0388ea89738bb0120fed0"
+          },
+          "title": {
+            "type": "string",
+            "example": "Project"
+          },
+          "icon": {
+            "type": "string",
+            "example": "star"
+          },
+          "background": {
+            "type": "string",
+            "example": "default"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "Done"
+                },
+                "board": {
+                  "type": "string",
+                  "example": "Project"
+                },
+                "owner": {
+                  "type": "string",
+                  "example": "65c0388ea89738bb0120fed0"
+                },
+                "tasks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "example": "Add documentation"
+                      },
+                      "description": {
+                        "type": "string",
+                        "example": "bla bla bla bla"
+                      },
+                      "priority": {
+                        "type": "string",
+                        "example": "Without priority"
+                      },
+                      "deadline": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "column": {
+                        "type": "string",
+                        "example": "76c0388ea89738bb4520hy65"
+                      },
+                      "board": {
+                        "type": "string",
+                        "example": "Project"
+                      },
+                      "owner": {
+                        "type": "string",
+                        "example": "65c0388ea89738bb0120fed0"
+                      },
+                      "_id": {
+                        "type": "string",
+                        "example": "89u0388ea89738bb4520sp87"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                },
+                "_id": {
+                  "type": "string",
+                  "example": "76c0388ea89738bb4520hy65"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EditBoardRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Project"
+          },
+          "icon": {
+            "type": "string",
+            "example": "star"
+          },
+          "background": {
+            "type": "string",
+            "example": "default"
+          }
+        }
+      },
+      "EditBoardResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "65c0388ea89738bb0120fed0"
+          },
+          "title": {
+            "type": "string",
+            "example": "Project"
+          },
+          "icon": {
+            "type": "string",
+            "example": "star"
+          },
+          "background": {
+            "type": "string",
+            "example": "default"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AddColumnRequest": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Done"
+          }
+        }
+      },
+      "AddColumnResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Done"
+          },
+          "board": {
+            "type": "string",
+            "example": "Project"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
+          },
+          "_id": {
+            "type": "string",
+            "example": "76c0388ea89738bb4520hy65"
+          },
+          "tasks": {
+            "type": "array"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "GetAllColumnsResponse": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "example": "1"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "example": "76c0388ea89738bb4520hy65"
+                },
+                "title": {
+                  "type": "string",
+                  "example": "Done"
+                },
+                "board": {
+                  "type": "string",
+                  "example": "Project"
+                },
+                "owner": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "65c0388ea89738bb0120fed0"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "John Doe"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "userTheme": {
+                      "type": "string",
+                      "example": "light"
+                    }
+                  }
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      },
+      "EditColumnRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Done"
+          }
+        }
+      },
+      "EditColumnResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "76c0388ea89738bb4520hy65"
+          },
+          "title": {
+            "type": "string",
+            "example": "Done"
+          },
+          "board": {
+            "type": "string",
+            "example": "Project"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AddTaskRequest": {
+        "type": "object",
+        "required": ["title", "description", "deadline"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Add documentation"
+          },
+          "description": {
+            "type": "string",
+            "example": "bla bla bla bla"
+          },
+          "priority": {
+            "type": "string",
+            "example": "Without priority"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AddTaskResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Add documentation"
+          },
+          "description": {
+            "type": "string",
+            "example": "bla bla bla bla"
+          },
+          "priority": {
+            "type": "string",
+            "example": "Without priority"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "column": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "76c0388ea89738bb4520hy65"
+              },
+              "title": {
+                "type": "string",
+                "example": "Done"
+              }
+            }
+          },
+          "board": {
+            "type": "string",
+            "example": "Project"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
+          },
+          "_id": {
+            "type": "string",
+            "example": "89u0388ea89738bb4520sp87"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EditTaskRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Add documentation"
+          },
+          "description": {
+            "type": "string",
+            "example": "bla bla bla bla"
+          },
+          "priority": {
+            "type": "string",
+            "example": "Without priority"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EditTaskAndChangeColumnResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "89u0388ea89738bb4520sp87"
+          },
+          "title": {
+            "type": "string",
+            "example": "Add documentation"
+          },
+          "description": {
+            "type": "string",
+            "example": "bla bla bla bla"
+          },
+          "priority": {
+            "type": "string",
+            "example": "Without priority"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "column": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "76c0388ea89738bb4520hy65"
+              },
+              "title": {
+                "type": "string",
+                "example": "Done"
+              }
+            }
+          },
+          "board": {
+            "type": "string",
+            "example": "Project"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       }
