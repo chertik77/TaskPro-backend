@@ -57,7 +57,7 @@
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "missing fields"
+                  "message": "Custom message from validation library"
                 }
               }
             }
@@ -108,7 +108,7 @@
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "missing fields"
+                  "message": "Custom message from validation library"
                 }
               }
             }
@@ -202,7 +202,7 @@
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "missing fields"
+                  "message": "Custom message from validation library"
                 }
               }
             }
@@ -245,6 +245,201 @@
               "application/json": {
                 "type": "object",
                 "example": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard": {
+      "patch": {
+        "tags": ["Dashboard"],
+        "summary": "Switch theme",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SwitchThemeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentAndEditUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Board"],
+        "summary": "Get all boards",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllBoardsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Board"],
+        "summary": "Add new board",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddBoardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Board with the same name already exists"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/help": {
+      "post": {
+        "tags": ["Dashboard"],
+        "summary": "Send email 'Need help'",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendEmailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Email sent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
               }
             }
           },
@@ -305,6 +500,10 @@
                 "type": "string",
                 "format": "email"
               },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              },
               "avatarURL": {
                 "type": "object",
                 "properties": {
@@ -317,10 +516,6 @@
                     "example": "avatars/nsd6alpowmw3ska"
                   }
                 }
-              },
-              "userTheme": {
-                "type": "string",
-                "example": "light"
               }
             }
           }
@@ -358,6 +553,10 @@
                 "type": "string",
                 "format": "email"
               },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              },
               "avatarURL": {
                 "type": "object",
                 "properties": {
@@ -370,10 +569,6 @@
                     "example": "avatars/nsd6alpowmw3ska"
                   }
                 }
-              },
-              "userTheme": {
-                "type": "string",
-                "example": "light"
               }
             }
           }
@@ -393,6 +588,158 @@
           "password": {
             "type": "string",
             "example": "qwerty123"
+          }
+        }
+      },
+      "SwitchThemeRequest": {
+        "type": "object",
+        "properties": {
+          "userTheme": {
+            "type": "string",
+            "example": "violet"
+          }
+        }
+      },
+      "GetAllBoardsResponse": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "example": "1"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "example": "65c0388ea89738bb0120fed0"
+                },
+                "title": {
+                  "type": "string",
+                  "example": "To Do"
+                },
+                "icon": {
+                  "type": "string",
+                  "example": "star"
+                },
+                "owner": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "65c0388ea89738bb0120fed0"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "John Doe"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "userTheme": {
+                      "type": "string",
+                      "example": "light"
+                    }
+                  }
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AddBoardRequest": {
+        "type": "object",
+        "required": ["title", "icon", "background"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "To Do"
+          },
+          "icon": {
+            "type": "string",
+            "example": "star"
+          },
+          "background": {
+            "type": "string",
+            "example": "default"
+          }
+        }
+      },
+      "AddBoardResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "To Do"
+          },
+          "icon": {
+            "type": "string",
+            "example": "star"
+          },
+          "background": {
+            "type": "string",
+            "example": "default"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "65c0388ea89738bb0120fed0"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "userTheme": {
+                "type": "string",
+                "example": "light"
+              }
+            }
+          },
+          "_id": {
+            "type": "string",
+            "example": "65c0388ea89738bb0120fed0"
+          },
+          "columns": {
+            "type": "array"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SendEmailRequest": {
+        "type": "object",
+        "required": ["name", "comment"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "comment": {
+            "type": "string",
+            "example": "Need help"
           }
         }
       }

@@ -17,7 +17,7 @@ export const getAll = async (req: Request, res: Response) => {
 
   res.json({
     total: boards.length,
-    boards
+    data: boards
   })
 }
 
@@ -133,7 +133,7 @@ export const sendEmail = async (req: Request, res: Response) => {
   await transport.sendMail(emailBody)
 
   res.json({
-    message: `Email sent`
+    message: 'Email sent'
   })
 }
 

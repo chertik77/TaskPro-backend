@@ -15,7 +15,7 @@ export const getAll = async (req: Request, res: Response) => {
 
   res.json({
     total: columns.length,
-    columns
+    data: columns
   })
 }
 

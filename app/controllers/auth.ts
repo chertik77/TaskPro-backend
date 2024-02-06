@@ -44,8 +44,8 @@ export const signup = async (
       _id: activeUser?._id,
       name: activeUser?.name,
       email: activeUser?.email,
-      avatarURL: activeUser?.avatarURL,
-      userTheme: activeUser?.userTheme
+      userTheme: activeUser?.userTheme,
+      avatarURL: activeUser?.avatarURL
     }
   })
 }
@@ -79,8 +79,8 @@ export const signin = async (
       _id: activeUser?._id,
       name: activeUser?.name,
       email: activeUser?.email,
-      avatarURL: activeUser?.avatarURL,
-      userTheme: activeUser?.userTheme
+      userTheme: activeUser?.userTheme,
+      avatarURL: activeUser?.avatarURL
     }
   })
 }
@@ -94,8 +94,8 @@ export const getCurrent = (req: Request, res: Response) => {
       _id,
       name,
       email,
-      avatarURL,
-      userTheme
+      userTheme,
+      avatarURL
     }
   })
 }
