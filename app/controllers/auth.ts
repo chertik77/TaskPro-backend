@@ -106,10 +106,10 @@ export const update = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { _id } = req.user
+  const { _id, email: userEmail } = req.user
   const { email, password } = req.body
 
-  if (email) {
+  if (email && email !== userEmail) {
     const userByEmail = await User.findOne({ email })
     if (userByEmail) {
       return next(createHttpError(409, 'Email already exist'))
