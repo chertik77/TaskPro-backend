@@ -38,7 +38,7 @@ export const taskSchema = new Schema(
       required: true
     }
   },
-  { versionKey: false, timestamps: true }
+  { versionKey: false }
 )
 
 taskSchema.post('save', handleSaveError)

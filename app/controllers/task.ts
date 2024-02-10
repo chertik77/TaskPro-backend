@@ -24,21 +24,12 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
     { title: board, owner, 'columns._id': columnWithTasks?._id },
     {
       $set: {
-        'columns.$.tasks': columnWithTasks?.tasks,
-        'columns.$.createdAt': columnWithTasks?.createdAt,
-        'columns.$.updatedAt': columnWithTasks?.updatedAt
+        'columns.$.tasks': columnWithTasks?.tasks
       }
     }
   )
 
-  const tempTask = await newTask.populate('column', 'title')
-  const extendedTask = await tempTask.populate('owner', [
-    'name',
-    'email',
-    'userTheme'
-  ])
-
-  res.status(201).json(extendedTask)
+  res.status(201).json(newTask)
 }
 
 //! Edit task
@@ -66,9 +57,7 @@ export const updateById = async (
         'tasks.$.title': updatedTask.title,
         'tasks.$.description': updatedTask.description,
         'tasks.$.priority': updatedTask.priority,
-        'tasks.$.deadline': updatedTask.deadline,
-        'tasks.$.createdAt': updatedTask.createdAt,
-        'tasks.$.updatedAt': updatedTask.updatedAt
+        'tasks.$.deadline': updatedTask.deadline
       }
     }
   )
@@ -76,21 +65,12 @@ export const updateById = async (
     { title: board, owner, 'columns._id': columnWithTasks?._id },
     {
       $set: {
-        'columns.$.tasks': columnWithTasks?.tasks,
-        'columns.$.createdAt': columnWithTasks?.createdAt,
-        'columns.$.updatedAt': columnWithTasks?.updatedAt
+        'columns.$.tasks': columnWithTasks?.tasks
       }
     }
   )
 
-  const tempTask = await updatedTask.populate('column', 'title')
-  const extendedTask = await tempTask.populate('owner', [
-    'name',
-    'email',
-    'userTheme'
-  ])
-
-  res.json(extendedTask)
+  res.json(updatedTask)
 }
 
 //! Delete task
@@ -121,9 +101,7 @@ export const deleteById = async (
     { title: board, owner, 'columns._id': columnWithTasks?._id },
     {
       $set: {
-        'columns.$.tasks': columnWithTasks?.tasks,
-        'columns.$.createdAt': columnWithTasks?.createdAt,
-        'columns.$.updatedAt': columnWithTasks?.updatedAt
+        'columns.$.tasks': columnWithTasks?.tasks
       }
     }
   )
@@ -162,9 +140,7 @@ export const changeTaskColumn = async (
     { title: board, owner, 'columns._id': delTaskByOldColId?._id },
     {
       $set: {
-        'columns.$.tasks': delTaskByOldColId?.tasks,
-        'columns.$.createdAt': delTaskByOldColId?.createdAt,
-        'columns.$.updatedAt': delTaskByOldColId?.updatedAt
+        'columns.$.tasks': delTaskByOldColId?.tasks
       }
     }
   )
@@ -177,19 +153,10 @@ export const changeTaskColumn = async (
     { title: board, owner, 'columns._id': addTaskByNewColId?._id },
     {
       $set: {
-        'columns.$.tasks': addTaskByNewColId?.tasks,
-        'columns.$.createdAt': addTaskByNewColId?.createdAt,
-        'columns.$.updatedAt': addTaskByNewColId?.updatedAt
+        'columns.$.tasks': addTaskByNewColId?.tasks
       }
     }
   )
 
-  const tempTask = await task.populate('column', 'title')
-  const extendedTask = await tempTask.populate('owner', [
-    'name',
-    'email',
-    'userTheme'
-  ])
-
-  res.json(extendedTask)
+  res.json(task)
 }

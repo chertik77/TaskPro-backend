@@ -13,10 +13,7 @@ export const getAll = async (req: Request, res: Response, next: NextFunction) =>
     return next(createHttpError(404, `Board ${board} not found`))
   }
 
-  const columns = await Column.find({ board, owner }, '-tasks').populate(
-    'owner',
-    ['name', 'email', 'userTheme']
-  )
+  const columns = await Column.find({ board, owner }, '-tasks')
 
   res.json({
     total: columns.length,
@@ -41,13 +38,7 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
     { $push: { columns: newColumn } }
   )
 
-  const extendedColumn = await newColumn.populate('owner', [
-    'name',
-    'email',
-    'userTheme'
-  ])
-
-  res.status(201).json(extendedColumn)
+  res.status(201).json(newColumn)
 }
 
 //! Edit column
@@ -73,20 +64,12 @@ export const updateById = async (
     { title: board, owner, 'columns._id': _id },
     {
       $set: {
-        'columns.$.title': updatedColumn.title,
-        'columns.$.createdAt': updatedColumn.createdAt,
-        'columns.$.updatedAt': updatedColumn.updatedAt
+        'columns.$.title': updatedColumn.title
       }
     }
   )
 
-  const extendedColumn = await updatedColumn.populate('owner', [
-    'name',
-    'email',
-    'userTheme'
-  ])
-
-  res.json(extendedColumn)
+  res.json(updatedColumn)
 }
 
 //!Delete column

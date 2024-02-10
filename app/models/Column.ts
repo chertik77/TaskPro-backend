@@ -20,7 +20,7 @@ export const columnSchema = new Schema(
     },
     tasks: [taskSchema]
   },
-  { versionKey: false, timestamps: true }
+  { versionKey: false }
 )
 
 columnSchema.post('save', handleSaveError)
