@@ -45,7 +45,7 @@ const userSchema = new Schema(
       default: ''
     }
   },
-  { versionKey: false, timestamps: true }
+  { versionKey: false }
 )
 
 userSchema.post('save', handleSaveError)

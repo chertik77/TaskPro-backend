@@ -12,10 +12,7 @@ const { SEND_EMAIL_FROM, SEND_EMAIL_TO } = process.env
 export const getAll = async (req: Request, res: Response) => {
   const { _id: owner } = req.user
 
-  const boards = await Board.find({ owner }, '-columns -background').populate(
-    'owner',
-    ['name', 'email', 'userTheme']
-  )
+  const boards = await Board.find({ owner }, '-columns -background')
 
   res.json({
     total: boards.length,
@@ -32,11 +29,7 @@ export const getById = async (
   const { _id: owner } = req.user
   const { boardName: title } = req.params
 
-  const board = await Board.findOne({ title, owner }).populate('owner', [
-    'name',
-    'email',
-    'userTheme'
-  ])
+  const board = await Board.findOne({ title, owner })
 
   if (!board) {
     return next(createHttpError(404, `Board ${title} not found`))
@@ -56,13 +49,8 @@ export const add = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   const newBoard = await Board.create({ ...req.body, owner })
-  const extendedBoard = await newBoard.populate('owner', [
-    'name',
-    'email',
-    'userTheme'
-  ])
 
-  res.status(201).json(extendedBoard)
+  res.status(201).json(newBoard)
 }
 
 //! Edit board
@@ -88,13 +76,11 @@ export const updateById = async (
     { title, owner },
     req.body,
     { fields: '-columns' }
-  ).populate('owner', ['name', 'email', 'userTheme'])
+  )
 
   if (!updatedBoard) {
     return next(createHttpError(404, `Board ${title} not found`))
   }
-
-  let editedBoard
 
   if (newTitle) {
     await Task.updateMany({ board: title, owner }, { board: newTitle })
@@ -111,16 +97,9 @@ export const updateById = async (
         }
       }
     )
-
-    editedBoard = await Board.findOne(
-      { title: newTitle, owner },
-      '-columns'
-    ).populate('owner', ['name', 'email', 'userTheme'])
-  } else {
-    editedBoard = updatedBoard
   }
 
-  res.json(editedBoard)
+  res.json(updatedBoard)
 }
 
 //! Delete board

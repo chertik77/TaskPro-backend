@@ -23,7 +23,7 @@ const boardSchema = new Schema(
     },
     columns: [columnSchema]
   },
-  { versionKey: false, timestamps: true }
+  { versionKey: false }
 )
 
 boardSchema.post('save', handleSaveError)
