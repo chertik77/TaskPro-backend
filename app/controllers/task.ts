@@ -128,9 +128,7 @@ export const deleteById = async (
     }
   )
 
-  res.json({
-    message: 'Task deleted'
-  })
+  res.json(deletedTask)
 }
 
 //! Change column for task
