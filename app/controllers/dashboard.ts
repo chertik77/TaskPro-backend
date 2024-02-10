@@ -117,9 +117,7 @@ export const deleteById = async (
     return next(createHttpError(404, `Board ${title} not found`))
   }
 
-  res.json({
-    message: `Board ${title} deleted`
-  })
+  res.json(deletedBoard)
 }
 
 //! Need help email
