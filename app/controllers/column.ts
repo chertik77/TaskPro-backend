@@ -111,7 +111,5 @@ export const deleteById = async (
     }
   )
 
-  res.json({
-    message: 'Column deleted'
-  })
+  res.json(deletedColumn)
 }
