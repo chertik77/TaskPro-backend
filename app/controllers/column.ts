@@ -3,24 +3,6 @@ import createHttpError from 'http-errors'
 import { Column } from 'models/Column'
 import { Board } from 'models/Board'
 
-//! Get all columns
-export const getAll = async (req: Request, res: Response, next: NextFunction) => {
-  const { _id: owner } = req.user
-  const { boardName: board } = req.params
-
-  const isCurrentBoard = await Board.findOne({ title: board, owner })
-  if (!isCurrentBoard) {
-    return next(createHttpError(404, `Board ${board} not found`))
-  }
-
-  const columns = await Column.find({ board, owner }, '-tasks')
-
-  res.json({
-    total: columns.length,
-    data: columns
-  })
-}
-
 //! Add new column
 export const add = async (req: Request, res: Response, next: NextFunction) => {
   const { _id: owner } = req.user
@@ -81,7 +63,11 @@ export const deleteById = async (
   const { _id: owner } = req.user
   const { boardName: board, columnId: _id } = req.params
 
-  const deletedColumn = await Column.findOneAndDelete({ _id, board, owner })
+  const deletedColumn = await Column.findOneAndDelete({
+    _id,
+    board,
+    owner
+  }).select('-tasks')
 
   if (!deletedColumn) {
     return next(createHttpError(404, 'Column not found'))

@@ -30,8 +30,6 @@ dashboardRouter.patch('/:boardName', validateBody(boardSchema.editBoardSchema), 
 dashboardRouter.delete('/:boardName', dashboardController.deleteById) // Delete board
 
 //! Columns
-dashboardRouter.get('/:boardName/columns', columnController.getAll) // Get all columns
-
 dashboardRouter.post('/:boardName', validateBody(addColumnSchema), columnController.add) // Add new column
 
 dashboardRouter.patch('/:boardName/:columnId', isValidId, validateBody(editColumnSchema), columnController.updateById) // Edit column
