@@ -21,26 +21,26 @@ dashboardRouter.post('/help', validateBody(boardSchema.needHelpSchema), dashboar
 //! Boards
 dashboardRouter.get('/', dashboardController.getAll) // Get all boards
 
-dashboardRouter.get('/:boardName', dashboardController.getById) // Get board by title
+dashboardRouter.get('/:boardId', isValidId, dashboardController.getById) // Get board by id
 
 dashboardRouter.post('/', validateBody(boardSchema.addNewBoardSchema), dashboardController.add) // Add new board
 
-dashboardRouter.patch('/:boardName', validateBody(boardSchema.editBoardSchema), dashboardController.updateById) // Edit board
+dashboardRouter.patch('/:boardId', isValidId, validateBody(boardSchema.editBoardSchema), dashboardController.updateById) // Edit board
 
-dashboardRouter.delete('/:boardName', dashboardController.deleteById) // Delete board
+dashboardRouter.delete('/:boardId', isValidId, dashboardController.deleteById) // Delete board
 
 //! Columns
-dashboardRouter.post('/:boardName', validateBody(addColumnSchema), columnController.add) // Add new column
+dashboardRouter.post('/:boardId', isValidId, validateBody(addColumnSchema), columnController.add) // Add new column
 
-dashboardRouter.patch('/:boardName/:columnId', isValidId, validateBody(editColumnSchema), columnController.updateById) // Edit column
+dashboardRouter.patch('/:boardId/:columnId', isValidId, validateBody(editColumnSchema), columnController.updateById) // Edit column
 
-dashboardRouter.delete('/:boardName/:columnId', isValidId, columnController.deleteById) // Delete column
+dashboardRouter.delete('/:boardId/:columnId', isValidId, columnController.deleteById) // Delete column
 
 //! Tasks
-dashboardRouter.post('/:boardName/:columnId', isValidId, validateBody(addNewTaskSchema), taskController.add) // Add new task
+dashboardRouter.post('/:boardId/:columnId', isValidId, validateBody(addNewTaskSchema), taskController.add) // Add new task
 
-dashboardRouter.patch('/:boardName/:columnId/:taskId', isValidId, validateBody(editTaskSchema), taskController.updateById) // Edit task
+dashboardRouter.patch('/:boardId/:columnId/:taskId', isValidId, validateBody(editTaskSchema), taskController.updateById) // Edit task
 
-dashboardRouter.delete('/:boardName/:columnId/:taskId', isValidId, taskController.deleteById) // Delete task
+dashboardRouter.delete('/:boardId/:columnId/:taskId', isValidId, taskController.deleteById) // Delete task
 
-dashboardRouter.patch('/:boardName/:columnId/:taskId/:newColumnId', isValidId, taskController.changeTaskColumn) // Change column for task
+dashboardRouter.patch('/:boardId/:columnId/:taskId/:newColumnId', isValidId, taskController.changeTaskColumn) // Change column for task

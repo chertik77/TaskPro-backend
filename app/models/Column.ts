@@ -9,7 +9,7 @@ export const columnSchema = new Schema(
       required: true
     },
     board: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: 'board',
       required: true
     },

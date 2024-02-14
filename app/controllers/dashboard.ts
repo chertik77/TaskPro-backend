@@ -1,8 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import { transport } from 'utils/nodemailer'
-import { Task } from 'models/Task'
-import { Column } from 'models/Column'
 import { Board } from 'models/Board'
 import { User } from 'models/User'
 
@@ -20,33 +18,27 @@ export const getAll = async (req: Request, res: Response) => {
   })
 }
 
-//! Get board for boardName
+//! Get board by id
 export const getById = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const { _id: owner } = req.user
-  const { boardName: title } = req.params
+  const { boardId: _id } = req.params
 
-  const board = await Board.findOne({ title, owner })
+  const board = await Board.findOne({ _id, owner })
 
   if (!board) {
-    return next(createHttpError(404, `Board ${title} not found`))
+    return next(createHttpError(404, `Board not found`))
   }
 
   res.json(board)
 }
 
 //! Add new board
-export const add = async (req: Request, res: Response, next: NextFunction) => {
+export const add = async (req: Request, res: Response) => {
   const { _id: owner } = req.user
-  const { title } = req.body
-
-  const board = await Board.findOne({ title, owner })
-  if (board) {
-    return next(createHttpError(409, 'Board with the same name already exists'))
-  }
 
   const newBoard = await Board.create({ ...req.body, owner })
 
@@ -60,43 +52,16 @@ export const updateById = async (
   next: NextFunction
 ) => {
   const { _id: owner } = req.user
-  const { boardName: title } = req.params
-  const { title: newTitle } = req.body
-
-  if (newTitle && newTitle !== title) {
-    const board = await Board.findOne({ title: newTitle, owner })
-    if (board) {
-      return next(
-        createHttpError(409, 'Board with the same name already exists')
-      )
-    }
-  }
+  const { boardId: _id } = req.params
 
   const updatedBoard = await Board.findOneAndUpdate(
-    { title, owner },
+    { _id, owner },
     req.body,
     { fields: '-columns' }
   )
 
   if (!updatedBoard) {
-    return next(createHttpError(404, `Board ${title} not found`))
-  }
-
-  if (newTitle && newTitle !== title) {
-    await Task.updateMany({ board: title, owner }, { board: newTitle })
-    await Column.updateMany(
-      { board: title, owner },
-      { board: newTitle, $set: { 'tasks.$[].board': newTitle } }
-    )
-    await Board.updateMany(
-      { title: newTitle, owner },
-      {
-        $set: {
-          'columns.$[].board': newTitle,
-          'columns.$[].tasks.$[].board': newTitle
-        }
-      }
-    )
+    return next(createHttpError(404, `Board not found`))
   }
 
   res.json(updatedBoard)
@@ -109,14 +74,14 @@ export const deleteById = async (
   next: NextFunction
 ) => {
   const { _id: owner } = req.user
-  const { boardName: title } = req.params
+  const { boardId: _id } = req.params
 
-  const deletedBoard = await Board.findOneAndDelete({ title, owner }).select(
+  const deletedBoard = await Board.findOneAndDelete({ _id, owner }).select(
     '-columns'
   )
 
   if (!deletedBoard) {
-    return next(createHttpError(404, `Board ${title} not found`))
+    return next(createHttpError(404, `Board not found`))
   }
 
   res.json(deletedBoard)
