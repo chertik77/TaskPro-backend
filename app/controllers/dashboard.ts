@@ -82,7 +82,7 @@ export const updateById = async (
     return next(createHttpError(404, `Board ${title} not found`))
   }
 
-  if (newTitle) {
+  if (newTitle && newTitle !== title) {
     await Task.updateMany({ board: title, owner }, { board: newTitle })
     await Column.updateMany(
       { board: title, owner },
@@ -111,7 +111,9 @@ export const deleteById = async (
   const { _id: owner } = req.user
   const { boardName: title } = req.params
 
-  const deletedBoard = await Board.findOneAndDelete({ title, owner })
+  const deletedBoard = await Board.findOneAndDelete({ title, owner }).select(
+    '-columns'
+  )
 
   if (!deletedBoard) {
     return next(createHttpError(404, `Board ${title} not found`))
@@ -144,13 +146,12 @@ export const sendEmail = async (req: Request, res: Response) => {
 
 //! Switch theme
 export const switchTheme = async (req: Request, res: Response) => {
-  const { _id } = req.user
+  const { _id, avatarURL } = req.user
   const { userTheme } = req.body
 
   let editedUser
 
-  const user = await User.findById(_id)
-  if (!user?.avatarURL?.publicId) {
+  if (!avatarURL.publicId) {
     switch (userTheme) {
       case 'light':
         editedUser = await User.findByIdAndUpdate(_id, {

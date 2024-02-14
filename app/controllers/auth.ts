@@ -21,18 +21,13 @@ export const signup = async (
 
   const hashPassword = await bcrypt.hash(password, 10)
 
-  await User.create({
+  const newUser = await User.create({
     ...req.body,
     password: hashPassword,
     avatarURL: {
       url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png'
     }
   })
-
-  const newUser = await User.findOne({ email })
-  if (!newUser) {
-    return next(createHttpError(404, `User not found`))
-  }
 
   const { _id: id } = newUser
   const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, { expiresIn: '1d' })
@@ -106,7 +101,7 @@ export const update = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { _id, email: userEmail } = req.user
+  const { _id, email: userEmail, avatarURL } = req.user
   const { email, password } = req.body
 
   if (email && email !== userEmail) {
@@ -119,15 +114,7 @@ export const update = async (
   let newPassword
 
   if (password) {
-    const userById = await User.findById(_id)
-    if (userById) {
-      const passwordCompare = await bcrypt.compare(password, userById.password)
-      if (passwordCompare) {
-        return next(createHttpError(400, "It's yours current password"))
-      } else {
-        newPassword = await bcrypt.hash(password, 10)
-      }
-    }
+    newPassword = await bcrypt.hash(password, 10)
   }
 
   let avatar
@@ -148,9 +135,8 @@ export const update = async (
       folder: 'TaskPro/user_avatars'
     })
 
-    const userById = await User.findById(_id)
-    if (userById && userById.avatarURL && userById.avatarURL.publicId) {
-      await cloudinary.uploader.destroy(userById.avatarURL.publicId, {
+    if (avatarURL.publicId) {
+      await cloudinary.uploader.destroy(avatarURL.publicId, {
         type: 'upload',
         resource_type: 'image'
       })

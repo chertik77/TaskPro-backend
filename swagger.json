@@ -457,7 +457,7 @@
         }
       }
     },
-    "/api/dashboard/:boardName": {
+    "/api/dashboard/{boardName}": {
       "get": {
         "tags": ["Board"],
         "summary": "Get board by title",
@@ -531,7 +531,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EditBoardResponse"
+                  "$ref": "#/components/schemas/EditAndDeleteBoardResponse"
                 }
               }
             }
@@ -598,9 +598,8 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Board Project deleted"
+                "schema": {
+                  "$ref": "#/components/schemas/EditAndDeleteBoardResponse"
                 }
               }
             }
@@ -697,55 +696,7 @@
         }
       }
     },
-    "/api/dashboard/:boardName/columns": {
-      "get": {
-        "tags": ["Column"],
-        "summary": "Get all columns",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "boardName",
-            "required": true
-          }
-        ],
-        "security": [{ "Bearer": [] }],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetAllColumnsResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Board Project not found"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/dashboard/:boardName/:columnId": {
+    "/api/dashboard/{boardName}/{columnId}": {
       "patch": {
         "tags": ["Column"],
         "summary": "Edit column",
@@ -778,7 +729,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EditColumnResponse"
+                  "$ref": "#/components/schemas/EditAndDeleteColumnResponse"
                 }
               }
             }
@@ -839,9 +790,8 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Column deleted"
+                "schema": {
+                  "$ref": "#/components/schemas/EditAndDeleteColumnResponse"
                 }
               }
             }
@@ -943,7 +893,7 @@
         }
       }
     },
-    "/api/dashboard/:boardName/:columnId/:taskId": {
+    "/api/dashboard/{boardName}/{columnId}/{taskId}": {
       "patch": {
         "tags": ["Task"],
         "summary": "Edit task",
@@ -981,7 +931,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EditTaskAndChangeColumnResponse"
+                  "$ref": "#/components/schemas/EditDelTaskAndChangeColumnResponse"
                 }
               }
             }
@@ -1047,9 +997,8 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Task deleted"
+                "schema": {
+                  "$ref": "#/components/schemas/EditDelTaskAndChangeColumnResponse"
                 }
               }
             }
@@ -1079,7 +1028,7 @@
         }
       }
     },
-    "/api/dashboard/:boardName/:columnId/:taskId/:newColumnId": {
+    "/api/dashboard/{boardName}/{columnId}/{taskId}/{newColumnId}": {
       "patch": {
         "tags": ["Task"],
         "summary": "Change column for task",
@@ -1112,7 +1061,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EditTaskAndChangeColumnResponse"
+                  "$ref": "#/components/schemas/EditDelTaskAndChangeColumnResponse"
                 }
               }
             }
@@ -1310,33 +1259,8 @@
                   "example": "star"
                 },
                 "owner": {
-                  "type": "object",
-                  "properties": {
-                    "_id": {
-                      "type": "string",
-                      "example": "65c0388ea89738bb0120fed0"
-                    },
-                    "name": {
-                      "type": "string",
-                      "example": "John Doe"
-                    },
-                    "email": {
-                      "type": "string",
-                      "format": "email"
-                    },
-                    "userTheme": {
-                      "type": "string",
-                      "example": "light"
-                    }
-                  }
-                },
-                "createdAt": {
                   "type": "string",
-                  "format": "date-time"
-                },
-                "updatedAt": {
-                  "type": "string",
-                  "format": "date-time"
+                  "example": "45g6388ea89738bb0120dw49"
                 }
               }
             }
@@ -1377,25 +1301,8 @@
             "example": "default"
           },
           "owner": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "65c0388ea89738bb0120fed0"
-              },
-              "name": {
-                "type": "string",
-                "example": "John Doe"
-              },
-              "email": {
-                "type": "string",
-                "format": "email"
-              },
-              "userTheme": {
-                "type": "string",
-                "example": "light"
-              }
-            }
+            "type": "string",
+            "example": "45g6388ea89738bb0120dw49"
           },
           "_id": {
             "type": "string",
@@ -1403,14 +1310,6 @@
           },
           "columns": {
             "type": "array"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
           }
         }
       },
@@ -1448,25 +1347,8 @@
             "example": "default"
           },
           "owner": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "65c0388ea89738bb0120fed0"
-              },
-              "name": {
-                "type": "string",
-                "example": "John Doe"
-              },
-              "email": {
-                "type": "string",
-                "format": "email"
-              },
-              "userTheme": {
-                "type": "string",
-                "example": "light"
-              }
-            }
+            "type": "string",
+            "example": "45g6388ea89738bb0120dw49"
           },
           "columns": {
             "type": "array",
@@ -1483,7 +1365,7 @@
                 },
                 "owner": {
                   "type": "string",
-                  "example": "65c0388ea89738bb0120fed0"
+                  "example": "45g6388ea89738bb0120dw49"
                 },
                 "tasks": {
                   "type": "array",
@@ -1516,19 +1398,11 @@
                       },
                       "owner": {
                         "type": "string",
-                        "example": "65c0388ea89738bb0120fed0"
+                        "example": "45g6388ea89738bb0120dw49"
                       },
                       "_id": {
                         "type": "string",
                         "example": "89u0388ea89738bb4520sp87"
-                      },
-                      "createdAt": {
-                        "type": "string",
-                        "format": "date-time"
-                      },
-                      "updatedAt": {
-                        "type": "string",
-                        "format": "date-time"
                       }
                     }
                   }
@@ -1536,25 +1410,9 @@
                 "_id": {
                   "type": "string",
                   "example": "76c0388ea89738bb4520hy65"
-                },
-                "createdAt": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "updatedAt": {
-                  "type": "string",
-                  "format": "date-time"
                 }
               }
             }
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
           }
         }
       },
@@ -1575,7 +1433,7 @@
           }
         }
       },
-      "EditBoardResponse": {
+      "EditAndDeleteBoardResponse": {
         "type": "object",
         "properties": {
           "_id": {
@@ -1595,33 +1453,8 @@
             "example": "default"
           },
           "owner": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "65c0388ea89738bb0120fed0"
-              },
-              "name": {
-                "type": "string",
-                "example": "John Doe"
-              },
-              "email": {
-                "type": "string",
-                "format": "email"
-              },
-              "userTheme": {
-                "type": "string",
-                "example": "light"
-              }
-            }
-          },
-          "createdAt": {
             "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
+            "example": "45g6388ea89738bb0120dw49"
           }
         }
       },
@@ -1647,25 +1480,8 @@
             "example": "Project"
           },
           "owner": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "65c0388ea89738bb0120fed0"
-              },
-              "name": {
-                "type": "string",
-                "example": "John Doe"
-              },
-              "email": {
-                "type": "string",
-                "format": "email"
-              },
-              "userTheme": {
-                "type": "string",
-                "example": "light"
-              }
-            }
+            "type": "string",
+            "example": "45g6388ea89738bb0120dw49"
           },
           "_id": {
             "type": "string",
@@ -1673,72 +1489,6 @@
           },
           "tasks": {
             "type": "array"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "GetAllColumnsResponse": {
-        "type": "object",
-        "properties": {
-          "total": {
-            "type": "integer",
-            "example": "1"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "_id": {
-                  "type": "string",
-                  "example": "76c0388ea89738bb4520hy65"
-                },
-                "title": {
-                  "type": "string",
-                  "example": "Done"
-                },
-                "board": {
-                  "type": "string",
-                  "example": "Project"
-                },
-                "owner": {
-                  "type": "object",
-                  "properties": {
-                    "_id": {
-                      "type": "string",
-                      "example": "65c0388ea89738bb0120fed0"
-                    },
-                    "name": {
-                      "type": "string",
-                      "example": "John Doe"
-                    },
-                    "email": {
-                      "type": "string",
-                      "format": "email"
-                    },
-                    "userTheme": {
-                      "type": "string",
-                      "example": "light"
-                    }
-                  }
-                },
-                "createdAt": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "updatedAt": {
-                  "type": "string",
-                  "format": "date-time"
-                }
-              }
-            }
           }
         }
       },
@@ -1751,7 +1501,7 @@
           }
         }
       },
-      "EditColumnResponse": {
+      "EditAndDeleteColumnResponse": {
         "type": "object",
         "properties": {
           "_id": {
@@ -1767,33 +1517,8 @@
             "example": "Project"
           },
           "owner": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "65c0388ea89738bb0120fed0"
-              },
-              "name": {
-                "type": "string",
-                "example": "John Doe"
-              },
-              "email": {
-                "type": "string",
-                "format": "email"
-              },
-              "userTheme": {
-                "type": "string",
-                "example": "light"
-              }
-            }
-          },
-          "createdAt": {
             "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
+            "example": "45g6388ea89738bb0120dw49"
           }
         }
       },
@@ -1839,54 +1564,20 @@
             "format": "date-time"
           },
           "column": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "76c0388ea89738bb4520hy65"
-              },
-              "title": {
-                "type": "string",
-                "example": "Done"
-              }
-            }
+            "type": "string",
+            "example": "76c0388ea89738bb4520hy65"
           },
           "board": {
             "type": "string",
             "example": "Project"
           },
           "owner": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "65c0388ea89738bb0120fed0"
-              },
-              "name": {
-                "type": "string",
-                "example": "John Doe"
-              },
-              "email": {
-                "type": "string",
-                "format": "email"
-              },
-              "userTheme": {
-                "type": "string",
-                "example": "light"
-              }
-            }
+            "type": "string",
+            "example": "45g6388ea89738bb0120dw49"
           },
           "_id": {
             "type": "string",
             "example": "89u0388ea89738bb4520sp87"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
           }
         }
       },
@@ -1911,7 +1602,7 @@
           }
         }
       },
-      "EditTaskAndChangeColumnResponse": {
+      "EditDelTaskAndChangeColumnResponse": {
         "type": "object",
         "properties": {
           "_id": {
@@ -1935,50 +1626,16 @@
             "format": "date-time"
           },
           "column": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "76c0388ea89738bb4520hy65"
-              },
-              "title": {
-                "type": "string",
-                "example": "Done"
-              }
-            }
+            "type": "string",
+            "example": "76c0388ea89738bb4520hy65"
           },
           "board": {
             "type": "string",
             "example": "Project"
           },
           "owner": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "65c0388ea89738bb0120fed0"
-              },
-              "name": {
-                "type": "string",
-                "example": "John Doe"
-              },
-              "email": {
-                "type": "string",
-                "format": "email"
-              },
-              "userTheme": {
-                "type": "string",
-                "example": "light"
-              }
-            }
-          },
-          "createdAt": {
             "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
+            "example": "45g6388ea89738bb0120dw49"
           }
         }
       }
