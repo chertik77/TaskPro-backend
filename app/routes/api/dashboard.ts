@@ -4,10 +4,10 @@ import { isValidId } from 'middlewares/isValidId'
 import { validateBody } from 'decorators/validateBody'
 import * as boardSchema from 'schemas/board'
 import { addColumnSchema, editColumnSchema } from 'schemas/column'
-import { addNewTaskSchema, editTaskSchema } from 'schemas/task'
+import { addNewCardSchema, editCardSchema } from 'schemas/card'
 import * as dashboardController from 'controllers/dashboard'
 import * as columnController from 'controllers/column'
-import * as taskController from 'controllers/task'
+import * as cardController from 'controllers/card'
 
 export const dashboardRouter = express.Router()
 
@@ -21,26 +21,26 @@ dashboardRouter.post('/help', validateBody(boardSchema.needHelpSchema), dashboar
 //! Boards
 dashboardRouter.get('/', dashboardController.getAll) // Get all boards
 
-dashboardRouter.get('/:boardName', dashboardController.getById) // Get board by title
+dashboardRouter.get('/:boardId', isValidId, dashboardController.getById) // Get board by id
 
 dashboardRouter.post('/', validateBody(boardSchema.addNewBoardSchema), dashboardController.add) // Add new board
 
-dashboardRouter.patch('/:boardName', validateBody(boardSchema.editBoardSchema), dashboardController.updateById) // Edit board
+dashboardRouter.patch('/:boardId', isValidId, validateBody(boardSchema.editBoardSchema), dashboardController.updateById) // Edit board
 
-dashboardRouter.delete('/:boardName', dashboardController.deleteById) // Delete board
+dashboardRouter.delete('/:boardId', isValidId, dashboardController.deleteById) // Delete board
 
 //! Columns
-dashboardRouter.post('/:boardName', validateBody(addColumnSchema), columnController.add) // Add new column
+dashboardRouter.post('/:boardId', isValidId, validateBody(addColumnSchema), columnController.add) // Add new column
 
-dashboardRouter.patch('/:boardName/:columnId', isValidId, validateBody(editColumnSchema), columnController.updateById) // Edit column
+dashboardRouter.patch('/:boardId/:columnId', isValidId, validateBody(editColumnSchema), columnController.updateById) // Edit column
 
-dashboardRouter.delete('/:boardName/:columnId', isValidId, columnController.deleteById) // Delete column
+dashboardRouter.delete('/:boardId/:columnId', isValidId, columnController.deleteById) // Delete column
 
-//! Tasks
-dashboardRouter.post('/:boardName/:columnId', isValidId, validateBody(addNewTaskSchema), taskController.add) // Add new task
+//! Cards
+dashboardRouter.post('/:boardId/:columnId', isValidId, validateBody(addNewCardSchema), cardController.add) // Add new card
 
-dashboardRouter.patch('/:boardName/:columnId/:taskId', isValidId, validateBody(editTaskSchema), taskController.updateById) // Edit task
+dashboardRouter.patch('/:boardId/:columnId/:cardId', isValidId, validateBody(editCardSchema), cardController.updateById) // Edit card
 
-dashboardRouter.delete('/:boardName/:columnId/:taskId', isValidId, taskController.deleteById) // Delete task
+dashboardRouter.delete('/:boardId/:columnId/:cardId', isValidId, cardController.deleteById) // Delete card
 
-dashboardRouter.patch('/:boardName/:columnId/:taskId/:newColumnId', isValidId, taskController.changeTaskColumn) // Change column for task
+dashboardRouter.patch('/:boardId/:columnId/:cardId/:newColumnId', isValidId, cardController.changeCardColumn) // Change column for card

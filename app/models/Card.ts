@@ -3,7 +3,7 @@ import { handleSaveError, runValidateAtUpdate } from './hooks'
 
 const priorityList = ['Low', 'Medium', 'High', 'Without priority']
 
-export const taskSchema = new Schema(
+export const cardSchema = new Schema(
   {
     title: {
       type: String,
@@ -28,7 +28,7 @@ export const taskSchema = new Schema(
       required: true
     },
     board: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: 'board',
       required: true
     },
@@ -41,10 +41,10 @@ export const taskSchema = new Schema(
   { versionKey: false }
 )
 
-taskSchema.post('save', handleSaveError)
+cardSchema.post('save', handleSaveError)
 
-taskSchema.pre('findOneAndUpdate', runValidateAtUpdate)
+cardSchema.pre('findOneAndUpdate', runValidateAtUpdate)
 
-taskSchema.post('findOneAndUpdate', handleSaveError)
+cardSchema.post('findOneAndUpdate', handleSaveError)
 
-export const Task = model('task', taskSchema)
+export const Card = model('card', cardSchema)

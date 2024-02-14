@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import { taskSchema } from './Task'
+import { cardSchema } from './Card'
 import { handleSaveError, runValidateAtUpdate } from './hooks'
 
 export const columnSchema = new Schema(
@@ -9,7 +9,7 @@ export const columnSchema = new Schema(
       required: true
     },
     board: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: 'board',
       required: true
     },
@@ -18,7 +18,7 @@ export const columnSchema = new Schema(
       ref: 'user',
       required: true
     },
-    tasks: [taskSchema]
+    cards: [cardSchema]
   },
   { versionKey: false }
 )

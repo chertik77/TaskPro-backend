@@ -6,17 +6,17 @@ import { Board } from 'models/Board'
 //! Add new column
 export const add = async (req: Request, res: Response, next: NextFunction) => {
   const { _id: owner } = req.user
-  const { boardName: board } = req.params
+  const { boardId: board } = req.params
 
-  const isCurrentBoard = await Board.findOne({ title: board, owner })
+  const isCurrentBoard = await Board.findOne({ _id: board, owner })
   if (!isCurrentBoard) {
-    return next(createHttpError(404, `Board ${board} not found`))
+    return next(createHttpError(404, `Board not found`))
   }
 
   const newColumn = await Column.create({ ...req.body, board, owner })
 
   await Board.updateOne(
-    { title: board, owner },
+    { _id: board, owner },
     { $push: { columns: newColumn } }
   )
 
@@ -30,12 +30,12 @@ export const updateById = async (
   next: NextFunction
 ) => {
   const { _id: owner } = req.user
-  const { boardName: board, columnId: _id } = req.params
+  const { boardId: board, columnId: _id } = req.params
 
   const updatedColumn = await Column.findOneAndUpdate(
     { _id, board, owner },
     req.body,
-    { fields: '-tasks' }
+    { fields: '-cards' }
   )
 
   if (!updatedColumn) {
@@ -43,7 +43,7 @@ export const updateById = async (
   }
 
   await Board.updateOne(
-    { title: board, owner, 'columns._id': _id },
+    { _id: board, owner, 'columns._id': _id },
     {
       $set: {
         'columns.$.title': updatedColumn.title
@@ -61,20 +61,20 @@ export const deleteById = async (
   next: NextFunction
 ) => {
   const { _id: owner } = req.user
-  const { boardName: board, columnId: _id } = req.params
+  const { boardId: board, columnId: _id } = req.params
 
   const deletedColumn = await Column.findOneAndDelete({
     _id,
     board,
     owner
-  }).select('-tasks')
+  }).select('-cards')
 
   if (!deletedColumn) {
     return next(createHttpError(404, 'Column not found'))
   }
 
   await Board.updateOne(
-    { title: board, owner },
+    { _id: board, owner },
     {
       $pull: { columns: { _id, board, owner } }
     }
