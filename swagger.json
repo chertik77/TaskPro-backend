@@ -228,6 +228,17 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Uploading avatar error"
+                }
+              }
+            }
           }
         }
       }
@@ -262,7 +273,7 @@
         }
       }
     },
-    "/api/dashboard": {
+    "/api/dashboard/theme": {
       "patch": {
         "tags": ["Dashboard"],
         "summary": "Switch theme",
@@ -312,7 +323,73 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/dashboard/help": {
+      "post": {
+        "tags": ["Dashboard"],
+        "summary": "Send email 'Need help'",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendEmailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Email sent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Custom message from validation library"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "example": {
+                  "message": "Sending email error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard": {
       "get": {
         "tags": ["Board"],
         "summary": "Get all boards",
@@ -397,59 +474,6 @@
                 "type": "object",
                 "example": {
                   "message": "Board with the same name already exists"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/dashboard/help": {
-      "post": {
-        "tags": ["Dashboard"],
-        "summary": "Send email 'Need help'",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SendEmailRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Email sent"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Custom message from validation library"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
                 }
               }
             }

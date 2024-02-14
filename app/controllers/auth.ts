@@ -30,7 +30,7 @@ export const signup = async (
   })
 
   const { _id: id } = newUser
-  const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, { expiresIn: '1d' })
+  const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, { expiresIn: '7d' })
   const activeUser = await User.findByIdAndUpdate(id, { token })
 
   res.status(201).json({
@@ -65,7 +65,7 @@ export const signin = async (
   }
 
   const { _id: id } = user
-  const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, { expiresIn: '1d' })
+  const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, { expiresIn: '7d' })
   const activeUser = await User.findByIdAndUpdate(id, { token })
 
   res.json({
@@ -131,15 +131,19 @@ export const update = async (
       )
     }
 
-    avatar = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'TaskPro/user_avatars'
-    })
-
-    if (avatarURL.publicId) {
-      await cloudinary.uploader.destroy(avatarURL.publicId, {
-        type: 'upload',
-        resource_type: 'image'
+    try {
+      avatar = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'TaskPro/user_avatars'
       })
+
+      if (avatarURL.publicId) {
+        await cloudinary.uploader.destroy(avatarURL.publicId, {
+          type: 'upload',
+          resource_type: 'image'
+        })
+      }
+    } catch {
+      return next(createHttpError(500, 'Uploading avatar error'))
     }
   }
 

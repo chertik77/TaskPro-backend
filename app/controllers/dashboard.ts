@@ -123,7 +123,11 @@ export const deleteById = async (
 }
 
 //! Need help email
-export const sendEmail = async (req: Request, res: Response) => {
+export const sendEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email, comment } = req.body
 
   const emailBody = {
@@ -137,11 +141,15 @@ export const sendEmail = async (req: Request, res: Response) => {
     <div/>`
   }
 
-  await transport.sendMail(emailBody)
+  try {
+    await transport.sendMail(emailBody)
 
-  res.json({
-    message: 'Email sent'
-  })
+    res.json({
+      message: 'Email sent'
+    })
+  } catch {
+    return next(createHttpError(500, 'Sending email error'))
+  }
 }
 
 //! Switch theme
