@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "version": "2.0.1",
+    "version": "2.2.1",
     "title": "Task Pro"
   },
   "consumes": ["application/json", "multipart/form-data"],
@@ -21,7 +21,7 @@
       "name": "Column"
     },
     {
-      "name": "Task"
+      "name": "Card"
     }
   ],
   "paths": {
@@ -466,29 +466,18 @@
                 }
               }
             }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Board with the same name already exists"
-                }
-              }
-            }
           }
         }
       }
     },
-    "/api/dashboard/{boardName}": {
+    "/api/dashboard/{boardId}": {
       "get": {
         "tags": ["Board"],
-        "summary": "Get board by title",
+        "summary": "Get board by id",
         "parameters": [
           {
             "in": "path",
-            "name": "boardName",
+            "name": "boardId",
             "required": true
           }
         ],
@@ -499,7 +488,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetBoardByTitleResponse"
+                  "$ref": "#/components/schemas/GetBoardByIdResponse"
                 }
               }
             }
@@ -521,7 +510,7 @@
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "Board Project not found"
+                  "message": "Board not found"
                 }
               }
             }
@@ -534,7 +523,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "boardName",
+            "name": "boardId",
             "required": true
           }
         ],
@@ -588,18 +577,7 @@
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "Board Project not found"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Board with the same name already exists"
+                  "message": "Board not found"
                 }
               }
             }
@@ -612,7 +590,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "boardName",
+            "name": "boardId",
             "required": true
           }
         ],
@@ -645,7 +623,7 @@
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "Board Project not found"
+                  "message": "Board not found"
                 }
               }
             }
@@ -658,7 +636,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "boardName",
+            "name": "boardId",
             "required": true
           }
         ],
@@ -712,7 +690,7 @@
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "Board Project not found"
+                  "message": "Board not found"
                 }
               }
             }
@@ -720,14 +698,14 @@
         }
       }
     },
-    "/api/dashboard/{boardName}/{columnId}": {
+    "/api/dashboard/{boardId}/{columnId}": {
       "patch": {
         "tags": ["Column"],
         "summary": "Edit column",
         "parameters": [
           {
             "in": "path",
-            "name": "boardName",
+            "name": "boardId",
             "required": true
           },
           {
@@ -799,7 +777,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "boardName",
+            "name": "boardId",
             "required": true
           },
           {
@@ -845,12 +823,12 @@
         }
       },
       "post": {
-        "tags": ["Task"],
-        "summary": "Add new task",
+        "tags": ["Card"],
+        "summary": "Add new card",
         "parameters": [
           {
             "in": "path",
-            "name": "boardName",
+            "name": "boardId",
             "required": true
           },
           {
@@ -865,7 +843,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AddTaskRequest"
+                "$ref": "#/components/schemas/AddCardRequest"
               }
             }
           }
@@ -876,7 +854,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AddTaskResponse"
+                  "$ref": "#/components/schemas/AddCardResponse"
                 }
               }
             }
@@ -917,14 +895,14 @@
         }
       }
     },
-    "/api/dashboard/{boardName}/{columnId}/{taskId}": {
+    "/api/dashboard/{boardId}/{columnId}/{cardId}": {
       "patch": {
-        "tags": ["Task"],
-        "summary": "Edit task",
+        "tags": ["Card"],
+        "summary": "Edit card",
         "parameters": [
           {
             "in": "path",
-            "name": "boardName",
+            "name": "boardId",
             "required": true
           },
           {
@@ -934,7 +912,7 @@
           },
           {
             "in": "path",
-            "name": "taskId",
+            "name": "cardId",
             "required": true
           }
         ],
@@ -944,7 +922,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EditTaskRequest"
+                "$ref": "#/components/schemas/EditCardRequest"
               }
             }
           }
@@ -955,7 +933,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EditDelTaskAndChangeColumnResponse"
+                  "$ref": "#/components/schemas/EditDelCardAndChangeColumnResponse"
                 }
               }
             }
@@ -988,7 +966,7 @@
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "Task not found"
+                  "message": "Card not found"
                 }
               }
             }
@@ -996,12 +974,12 @@
         }
       },
       "delete": {
-        "tags": ["Task"],
-        "summary": "Delete task",
+        "tags": ["Card"],
+        "summary": "Delete card",
         "parameters": [
           {
             "in": "path",
-            "name": "boardName",
+            "name": "boardId",
             "required": true
           },
           {
@@ -1011,7 +989,7 @@
           },
           {
             "in": "path",
-            "name": "taskId",
+            "name": "cardId",
             "required": true
           }
         ],
@@ -1022,7 +1000,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EditDelTaskAndChangeColumnResponse"
+                  "$ref": "#/components/schemas/EditDelCardAndChangeColumnResponse"
                 }
               }
             }
@@ -1044,7 +1022,7 @@
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "Task not found"
+                  "message": "Card not found"
                 }
               }
             }
@@ -1052,14 +1030,14 @@
         }
       }
     },
-    "/api/dashboard/{boardName}/{columnId}/{taskId}/{newColumnId}": {
+    "/api/dashboard/{boardId}/{columnId}/{cardId}/{newColumnId}": {
       "patch": {
-        "tags": ["Task"],
-        "summary": "Change column for task",
+        "tags": ["Card"],
+        "summary": "Change column for card",
         "parameters": [
           {
             "in": "path",
-            "name": "boardName",
+            "name": "boardId",
             "required": true
           },
           {
@@ -1069,7 +1047,7 @@
           },
           {
             "in": "path",
-            "name": "taskId",
+            "name": "cardId",
             "required": true
           },
           {
@@ -1085,7 +1063,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EditDelTaskAndChangeColumnResponse"
+                  "$ref": "#/components/schemas/EditDelCardAndChangeColumnResponse"
                 }
               }
             }
@@ -1107,7 +1085,7 @@
               "application/json": {
                 "type": "object",
                 "example": {
-                  "message": "Task not found"
+                  "message": "Card not found"
                 }
               }
             }
@@ -1351,7 +1329,7 @@
           }
         }
       },
-      "GetBoardByTitleResponse": {
+      "GetBoardByIdResponse": {
         "type": "object",
         "properties": {
           "_id": {
@@ -1385,13 +1363,13 @@
                 },
                 "board": {
                   "type": "string",
-                  "example": "Project"
+                  "example": "65c0388ea89738bb0120fed0"
                 },
                 "owner": {
                   "type": "string",
                   "example": "45g6388ea89738bb0120dw49"
                 },
-                "tasks": {
+                "cards": {
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -1418,7 +1396,7 @@
                       },
                       "board": {
                         "type": "string",
-                        "example": "Project"
+                        "example": "65c0388ea89738bb0120fed0"
                       },
                       "owner": {
                         "type": "string",
@@ -1501,7 +1479,7 @@
           },
           "board": {
             "type": "string",
-            "example": "Project"
+            "example": "65c0388ea89738bb0120fed0"
           },
           "owner": {
             "type": "string",
@@ -1511,7 +1489,7 @@
             "type": "string",
             "example": "76c0388ea89738bb4520hy65"
           },
-          "tasks": {
+          "cards": {
             "type": "array"
           }
         }
@@ -1538,7 +1516,7 @@
           },
           "board": {
             "type": "string",
-            "example": "Project"
+            "example": "65c0388ea89738bb0120fed0"
           },
           "owner": {
             "type": "string",
@@ -1546,7 +1524,7 @@
           }
         }
       },
-      "AddTaskRequest": {
+      "AddCardRequest": {
         "type": "object",
         "required": ["title", "description", "deadline"],
         "properties": {
@@ -1568,7 +1546,7 @@
           }
         }
       },
-      "AddTaskResponse": {
+      "AddCardResponse": {
         "type": "object",
         "properties": {
           "title": {
@@ -1593,7 +1571,7 @@
           },
           "board": {
             "type": "string",
-            "example": "Project"
+            "example": "65c0388ea89738bb0120fed0"
           },
           "owner": {
             "type": "string",
@@ -1605,7 +1583,7 @@
           }
         }
       },
-      "EditTaskRequest": {
+      "EditCardRequest": {
         "type": "object",
         "properties": {
           "title": {
@@ -1626,7 +1604,7 @@
           }
         }
       },
-      "EditDelTaskAndChangeColumnResponse": {
+      "EditDelCardAndChangeColumnResponse": {
         "type": "object",
         "properties": {
           "_id": {
@@ -1655,7 +1633,7 @@
           },
           "board": {
             "type": "string",
-            "example": "Project"
+            "example": "65c0388ea89738bb0120fed0"
           },
           "owner": {
             "type": "string",
