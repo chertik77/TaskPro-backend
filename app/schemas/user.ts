@@ -11,7 +11,7 @@ export const signupSchema = Joi.object({
       }
       return value
     }),
-  password: Joi.string().min(8).required()
+  password: Joi.string().min(8).required().max(64)
 })
 
 export const signinSchema = Joi.object({
@@ -23,7 +23,7 @@ export const signinSchema = Joi.object({
       }
       return value
     }),
-  password: Joi.string().min(8).required()
+  password: Joi.string().min(8).required().max(64)
 })
 
 export const editUserSchema = Joi.object({
