@@ -30,7 +30,7 @@ export const signup = async (
   })
 
   const { _id: id } = newUser
-  const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, { expiresIn: '1d' })
+  const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, { expiresIn: '7d' })
   const activeUser = await User.findByIdAndUpdate(id, { token })
 
   res.status(201).json({
@@ -65,7 +65,7 @@ export const signin = async (
   }
 
   const { _id: id } = user
-  const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, { expiresIn: '1d' })
+  const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, { expiresIn: '7d' })
   const activeUser = await User.findByIdAndUpdate(id, { token })
 
   res.json({
