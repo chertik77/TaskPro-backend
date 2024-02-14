@@ -131,15 +131,19 @@ export const update = async (
       )
     }
 
-    avatar = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'TaskPro/user_avatars'
-    })
-
-    if (avatarURL.publicId) {
-      await cloudinary.uploader.destroy(avatarURL.publicId, {
-        type: 'upload',
-        resource_type: 'image'
+    try {
+      avatar = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'TaskPro/user_avatars'
       })
+
+      if (avatarURL.publicId) {
+        await cloudinary.uploader.destroy(avatarURL.publicId, {
+          type: 'upload',
+          resource_type: 'image'
+        })
+      }
+    } catch {
+      return next(createHttpError(500, 'Uploading avatar error'))
     }
   }
 

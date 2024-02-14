@@ -14,7 +14,7 @@ export const dashboardRouter = express.Router()
 dashboardRouter.use(authenticate)
 
 //! Dashboard
-dashboardRouter.patch('/', validateBody(boardSchema.editThemeSchema), dashboardController.switchTheme) // Switch theme
+dashboardRouter.patch('/theme', validateBody(boardSchema.editThemeSchema), dashboardController.switchTheme) // Switch theme
 
 dashboardRouter.post('/help', validateBody(boardSchema.needHelpSchema), dashboardController.sendEmail) // Send email 'Need help'
 
