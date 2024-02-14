@@ -35,7 +35,7 @@ export const updateById = async (
   const updatedColumn = await Column.findOneAndUpdate(
     { _id, board, owner },
     req.body,
-    { fields: '-tasks' }
+    { fields: '-cards' }
   )
 
   if (!updatedColumn) {
@@ -67,7 +67,7 @@ export const deleteById = async (
     _id,
     board,
     owner
-  }).select('-tasks')
+  }).select('-cards')
 
   if (!deletedColumn) {
     return next(createHttpError(404, 'Column not found'))
