@@ -158,5 +158,15 @@ export const changeCardColumn = async (
     }
   )
 
-  res.json({...card, oldColumn: column})
+ res.json({
+   _id: card._id,
+   title: card.title,
+   description: card.description,
+   priority: card.priority,
+   deadline: card.deadline,
+   column: card.column,
+   oldColumn: column,
+   board: card.board,
+   owner: card.owner
+ })
 }
