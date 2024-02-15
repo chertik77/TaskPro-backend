@@ -158,5 +158,5 @@ export const changeCardColumn = async (
     }
   )
 
-  res.json(card)
+  res.json({...card, oldColumn: column})
 }
