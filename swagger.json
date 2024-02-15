@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "version": "2.2.1",
+    "version": "2.2.2",
     "title": "Task Pro"
   },
   "consumes": ["application/json", "multipart/form-data"],
@@ -933,7 +933,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EditDelCardAndChangeColumnResponse"
+                  "$ref": "#/components/schemas/EditAndDeleteCardResponse"
                 }
               }
             }
@@ -1000,7 +1000,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EditDelCardAndChangeColumnResponse"
+                  "$ref": "#/components/schemas/EditAndDeleteCardResponse"
                 }
               }
             }
@@ -1063,7 +1063,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EditDelCardAndChangeColumnResponse"
+                  "$ref": "#/components/schemas/ChangeColumnResponse"
                 }
               }
             }
@@ -1604,7 +1604,7 @@
           }
         }
       },
-      "EditDelCardAndChangeColumnResponse": {
+      "EditAndDeleteCardResponse": {
         "type": "object",
         "properties": {
           "_id": {
@@ -1630,6 +1630,47 @@
           "column": {
             "type": "string",
             "example": "76c0388ea89738bb4520hy65"
+          },
+          "board": {
+            "type": "string",
+            "example": "65c0388ea89738bb0120fed0"
+          },
+          "owner": {
+            "type": "string",
+            "example": "45g6388ea89738bb0120dw49"
+          }
+        }
+      },
+      "ChangeColumnResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "89u0388ea89738bb4520sp87"
+          },
+          "title": {
+            "type": "string",
+            "example": "Add documentation"
+          },
+          "description": {
+            "type": "string",
+            "example": "bla bla bla bla"
+          },
+          "priority": {
+            "type": "string",
+            "example": "Without priority"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "column": {
+            "type": "string",
+            "example": "76c0388ea89738bb4520hy65"
+          },
+          "oldColumn": {
+            "type": "string",
+            "example": "rr63388ea89738bb4520sd32"
           },
           "board": {
             "type": "string",
