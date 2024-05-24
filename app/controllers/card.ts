@@ -1,172 +1,146 @@
+import { Card } from '@/models/Card'
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
-import { Card } from '@/models/Card'
-import { Column } from 'models/Column'
 import { Board } from 'models/Board'
+import { Column } from 'models/Column'
 
-//! Add new card
-export const add = async (req: Request, res: Response, next: NextFunction) => {
-  const { _id: owner } = req.user
-  const { boardId: board, columnId: column } = req.params
+class Controller {
+  add = async (req: Request, res: Response, next: NextFunction) => {
+    const { id: owner } = req.user
 
-  const isCurrentColumn = await Column.findOne({ _id: column, board, owner })
-  if (!isCurrentColumn) {
-    return next(createHttpError(404, 'Column not found'))
+    const { columnId: column } = req.params
+
+    const isCurrentColumn = await Column.findOne({ _id: column, owner })
+
+    if (!isCurrentColumn) {
+      return next(createHttpError(404, 'Column not found'))
+    }
+
+    const newCard = await Card.create({ ...req.body, column, owner })
+
+    const columnWithCards = await Column.findOneAndUpdate(
+      { _id: column, owner },
+      { $push: { cards: newCard } }
+    )
+
+    await Board.updateOne(
+      { owner, 'columns._id': columnWithCards?._id },
+      {
+        $set: {
+          'columns.$.cards': columnWithCards?.cards
+        }
+      }
+    )
+
+    res.status(201).json(newCard)
   }
 
-  const newCard = await Card.create({ ...req.body, column, board, owner })
+  updateById = async (req: Request, res: Response, next: NextFunction) => {
+    const { id: owner } = req.user
 
-  const columnWithCards = await Column.findOneAndUpdate(
-    { _id: column, board, owner },
-    { $push: { cards: newCard } }
-  )
-  await Board.updateOne(
-    { _id: board, owner, 'columns._id': columnWithCards?._id },
-    {
-      $set: {
-        'columns.$.cards': columnWithCards?.cards
-      }
+    const { cardId: _id } = req.params
+
+    const updatedCard = await Card.findOneAndUpdate({ _id, owner }, req.body)
+
+    if (!updatedCard) {
+      return next(createHttpError(404, 'Card not found'))
     }
-  )
 
-  res.status(201).json(newCard)
-}
+    const columnWithCards = await Column.findOneAndUpdate(
+      { owner, 'cards._id': _id },
+      {
+        $set: {
+          'cards.$.title': updatedCard.title,
+          'cards.$.description': updatedCard.description,
+          'cards.$.priority': updatedCard.priority,
+          'cards.$.deadline': updatedCard.deadline
+        }
+      }
+    )
+    await Board.updateOne(
+      { owner, 'columns._id': columnWithCards?._id },
+      {
+        $set: {
+          'columns.$.cards': columnWithCards?.cards
+        }
+      }
+    )
 
-//! Edit card
-export const updateById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { _id: owner } = req.user
-  const { boardId: board, columnId: column, cardId: _id } = req.params
-
-  const updatedCard = await Card.findOneAndUpdate(
-    { _id, column, board, owner },
-    req.body
-  )
-
-  if (!updatedCard) {
-    return next(createHttpError(404, 'Card not found'))
+    res.json(updatedCard)
   }
 
-  const columnWithCards = await Column.findOneAndUpdate(
-    { _id: column, board, owner, 'cards._id': _id },
-    {
-      $set: {
-        'cards.$.title': updatedCard.title,
-        'cards.$.description': updatedCard.description,
-        'cards.$.priority': updatedCard.priority,
-        'cards.$.deadline': updatedCard.deadline
-      }
+  deleteById = async (req: Request, res: Response, next: NextFunction) => {
+    const { id: owner } = req.user
+    const { columnId: column, cardId: _id } = req.params
+
+    const deletedCard = await Card.findOneAndDelete({ _id, column, owner })
+
+    if (!deletedCard) {
+      return next(createHttpError(404, 'Card not found'))
     }
-  )
-  await Board.updateOne(
-    { _id: board, owner, 'columns._id': columnWithCards?._id },
-    {
-      $set: {
-        'columns.$.cards': columnWithCards?.cards
+
+    const columnWithCards = await Column.findOneAndUpdate(
+      { _id: column, owner },
+      { $pull: { cards: { _id, column, owner } } }
+    )
+
+    await Board.updateOne(
+      { owner, 'columns._id': columnWithCards?._id },
+      {
+        $set: {
+          'columns.$.cards': columnWithCards?.cards
+        }
       }
-    }
-  )
+    )
 
-  res.json(updatedCard)
-}
-
-//! Delete card
-export const deleteById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { _id: owner } = req.user
-  const { boardId: board, columnId: column, cardId: _id } = req.params
-
-  const deletedCard = await Card.findOneAndDelete({
-    _id,
-    column,
-    board,
-    owner
-  })
-
-  if (!deletedCard) {
-    return next(createHttpError(404, 'Card not found'))
+    res.json(deletedCard)
   }
 
-  const columnWithCards = await Column.findOneAndUpdate(
-    { _id: column, board, owner },
-    { $pull: { cards: { _id, column, board, owner } } }
-  )
-  await Board.updateOne(
-    { _id: board, owner, 'columns._id': columnWithCards?._id },
-    {
-      $set: {
-        'columns.$.cards': columnWithCards?.cards
-      }
+  changeCardColumn = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { id: owner } = req.user
+    const { columnId: column, cardId: _id, newColumnId } = req.params
+
+    const card = await Card.findOneAndUpdate(
+      { _id, column, owner },
+      { column: newColumnId }
+    )
+
+    if (!card) {
+      return next(createHttpError(404, 'Card not found'))
     }
-  )
 
-  res.json(deletedCard)
-}
+    const delCardByOldColId = await Column.findOneAndUpdate(
+      { _id: column, owner },
+      { $pull: { cards: { _id, column, owner } } }
+    )
+    await Board.updateOne(
+      { owner, 'columns._id': delCardByOldColId?._id },
+      {
+        $set: {
+          'columns.$.cards': delCardByOldColId?.cards
+        }
+      }
+    )
 
-//! Change column for card
-export const changeCardColumn = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { _id: owner } = req.user
-  const {
-    boardId: board,
-    columnId: column,
-    cardId: _id,
-    newColumnId
-  } = req.params
+    const addCardByNewColId = await Column.findOneAndUpdate(
+      { _id: newColumnId, owner },
+      { $push: { cards: card } }
+    )
+    await Board.updateOne(
+      { owner, 'columns._id': addCardByNewColId?._id },
+      {
+        $set: {
+          'columns.$.cards': addCardByNewColId?.cards
+        }
+      }
+    )
 
-  const card = await Card.findOneAndUpdate(
-    { _id, column, board, owner },
-    { column: newColumnId }
-  )
-
-  if (!card) {
-    return next(createHttpError(404, 'Card not found'))
+    res.json(card)
   }
-
-  const delCardByOldColId = await Column.findOneAndUpdate(
-    { _id: column, board, owner },
-    { $pull: { cards: { _id, column, board, owner } } }
-  )
-  await Board.updateOne(
-    { _id: board, owner, 'columns._id': delCardByOldColId?._id },
-    {
-      $set: {
-        'columns.$.cards': delCardByOldColId?.cards
-      }
-    }
-  )
-
-  const addCardByNewColId = await Column.findOneAndUpdate(
-    { _id: newColumnId, board, owner },
-    { $push: { cards: card } }
-  )
-  await Board.updateOne(
-    { _id: board, owner, 'columns._id': addCardByNewColId?._id },
-    {
-      $set: {
-        'columns.$.cards': addCardByNewColId?.cards
-      }
-    }
-  )
-
- res.json({
-   _id: card._id,
-   title: card.title,
-   description: card.description,
-   priority: card.priority,
-   deadline: card.deadline,
-   column: card.column,
-   oldColumn: column,
-   board: card.board,
-   owner: card.owner
- })
 }
+
+export const cardController = new Controller()

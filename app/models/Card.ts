@@ -27,11 +27,6 @@ export const cardSchema = new Schema(
       ref: 'column',
       required: true
     },
-    board: {
-      type: Schema.Types.ObjectId,
-      ref: 'board',
-      required: true
-    },
     owner: {
       type: Schema.Types.ObjectId,
       ref: 'user',

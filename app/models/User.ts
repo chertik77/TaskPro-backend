@@ -25,15 +25,16 @@ const userSchema = new Schema(
       minlength: 8,
       required: true
     },
-    userTheme: {
+    theme: {
       type: String,
       enum: userTheme,
       default: 'light'
     },
-    avatarURL: {
+    avatar: {
       url: {
         type: String,
-        default: ''
+        default:
+          'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png'
       },
       publicId: {
         type: String,

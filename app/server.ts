@@ -1,10 +1,8 @@
 import mongoose from 'mongoose'
 import { app } from './app'
 
-const { DB_HOST } = process.env
-
 mongoose
-  .connect(DB_HOST as string)
+  .connect(process.env.DB_HOST!)
   .then(() => {
     app.listen(7000, () =>
       console.log(`Database connected. Server listening on port 7000`)

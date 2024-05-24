@@ -1,14 +1,14 @@
 declare namespace Express {
   export interface Request {
     user: {
-      _id: string
+      id: string
       name: string
       email: string
-      avatarURL: {
+      avatar: {
         url: string
         publicId: string
       }
-      userTheme: string
+      theme: string
     }
   }
 }

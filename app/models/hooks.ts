@@ -1,12 +1,13 @@
 import type { CallbackWithoutResultAndOptionalError, Query } from 'mongoose'
-import { CustomError } from '../app'
+import { ResponseError } from '../app'
 
 export const handleSaveError = (
-  error: CustomError,
+  error: ResponseError,
   _: unknown,
   next: CallbackWithoutResultAndOptionalError
 ) => {
   error.status = 400
+
   next()
 }
 
@@ -15,8 +16,11 @@ export const runValidateAtUpdate = function (
   next: CallbackWithoutResultAndOptionalError
 ) {
   const options = this.getOptions()
+
   options.new = true
   options.runValidators = true
+
   this.setOptions(options)
+
   next()
 }

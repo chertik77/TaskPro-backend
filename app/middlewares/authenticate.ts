@@ -12,19 +12,28 @@ export const authenticate = async (
 ) => {
   const { authorization = '' } = req.headers
   const [bearer, token] = authorization.split(' ')
+
   if (bearer !== 'Bearer') {
     return next(createHttpError(401))
   }
 
   try {
-    const { id } = jwt.verify(token, JWT_SECRET as string) as {
-      id: string
-    }
+    const { id } = jwt.verify(token, JWT_SECRET as string) as { id: string }
+
     const user = await User.findById(id)
+
     if (!user || !user.token || token !== user.token) {
       return next(createHttpError(401))
     }
-    req.user = user.toObject()
+
+    req.user = user.toObject({
+      virtuals: true,
+      transform(_, ret) {
+        delete ret.password
+        delete ret._id
+      }
+    })
+
     next()
   } catch {
     return next(createHttpError(401))

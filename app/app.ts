@@ -5,40 +5,60 @@ import express, {
   type Request,
   type Response
 } from 'express'
+import { createValidator } from 'express-joi-validation'
+import mongoose from 'mongoose'
 import logger from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 import swaggerDocument from '../swagger.json'
 import { authRouter } from './routes/api/auth'
-import { dashboardRouter } from './routes/api/dashboard'
+import { boardRouter } from './routes/api/board'
+import { cardRouter } from './routes/api/card'
+import { columnRouter } from './routes/api/column'
+import { userRouter } from './routes/api/user'
 
-export type CustomError = Error & {
+export type ResponseError = Error & {
   status?: number
   code?: number | string
 }
 
 export const app = express()
+export const validator = createValidator()
 
-const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
-
-app.use(logger(formatsLogger))
+app.use(logger('dev'))
 app.use(cors())
 app.use(express.json())
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use('/api/auth', authRouter)
-app.use('/api/dashboard', dashboardRouter)
+app.use('/api/user', userRouter)
+app.use('/api/board', boardRouter)
+app.use('/api/column', columnRouter)
+app.use('/api/card', cardRouter)
 
-app.use((_: Request, res: Response) => {
+app.use((_, res) => {
   res.status(404).json({ message: 'Not found' })
 })
 
-app.use(
-  (err: CustomError, _: Request, res: Response, __: NextFunction): void => {
-    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-      err.status = 400
+app.use((err: ResponseError, _: Request, res: Response, __: NextFunction) => {
+  if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+    err.status = 400
+  }
+
+  const { status = 500, message = 'Server error' } = err
+  res.status(status).json({ message })
+})
+
+mongoose.set('toJSON', {
+  virtuals: true,
+  transform(_, ret) {
+    if (ret.password) delete ret.password
+
+    if (ret.token) delete ret.token
+
+    if (ret.avatar) {
+      ret.avatar = ret.avatar.url
     }
 
-    const { status = 500, message = 'Server error' } = err
-    res.status(status).json({ message })
+    delete ret._id
   }
-)
+})

@@ -3,193 +3,64 @@ import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
 import { User } from 'models/User'
-import cloudinary from 'utils/cloudinary'
 
 const { JWT_SECRET } = process.env
 
-//! Sing up
-export const signup = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { email, password } = req.body
-  const user = await User.findOne({ email })
-  if (user) {
-    return next(createHttpError(409, 'Email already exist'))
-  }
+class Controller {
+  signup = async (req: Request, res: Response, next: NextFunction) => {
+    const isUserExists = await User.findOne({ email: req.body.email })
 
-  const hashPassword = await bcrypt.hash(password, 10)
-
-  const newUser = await User.create({
-    ...req.body,
-    password: hashPassword,
-    avatarURL: {
-      url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png'
-    }
-  })
-
-  const { _id: id } = newUser
-  const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, { expiresIn: '7d' })
-  const activeUser = await User.findByIdAndUpdate(id, { token })
-
-  res.status(201).json({
-    token: activeUser?.token,
-    user: {
-      _id: activeUser?._id,
-      name: activeUser?.name,
-      email: activeUser?.email,
-      userTheme: activeUser?.userTheme,
-      avatarURL: activeUser?.avatarURL
-    }
-  })
-}
-
-//! Sing in
-export const signin = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { email, password } = req.body
-
-  const user = await User.findOne({ email })
-  if (!user) {
-    return next(createHttpError(401, 'Email or password invalid'))
-  }
-
-  const passwordCompare = await bcrypt.compare(password, user.password)
-
-  if (!passwordCompare) {
-    return next(createHttpError(401, 'Email or password invalid'))
-  }
-
-  const { _id: id } = user
-  const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, { expiresIn: '7d' })
-  const activeUser = await User.findByIdAndUpdate(id, { token })
-
-  res.json({
-    token: activeUser?.token,
-    user: {
-      _id: activeUser?._id,
-      name: activeUser?.name,
-      email: activeUser?.email,
-      userTheme: activeUser?.userTheme,
-      avatarURL: activeUser?.avatarURL
-    }
-  })
-}
-
-//! Get current
-export const getCurrent = (req: Request, res: Response) => {
-  const { _id, name, email, avatarURL, userTheme } = req.user
-
-  res.json({
-    user: {
-      _id,
-      name,
-      email,
-      userTheme,
-      avatarURL
-    }
-  })
-}
-
-//! Edit user
-export const update = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { _id, email: userEmail, avatarURL } = req.user
-  const { email, password } = req.body
-
-  if (email && email !== userEmail) {
-    const userByEmail = await User.findOne({ email })
-    if (userByEmail) {
+    if (isUserExists) {
       return next(createHttpError(409, 'Email already exist'))
     }
+
+    const { id } = await User.create({
+      ...req.body,
+      password: await bcrypt.hash(req.body.password, 10)
+    })
+
+    const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, {
+      expiresIn: '7d'
+    })
+
+    const user = await User.findByIdAndUpdate(id, { token })
+
+    res.status(201).json({ token: user?.token, user })
   }
 
-  let newPassword
+  signin = async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body
 
-  if (password) {
-    newPassword = await bcrypt.hash(password, 10)
-  }
+    const user = await User.findOne({ email })
 
-  let avatar
-
-  if (req.file) {
-    const extArr = ['jpeg', 'png']
-
-    const fileMimetype = req.file.mimetype.split('/')
-    const ext = fileMimetype[fileMimetype.length - 1]
-
-    if (!extArr.includes(ext)) {
-      return next(
-        createHttpError(400, 'File must have .jpeg or .png extension')
-      )
+    if (!user) {
+      return next(createHttpError(401, 'Email or password invalid'))
     }
 
-    try {
-      avatar = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'TaskPro/user_avatars'
-      })
+    const isPasswordMatch = await bcrypt.compare(password, user.password)
 
-      if (avatarURL.publicId) {
-        await cloudinary.uploader.destroy(avatarURL.publicId, {
-          type: 'upload',
-          resource_type: 'image'
-        })
-      }
-    } catch {
-      return next(createHttpError(500, 'Uploading avatar error'))
+    if (!isPasswordMatch) {
+      return next(createHttpError(401, 'Email or password invalid'))
     }
+
+    const token = jwt.sign({ id: user.id }, JWT_SECRET as jwt.Secret, {
+      expiresIn: '7d'
+    })
+
+    const activeUser = await User.findByIdAndUpdate(user.id, { token })
+
+    res.json({ token: activeUser?.token, user })
   }
 
-  let updatedUser
-
-  if (avatar && newPassword) {
-    updatedUser = await User.findByIdAndUpdate(_id, {
-      ...req.body,
-      password: newPassword,
-      avatarURL: {
-        url: avatar.url,
-        publicId: avatar.public_id
-      }
-    })
-  } else if (avatar) {
-    updatedUser = await User.findByIdAndUpdate(_id, {
-      ...req.body,
-      avatarURL: {
-        url: avatar.url,
-        publicId: avatar.public_id
-      }
-    })
-  } else if (newPassword) {
-    updatedUser = await User.findByIdAndUpdate(_id, {
-      ...req.body,
-      password: newPassword
-    })
-  } else {
-    updatedUser = await User.findByIdAndUpdate(_id, req.body)
+  current = (req: Request, res: Response) => {
+    res.json({ ...req.user, avatar: req.user.avatar.url })
   }
 
-  res.json({
-    user: {
-      _id: updatedUser?._id,
-      name: updatedUser?.name,
-      email: updatedUser?.email,
-      userTheme: updatedUser?.userTheme,
-      avatarURL: updatedUser?.avatarURL
-    }
-  })
+  logout = async (req: Request, res: Response) => {
+    await User.findByIdAndDelete(req.user.id, { token: '' })
+
+    res.status(204).json({})
+  }
 }
 
-//! Logout
-export const logout = async (req: Request, res: Response) => {
-  const { _id } = req.user
-  await User.findByIdAndUpdate(_id, { token: '' })
-
-  res.status(204).json({})
-}
+export const AuthController = new Controller()
