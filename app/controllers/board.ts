@@ -1,13 +1,11 @@
 import { Board } from '@/models/Board'
+import { getBgImage } from '@/utils/bg-image'
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 
 class Controller {
   getAll = async (req: Request, res: Response) => {
-    const boards = await Board.find(
-      { owner: req.user.id },
-      '-columns -background'
-    )
+    const boards = await Board.find({ owner: req.user.id }, '-columns')
 
     res.json({ boards })
   }
@@ -28,7 +26,11 @@ class Controller {
   add = async (req: Request, res: Response) => {
     const { id: owner } = req.user
 
-    const newBoard = await Board.create({ ...req.body, owner })
+    const newBoard = await Board.create({
+      ...req.body,
+      owner,
+      background: getBgImage(req.body.background)
+    })
 
     res.status(201).json(newBoard)
   }
@@ -39,7 +41,7 @@ class Controller {
 
     const updatedBoard = await Board.findOneAndUpdate(
       { _id, owner },
-      req.body,
+      { ...req.body, background: getBgImage(req.body.background) },
       { fields: '-columns' }
     )
 

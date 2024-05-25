@@ -13,8 +13,7 @@ const boardSchema = new Schema(
       required: true
     },
     background: {
-      type: String,
-      required: true
+      type: Object
     },
     owner: {
       type: Schema.Types.ObjectId,
