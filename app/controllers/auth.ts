@@ -33,7 +33,6 @@ class Controller {
 
     const user = await User.findOne({ email })
 
-    console.log(user)
     if (!user) {
       return next(createHttpError(401, 'Email or password invalid'))
     }
