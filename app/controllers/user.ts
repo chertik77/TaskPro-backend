@@ -115,20 +115,57 @@ class Controller {
   }
 
   changeTheme = async (req: Request, res: Response) => {
-    const { id, avatar } = req.user
+    const { id } = req.user
 
-    const editedUser = await User.findByIdAndUpdate(id, {
-      ...req.body,
-      avatar: {
-        url:
-          !avatar.publicId && req.body.theme === 'light'
-            ? 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png'
-            : !avatar.publicId && req.body.theme === 'dark'
-            ? 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_dark.png'
-            : 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_violet.png',
-        publicId: ''
+    const user = await User.findById(id)
+
+    let editedUser
+
+    if (!user?.avatar?.publicId) {
+      switch (req.body.theme) {
+        case 'light':
+          editedUser = await User.findByIdAndUpdate(id, {
+            ...req.body,
+            avavar: {
+              url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png',
+              publicId: ''
+            }
+          })
+          break
+
+        case 'dark':
+          editedUser = await User.findByIdAndUpdate(id, {
+            ...req.body,
+            avavar: {
+              url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_dark.png',
+              publicId: ''
+            }
+          })
+          break
+
+        case 'violet':
+          editedUser = await User.findByIdAndUpdate(id, {
+            ...req.body,
+            avatar: {
+              url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_violet.png',
+              publicId: ''
+            }
+          })
+          break
+
+        default:
+          editedUser = await User.findByIdAndUpdate(id, {
+            ...req.body,
+            avatar: {
+              url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png',
+              publicId: ''
+            }
+          })
+          break
       }
-    })
+    } else {
+      editedUser = await User.findByIdAndUpdate(id, req.body)
+    }
 
     res.json(editedUser)
   }
