@@ -33,6 +33,7 @@ class Controller {
 
     const user = await User.findOne({ email })
 
+    console.log(user)
     if (!user) {
       return next(createHttpError(401, 'Email or password invalid'))
     }
@@ -57,7 +58,7 @@ class Controller {
   }
 
   logout = async (req: Request, res: Response) => {
-    await User.findByIdAndDelete(req.user.id, { token: '' })
+    await User.findByIdAndUpdate(req.user.id, { token: '' })
 
     res.status(204).json({})
   }
