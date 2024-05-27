@@ -5,7 +5,6 @@ import express, {
   type Request,
   type Response
 } from 'express'
-import { createValidator } from 'express-joi-validation'
 import mongoose from 'mongoose'
 import logger from 'morgan'
 import swaggerUi from 'swagger-ui-express'
@@ -22,7 +21,6 @@ export type ResponseError = Error & {
 }
 
 export const app = express()
-export const validator = createValidator()
 
 app.use(logger('dev'))
 app.use(cors())
@@ -52,8 +50,6 @@ mongoose.set('toJSON', {
   virtuals: true,
   transform(_, ret) {
     if (ret.password) delete ret.password
-
-    if (ret.token) delete ret.token
 
     if (ret.avatar) {
       ret.avatar = ret.avatar.url

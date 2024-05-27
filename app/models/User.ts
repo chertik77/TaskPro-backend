@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 import isEmail from 'validator/lib/isEmail'
 import { handleSaveError, runValidateAtUpdate } from './hooks'
 
-const userTheme = ['light', 'dark', 'violet']
+export const userThemes = ['light', 'dark', 'violet']
 
 const userSchema = new Schema(
   {
@@ -13,9 +13,7 @@ const userSchema = new Schema(
     email: {
       type: String,
       validate: (value: string) => {
-        if (!isEmail(value)) {
-          throw new Error('Email is not valid')
-        }
+        if (!isEmail(value)) throw new Error('Email is not valid')
       },
       unique: true,
       required: true
@@ -27,7 +25,7 @@ const userSchema = new Schema(
     },
     theme: {
       type: String,
-      enum: userTheme,
+      enum: userThemes,
       default: 'light'
     },
     avatar: {
@@ -40,10 +38,6 @@ const userSchema = new Schema(
         type: String,
         default: ''
       }
-    },
-    token: {
-      type: String,
-      default: ''
     }
   },
   { versionKey: false }

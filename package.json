@@ -7,7 +7,7 @@
   },
   "scripts": {
     "start": "ts-node -r tsconfig-paths/register app/server.ts",
-    "dev": "ts-node-dev -r tsconfig-paths/register app/server.ts",
+    "dev": "ts-node-dev -r tsconfig-paths/register --files app/server.ts",
     "lint": "eslint app/**/*.ts",
     "lint:fix": "eslint --fix app/**/*.ts",
     "prepare": "husky"

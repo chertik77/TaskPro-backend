@@ -53,3 +53,7 @@ export const needHelpSchema = Joi.object({
 export const changeThemeSchema = Joi.object({
   theme: Joi.string().valid('light', 'dark', 'violet')
 })
+
+export const refreshTokenSchema = Joi.object({
+  refreshToken: Joi.string().required()
+})

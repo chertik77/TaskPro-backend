@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose'
-import { cardSchema } from './Card'
 import { handleSaveError, runValidateAtUpdate } from './hooks'
 
 export const columnSchema = new Schema(
@@ -17,8 +16,7 @@ export const columnSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'user',
       required: true
-    },
-    cards: [cardSchema]
+    }
   },
   { versionKey: false }
 )

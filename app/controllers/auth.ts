@@ -2,7 +2,9 @@ import bcrypt from 'bcrypt'
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
+import { Session } from 'models/Session'
 import { User } from 'models/User'
+import { Types } from 'mongoose'
 
 const { JWT_SECRET } = process.env
 
@@ -14,18 +16,18 @@ class Controller {
       return next(createHttpError(409, 'Email already exist'))
     }
 
-    const { id } = await User.create({
+    const newUser = await User.create({
       ...req.body,
       password: await bcrypt.hash(req.body.password, 10)
     })
 
-    const token = jwt.sign({ id }, JWT_SECRET as jwt.Secret, {
-      expiresIn: '7d'
-    })
+    const newSession = await Session.create({ uid: newUser._id })
 
-    const user = await User.findByIdAndUpdate(id, { token })
+    const payload = { id: newUser._id, sid: newSession._id }
 
-    res.status(201).json({ token: user?.token, user })
+    const tokens = this.getNewTokens(payload)
+
+    res.status(201).json({ newUser, ...tokens })
   }
 
   signin = async (req: Request, res: Response, next: NextFunction) => {
@@ -43,23 +45,67 @@ class Controller {
       return next(createHttpError(401, 'Email or password invalid'))
     }
 
-    const token = jwt.sign({ id: user.id }, JWT_SECRET as jwt.Secret, {
-      expiresIn: '7d'
-    })
+    const newSession = await Session.create({ uid: user.id })
 
-    const activeUser = await User.findByIdAndUpdate(user.id, { token })
+    const payload = { id: user._id, sid: newSession._id }
 
-    res.json({ token: activeUser?.token, user })
+    const tokens = this.getNewTokens(payload)
+
+    res.json({ user, ...tokens })
   }
 
-  current = (req: Request, res: Response) => {
-    res.json({ ...req.user, avatar: req.user.avatar.url })
+  updateTokens = async (req: Request, res: Response, next: NextFunction) => {
+    const { refreshToken: incomingRefreshToken } = req.body
+
+    const { id, sid } = jwt.verify(incomingRefreshToken, JWT_SECRET!) as {
+      id: string
+      sid: string
+    }
+
+    const user = await User.findOne({ _id: id })
+
+    if (!user) {
+      throw next(createHttpError(403))
+    }
+
+    const currentSession = await Session.findOne({ _id: sid })
+
+    if (!currentSession) {
+      throw next(createHttpError(403))
+    }
+
+    await Session.deleteOne({ _id: sid })
+
+    const newSid = await Session.create({ uid: user._id })
+
+    const payload = { id: user._id, sid: newSid._id }
+
+    const tokens = this.getNewTokens(payload)
+
+    res.json({ ...tokens })
   }
 
   logout = async (req: Request, res: Response) => {
-    await User.findByIdAndUpdate(req.user.id, { token: '' })
+    const { _id: ssid } = req.session
+
+    await Session.deleteOne({ _id: ssid })
 
     res.status(204).json({})
+  }
+
+  private getNewTokens = (payload: {
+    id: Types.ObjectId
+    sid: Types.ObjectId
+  }) => {
+    const accessToken = jwt.sign(payload, JWT_SECRET as jwt.Secret, {
+      expiresIn: '1h'
+    })
+
+    const refreshToken = jwt.sign(payload, JWT_SECRET as jwt.Secret, {
+      expiresIn: '20h'
+    })
+
+    return { accessToken, refreshToken }
   }
 }
 

@@ -1,3 +1,4 @@
+import { Session } from '@/models/Session'
 import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
@@ -18,11 +19,15 @@ export const authenticate = async (
   }
 
   try {
-    const { id } = jwt.verify(token, JWT_SECRET as string) as { id: string }
+    const { id, sid } = jwt.verify(token, JWT_SECRET!) as {
+      id: string
+      sid: string
+    }
 
     const user = await User.findById(id)
+    const session = await Session.findById(sid)
 
-    if (!user || !user.token || token !== user.token) {
+    if (!user || !session) {
       return next(createHttpError(401))
     }
 
@@ -33,6 +38,8 @@ export const authenticate = async (
         delete ret._id
       }
     })
+
+    req.session = session._id
 
     next()
   } catch {

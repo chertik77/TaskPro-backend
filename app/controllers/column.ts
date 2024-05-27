@@ -6,6 +6,7 @@ import { Column } from 'models/Column'
 class Controller {
   add = async (req: Request, res: Response, next: NextFunction) => {
     const { id: owner } = req.user
+
     const { boardId: board } = req.params
 
     const isCurrentBoard = await Board.findOne({ _id: board, owner })
@@ -16,60 +17,37 @@ class Controller {
 
     const newColumn = await Column.create({ ...req.body, board, owner })
 
-    await Board.updateOne(
-      { _id: board, owner },
-      { $push: { columns: newColumn } }
-    )
-
     res.status(201).json(newColumn)
   }
 
   updateById = async (req: Request, res: Response, next: NextFunction) => {
     const { id: owner } = req.user
+
     const { columnId: _id } = req.params
 
     const updatedColumn = await Column.findOneAndUpdate(
       { _id, owner },
-      req.body,
-      { fields: '-cards' }
+      req.body
     )
 
     if (!updatedColumn) {
       return next(createHttpError(404, 'Column not found'))
     }
 
-    await Board.updateOne(
-      { owner, 'columns._id': _id },
-      {
-        $set: {
-          'columns.$.title': updatedColumn.title
-        }
-      }
-    )
-
     res.json(updatedColumn)
   }
 
   deleteById = async (req: Request, res: Response, next: NextFunction) => {
     const { id: owner } = req.user
-    const { boardId: board, columnId: _id } = req.params
+    const { columnId: _id } = req.params
 
-    const deletedColumn = await Column.findOneAndDelete({
-      _id,
-      board,
-      owner
-    }).select('-cards')
+    const column = await Column.findById(_id)
 
-    if (!deletedColumn) {
-      return next(createHttpError(404, 'Column not found'))
+    if (!column) {
+      throw next(createHttpError(404, `Column Not Found`))
     }
 
-    await Board.updateOne(
-      { _id: board, owner },
-      {
-        $pull: { columns: { _id, board, owner } }
-      }
-    )
+    const deletedColumn = await Column.findOneAndDelete({ _id, owner })
 
     res.json(deletedColumn)
   }

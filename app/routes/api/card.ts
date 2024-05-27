@@ -12,7 +12,7 @@ const validator = createValidator()
 cardRouter.use(authenticate)
 
 cardRouter.post(
-  '/:columnId/add-card',
+  '/:columnId',
   isValidId,
   validator.body(addNewCardSchema),
   cardController.add
@@ -25,10 +25,10 @@ cardRouter.put(
   cardController.updateById
 )
 
-cardRouter.delete('/:columnId/:cardId', isValidId, cardController.deleteById)
+cardRouter.delete('/:cardId', isValidId, cardController.deleteById)
 
-cardRouter.put(
-  '/:columnId/:cardId/:newColumnId',
+cardRouter.patch(
+  '/:cardId/:newColumnId',
   isValidId,
   cardController.changeCardColumn
 )

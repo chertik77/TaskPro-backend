@@ -15,7 +15,7 @@ boardRouter.get('/', boardController.getAll)
 
 boardRouter.get('/:boardId', isValidId, boardController.getById)
 
-boardRouter.post('/add', validator.body(addNewBoardSchema), boardController.add)
+boardRouter.post('/', validator.body(addNewBoardSchema), boardController.add)
 
 boardRouter.put(
   '/:boardId',

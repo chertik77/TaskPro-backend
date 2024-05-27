@@ -12,15 +12,11 @@ const validator = createValidator()
 columnRouter.use(authenticate)
 
 columnRouter.post(
-  '/:boardId/add',
+  '/:boardId',
   validator.body(addColumnSchema),
   columnController.add
 )
 
 columnRouter.put('/:columnId', isValidId, columnController.updateById)
 
-columnRouter.delete(
-  '/:boardId/:columnId',
-  isValidId,
-  columnController.deleteById
-)
+columnRouter.delete('/:columnId', isValidId, columnController.deleteById)
