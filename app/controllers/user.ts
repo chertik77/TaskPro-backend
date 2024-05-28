@@ -7,15 +7,13 @@ import { User } from 'models/User'
 
 class Controller {
   update = async (req: Request, res: Response, next: NextFunction) => {
-    const { id, email: userEmail, avatar } = req.user
-
+    const { id, avatar } = req.user
     const { email, password } = req.body
 
-    if (email && email !== userEmail) {
-      const isEmailExists = await User.findOne({ email })
-      if (isEmailExists) {
-        return next(createHttpError(409, 'Email already exist'))
-      }
+    const isEmailExists = await User.findOne({ email })
+
+    if (email && isEmailExists) {
+      return next(createHttpError(409, 'Email already exist'))
     }
 
     let newPassword

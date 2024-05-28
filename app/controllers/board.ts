@@ -7,7 +7,7 @@ import { Types } from 'mongoose'
 
 class Controller {
   getAll = async (req: Request, res: Response) => {
-    const boards = await Board.find({ owner: req.user.id })
+    const boards = await Board.find({ owner: req.user.id }).select('-columns')
 
     res.json({ boards })
   }
@@ -36,10 +36,30 @@ class Controller {
           foreignField: 'column',
           as: 'cards'
         }
+      },
+      { $addFields: { id: '$_id' } },
+      { $project: { _id: 0, owner: 0, board: 0 } },
+      {
+        $addFields: {
+          cards: {
+            $map: {
+              input: '$cards',
+              as: 'card',
+              in: {
+                id: '$$card._id',
+                title: '$$card.title',
+                description: '$$card.description',
+                priority: '$$card.priority',
+                deadline: '$$card.deadline',
+                column: '$$card.column'
+              }
+            }
+          }
+        }
       }
     ])
 
-    res.json(result)
+    res.json({ ...board.toJSON(), columns: result })
   }
 
   add = async (req: Request, res: Response) => {

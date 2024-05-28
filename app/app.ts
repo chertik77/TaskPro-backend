@@ -55,6 +55,10 @@ mongoose.set('toJSON', {
       ret.avatar = ret.avatar.url
     }
 
+    if (ret.owner) {
+      delete ret.owner
+    }
+
     delete ret._id
   }
 })

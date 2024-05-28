@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose'
 import { handleSaveError, runValidateAtUpdate } from './hooks'
 
-const priorityList = ['Low', 'Medium', 'High', 'Without priority']
+export const priorityList = ['Low', 'Medium', 'High', 'Without priority']
 
 export const cardSchema = new Schema(
   {

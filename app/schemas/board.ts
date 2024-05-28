@@ -1,13 +1,11 @@
 import Joi from 'joi'
 
-export const addNewBoardSchema = Joi.object({
-  title: Joi.string().min(3).required(),
-  icon: Joi.string().required(),
-  background: Joi.string().required()
-})
-
-export const editBoardSchema = Joi.object({
+const schema = Joi.object({
   title: Joi.string().min(3),
   icon: Joi.string(),
   background: Joi.string()
 })
+
+export const addNewBoardSchema = schema.options({ presence: 'required' })
+
+export const editBoardSchema = schema

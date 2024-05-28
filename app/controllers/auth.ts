@@ -21,9 +21,9 @@ class Controller {
       password: await bcrypt.hash(req.body.password, 10)
     })
 
-    const newSession = await Session.create({ uid: newUser._id })
+    const newSession = await Session.create({ uid: newUser.id })
 
-    const payload = { id: newUser._id, sid: newSession._id }
+    const payload = { id: newUser.id, sid: newSession.id }
 
     const tokens = this.getNewTokens(payload)
 
@@ -47,7 +47,7 @@ class Controller {
 
     const newSession = await Session.create({ uid: user.id })
 
-    const payload = { id: user._id, sid: newSession._id }
+    const payload = { id: user.id, sid: newSession.id }
 
     const tokens = this.getNewTokens(payload)
 
@@ -62,13 +62,13 @@ class Controller {
       sid: string
     }
 
-    const user = await User.findOne({ _id: id })
+    const user = await User.findById(id)
 
     if (!user) {
       throw next(createHttpError(403))
     }
 
-    const currentSession = await Session.findOne({ _id: sid })
+    const currentSession = await Session.findById(sid)
 
     if (!currentSession) {
       throw next(createHttpError(403))
@@ -76,9 +76,9 @@ class Controller {
 
     await Session.deleteOne({ _id: sid })
 
-    const newSid = await Session.create({ uid: user._id })
+    const newSid = await Session.create({ uid: user.id })
 
-    const payload = { id: user._id, sid: newSid._id }
+    const payload = { id: user.id, sid: newSid.id }
 
     const tokens = this.getNewTokens(payload)
 
@@ -86,9 +86,7 @@ class Controller {
   }
 
   logout = async (req: Request, res: Response) => {
-    const { _id: ssid } = req.session
-
-    await Session.deleteOne({ _id: ssid })
+    await Session.findByIdAndDelete(req.session._id)
 
     res.status(204).json({})
   }
