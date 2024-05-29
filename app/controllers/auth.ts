@@ -21,9 +21,9 @@ class Controller {
       password: await bcrypt.hash(req.body.password, 10)
     })
 
-    const newSession = await Session.create({ uid: newUser.id })
+    const newSession = await Session.create({ uid: newUser._id })
 
-    const payload = { id: newUser.id, sid: newSession.id }
+    const payload = { id: newUser._id, sid: newSession._id }
 
     const tokens = this.getNewTokens(payload)
 
@@ -45,9 +45,9 @@ class Controller {
       return next(createHttpError(401, 'Email or password invalid'))
     }
 
-    const newSession = await Session.create({ uid: user.id })
+    const newSession = await Session.create({ uid: user._id })
 
-    const payload = { id: user.id, sid: newSession.id }
+    const payload = { id: user._id, sid: newSession._id }
 
     const tokens = this.getNewTokens(payload)
 
@@ -65,13 +65,13 @@ class Controller {
     const user = await User.findById(id)
 
     if (!user) {
-      throw next(createHttpError(403))
+      return next(createHttpError(403))
     }
 
-    const currentSession = await Session.findById(sid)
+    const currentSession = await Session.findOne({ _id: sid })
 
     if (!currentSession) {
-      throw next(createHttpError(403))
+      return next(createHttpError(403))
     }
 
     await Session.deleteOne({ _id: sid })

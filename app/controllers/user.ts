@@ -7,12 +7,12 @@ import { User } from 'models/User'
 
 class Controller {
   update = async (req: Request, res: Response, next: NextFunction) => {
-    const { id, avatar } = req.user
+    const { id, avatar, email: userEmail } = req.user
     const { email, password } = req.body
 
     const isEmailExists = await User.findOne({ email })
 
-    if (email && isEmailExists) {
+    if (email && email !== userEmail && isEmailExists) {
       return next(createHttpError(409, 'Email already exist'))
     }
 

@@ -44,7 +44,7 @@ class Controller {
     const column = await Column.findById(_id)
 
     if (!column) {
-      throw next(createHttpError(404, `Column Not Found`))
+      return next(createHttpError(404, `Column Not Found`))
     }
 
     const deletedColumn = await Column.findOneAndDelete({ _id, owner })
