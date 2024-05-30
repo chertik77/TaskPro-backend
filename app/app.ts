@@ -23,7 +23,7 @@ export type ResponseError = Error & {
 export const app = express()
 
 app.use(logger('dev'))
-app.use(cors())
+app.use(cors({ origin: 'https://task-pro-frontend-theta.vercel.app' }))
 app.use(express.json())
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
