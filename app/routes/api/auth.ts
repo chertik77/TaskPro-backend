@@ -20,4 +20,4 @@ authRouter.post(
   AuthController.updateTokens
 )
 
-authRouter.post('/google', AuthController.signupByGoogle)
+// authRouter.post('/google', AuthController.signupByGoogle)
