@@ -19,3 +19,5 @@ authRouter.post(
   validator.body(refreshTokenSchema),
   AuthController.updateTokens
 )
+
+authRouter.post('/google', AuthController.signupByGoogle)

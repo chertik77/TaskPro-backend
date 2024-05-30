@@ -1,5 +1,7 @@
+import { getUserData } from '@/utils/getGoogleUserData'
 import bcrypt from 'bcrypt'
 import type { NextFunction, Request, Response } from 'express'
+import { OAuth2Client } from 'google-auth-library'
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
 import { Session } from 'models/Session'
@@ -52,6 +54,45 @@ class Controller {
     const tokens = this.getNewTokens(payload)
 
     res.json({ user, ...tokens })
+  }
+
+  signupByGoogle = async (req: Request, res: Response) => {
+    const oAuth2Client = new OAuth2Client(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      'postmessage'
+    )
+
+    const { tokens } = await oAuth2Client.getToken(req.body.code)
+
+    await oAuth2Client.setCredentials(tokens)
+
+    const userData = await getUserData(oAuth2Client.credentials.access_token!)
+
+    const user = await User.findOne({ email: userData.email })
+
+    if (!user) {
+      const hashPassword = await bcrypt.hash(userData.sub, 10)
+
+      const newUser = await User.create({
+        name: userData.name,
+        email: userData.email,
+        password: hashPassword,
+        avatar: { url: userData.picture }
+      })
+
+      const newSession = await Session.create({ uid: newUser._id })
+
+      const tokens = this.getNewTokens({ id: newUser._id, sid: newSession._id })
+
+      res.json({ user: newUser, ...tokens })
+    } else {
+      const newSession = await Session.create({ uid: user._id })
+
+      const tokens = this.getNewTokens({ id: user._id, sid: newSession._id })
+
+      res.json({ user, ...tokens })
+    }
   }
 
   updateTokens = async (req: Request, res: Response, next: NextFunction) => {
