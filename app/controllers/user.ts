@@ -124,7 +124,7 @@ class Controller {
         case 'light':
           editedUser = await User.findByIdAndUpdate(id, {
             ...req.body,
-            avavar: {
+            avatar: {
               url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png',
               publicId: ''
             }
@@ -134,7 +134,7 @@ class Controller {
         case 'dark':
           editedUser = await User.findByIdAndUpdate(id, {
             ...req.body,
-            avavar: {
+            avatar: {
               url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_dark.png',
               publicId: ''
             }

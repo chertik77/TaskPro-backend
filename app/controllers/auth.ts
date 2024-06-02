@@ -29,7 +29,7 @@ class Controller {
 
     const tokens = this.getNewTokens(payload)
 
-    res.status(201).json({ newUser, ...tokens })
+    res.status(201).json({ user: newUser, ...tokens })
   }
 
   signin = async (req: Request, res: Response, next: NextFunction) => {
