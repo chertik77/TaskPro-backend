@@ -125,8 +125,11 @@ class Controller {
       const tokens = this.getNewTokens(payload)
 
       res.json({ ...tokens })
-    } catch (e) {
-      console.log(e)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      if (e.message === 'jwt expired') {
+        res.status(403).json({ error: 'jwt expired' })
+      }
     }
   }
 
