@@ -148,7 +148,7 @@ class Controller {
     })
 
     const refreshToken = jwt.sign(payload, JWT_SECRET as jwt.Secret, {
-      expiresIn: '20h'
+      expiresIn: '7d'
     })
 
     return { accessToken, refreshToken }
