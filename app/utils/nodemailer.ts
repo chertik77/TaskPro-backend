@@ -1,3 +1,6 @@
+import dotenv from 'dotenv'
+dotenv.config()
+
 import nodemailer from 'nodemailer'
 
 const { SEND_EMAIL_FROM, SENDER_PASSWORD } = process.env
