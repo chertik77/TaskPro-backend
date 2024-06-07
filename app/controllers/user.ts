@@ -107,7 +107,8 @@ class Controller {
       await transport.sendMail(emailBody)
 
       res.json({ message: 'Email sent' })
-    } catch {
+    } catch (e) {
+      console.log(e)
       return next(createHttpError(500, 'Sending email error'))
     }
   }
