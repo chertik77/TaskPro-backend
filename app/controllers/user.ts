@@ -167,6 +167,14 @@ class Controller {
 
     res.json(editedUser)
   }
+
+  me = async (req: Request, res: Response) => {
+    const { id } = req.user
+
+    const user = await User.findById(id)
+
+    res.json(user)
+  }
 }
 
 export const UserController = new Controller()

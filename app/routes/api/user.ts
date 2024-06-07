@@ -25,3 +25,5 @@ userRouter.put(
   validator.body(changeThemeSchema),
   UserController.changeTheme
 )
+
+userRouter.get('/me', UserController.me)
