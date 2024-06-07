@@ -13,6 +13,6 @@ mongoose
     process.exit(1)
   })
 
-setTimeout(() => {
+setInterval(() => {
   fetch('http://localhost:7000').then(() => console.log('Server online'))
-}, 5000)
+}, 300000)
