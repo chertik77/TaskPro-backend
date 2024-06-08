@@ -95,7 +95,6 @@ class Controller {
     const emailBody = {
       from: process.env.SEND_EMAIL_FROM,
       to: process.env.SEND_EMAIL_TO,
-      credentials: '',
       subject: 'Need help',
       html: `
       <div>
