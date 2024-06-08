@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer'
 const { SEND_EMAIL_FROM, SENDER_PASSWORD } = process.env
 
 const nodemailerConfig = {
-  host: 'smtp.ukr.net',
+  host: 'smtp.meta.ua',
   port: 465,
   secure: true,
   auth: {
