@@ -15,6 +15,6 @@ mongoose
     process.exit(1)
   })
 
-setTimeout(() => {
-  fetch('http://localhost:7000').then(() => console.log("I'm alive"))
-}, 5 * 60 * 1000)
+// setTimeout(() => {
+//   fetch('http://localhost:7000').then(() => console.log("I'm alive"))
+// }, 5 * 60 * 1000)
