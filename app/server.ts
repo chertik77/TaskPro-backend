@@ -1,10 +1,12 @@
 import mongoose from 'mongoose'
 import { app } from './app'
 
+const port = Number(process.env.PORT) || 3000
+
 mongoose
   .connect(process.env.DB_HOST!)
   .then(() => {
-    app.listen(7000, () =>
+    app.listen(port, '0.0.0.0', () =>
       console.log(`Database connected. Server listening on port 7000`)
     )
   })
