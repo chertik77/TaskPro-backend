@@ -1,12 +1,12 @@
 import mongoose from 'mongoose'
-import '../keep_alive'
 import { app } from './app'
+
 const port = Number(process.env.PORT) || 3000
 
 mongoose
   .connect(process.env.DB_HOST!)
   .then(() => {
-    app.listen(port, '0.0.0.0', () =>
+    app.listen(port, () =>
       console.log(`Database connected. Server listening on port 7000`)
     )
   })
@@ -15,6 +15,6 @@ mongoose
     process.exit(1)
   })
 
-setInterval(() => {
-  fetch('http://localhost:7000').then(() => console.log('Server online'))
-}, 300000)
+setTimeout(() => {
+  fetch('http://localhost:7000').then(() => console.log("I'm alive"))
+}, 5 * 60 * 1000)
