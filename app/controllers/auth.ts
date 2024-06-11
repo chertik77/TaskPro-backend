@@ -1,9 +1,8 @@
-import { getUserData } from '@/utils/getGoogleUserData'
 import bcrypt from 'bcrypt'
 import type { NextFunction, Request, Response } from 'express'
-import { OAuth2Client } from 'google-auth-library'
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
+import { jwtDecode } from 'jwt-decode'
 import { Session } from 'models/Session'
 import { User } from 'models/User'
 import { Types } from 'mongoose'
@@ -57,28 +56,23 @@ class Controller {
   }
 
   signupByGoogle = async (req: Request, res: Response) => {
-    const oAuth2Client = new OAuth2Client(
-      process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET,
-      'postmessage'
-    )
+    const decoded = jwtDecode<{
+      name: string
+      email: string
+      sub: string
+      picture: string
+    }>(req.body.credential)
 
-    const { tokens } = await oAuth2Client.getToken(req.body.code)
-
-    await oAuth2Client.setCredentials(tokens)
-
-    const userData = await getUserData(oAuth2Client.credentials.access_token!)
-
-    const user = await User.findOne({ email: userData.email })
+    const user = await User.findOne({ email: decoded.email })
 
     if (!user) {
-      const hashPassword = await bcrypt.hash(userData.sub, 10)
+      const hashPassword = await bcrypt.hash(decoded.sub, 10)
 
       const newUser = await User.create({
-        name: userData.name,
-        email: userData.email,
+        name: decoded.name,
+        email: decoded.email,
         password: hashPassword,
-        avatar: { url: userData.picture }
+        avatar: { url: decoded.picture, publicId: 'google-picture' }
       })
 
       const newSession = await Session.create({ uid: newUser._id })
