@@ -106,12 +106,14 @@ class Controller {
 
       const user = await User.findById(id)
 
+      console.log(user)
       if (!user) {
         return next(createHttpError(403))
       }
 
       const currentSession = await Session.findOne({ _id: sid })
 
+      console.log(currentSession)
       if (!currentSession) {
         return next(createHttpError(403))
       }
@@ -127,6 +129,7 @@ class Controller {
       res.json({ ...tokens })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
+      console.log(e)
       if (e.message === 'jwt expired') {
         res.status(403).json({ error: 'jwt expired' })
       }
