@@ -77,6 +77,8 @@ class Controller {
 
       const newSession = await Session.create({ uid: newUser._id })
 
+      await newUser.save()
+
       const tokens = this.getNewTokens({ id: newUser._id, sid: newSession._id })
 
       res.json({ user: newUser, ...tokens })
@@ -100,7 +102,6 @@ class Controller {
 
       const user = await User.findById(id)
 
-      console.log(user)
       if (!user) {
         return next(createHttpError(403))
       }
@@ -114,9 +115,9 @@ class Controller {
 
       await Session.deleteOne({ _id: sid })
 
-      const newSid = await Session.create({ uid: user.id })
+      const newSid = await Session.create({ uid: user._id })
 
-      const payload = { id: user.id, sid: newSid.id }
+      const payload = { id: user._id, sid: newSid._id }
 
       const tokens = this.getNewTokens(payload)
 
