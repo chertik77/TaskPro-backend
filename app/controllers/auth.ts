@@ -108,7 +108,6 @@ class Controller {
 
       const currentSession = await Session.findOne({ _id: sid })
 
-      console.log(currentSession)
       if (!currentSession) {
         return next(createHttpError(403))
       }
