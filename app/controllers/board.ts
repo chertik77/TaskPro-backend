@@ -9,7 +9,7 @@ class Controller {
   getAll = async (req: Request, res: Response) => {
     const boards = await Board.find({ owner: req.user.id }).select('-columns')
 
-    res.json({ boards })
+    res.json(boards)
   }
 
   getById = async (req: Request, res: Response, next: NextFunction) => {
