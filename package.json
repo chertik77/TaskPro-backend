@@ -8,8 +8,7 @@
   "scripts": {
     "start": "ts-node -r tsconfig-paths/register app/server.ts",
     "dev": "ts-node-dev -r tsconfig-paths/register --files --quiet app/server.ts",
-    "lint": "eslint app/**/*.ts",
-    "lint:fix": "eslint --fix app/**/*.ts",
+    "lint": "eslint --fix app/**/*.ts",
     "prepare": "husky"
   },
   "dependencies": {
@@ -18,20 +17,13 @@
     "cors": "2.8.5",
     "dotenv": "^16.3.1",
     "express": "4.17.1",
-    "express-joi-validation": "^5.0.1",
-    "express-validator": "^7.1.0",
-    "express-zod-safe": "^1.1.1",
     "http-errors": "^2.0.0",
-    "joi": "^17.10.1",
-    "joi-extract-type": "^15.0.8",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.0",
     "morgan": "1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.9",
-    "normalize-mongoose": "^1.0.0",
     "swagger-ui-express": "^5.0.0",
-    "types-joi": "^2.1.0",
     "validator": "^13.11.0",
     "zod": "^3.23.8",
     "zod-express-middleware": "^1.4.0"
@@ -53,7 +45,6 @@
     "@typescript-eslint/eslint-plugin": "^6.20.0",
     "@typescript-eslint/parser": "^6.20.0",
     "eslint": "^8.56.0",
-    "eslint-plugin-import": "2.25.3",
     "husky": "^9.0.6",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
