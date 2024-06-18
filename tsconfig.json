@@ -1,8 +1,5 @@
 {
   "compilerOptions": {
-    "paths": {
-      "@/*": ["*"]
-    },
     "target": "es2016",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",

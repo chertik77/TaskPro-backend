@@ -1,8 +1,9 @@
-import { Session } from '@/models/Session'
 import type { NextFunction, Request, Response } from 'express'
+
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
-import { User } from 'models/User'
+
+import { Session, User } from 'models'
 
 const { JWT_SECRET } = process.env
 

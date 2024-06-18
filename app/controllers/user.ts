@@ -1,11 +1,14 @@
-import { NeedHelpSchema } from '@/schemas/user'
-import cloudinary from '@/utils/cloudinary'
-import { transport } from '@/utils/nodemailer'
-import bcrypt from 'bcrypt'
 import type { NextFunction, Request, Response } from 'express'
+import type { TypedRequestBody } from 'zod-express-middleware'
+
+import bcrypt from 'bcrypt'
 import createHttpError from 'http-errors'
+
 import { User } from 'models/User'
-import { TypedRequestBody } from 'zod-express-middleware'
+
+import { NeedHelpSchema } from 'schemas/user'
+import cloudinary from 'utils/cloudinary'
+import { transport } from 'utils/nodemailer'
 
 export const userController = {
   update: async (req: Request, res: Response, next: NextFunction) => {

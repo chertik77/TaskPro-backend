@@ -1,8 +1,11 @@
-import { cardController } from '@/controllers/card'
-import { AddCardSchema, EditCardSchema } from '@/schemas/card'
 import { Router } from 'express'
-import { authenticate } from 'middlewares/authenticate'
 import { validateRequestBody } from 'zod-express-middleware'
+
+import { cardController } from 'controllers'
+
+import { authenticate } from 'middlewares'
+
+import { AddCardSchema, EditCardSchema } from 'schemas/card'
 
 export const cardRouter = Router()
 

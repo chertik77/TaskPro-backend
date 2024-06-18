@@ -1,8 +1,11 @@
-import { boardController } from '@/controllers/board'
 import { Router } from 'express'
-import { authenticate } from 'middlewares/authenticate'
-import { AddBoardSchema, EditBoardSchema } from 'schemas/board'
 import { validateRequestBody } from 'zod-express-middleware'
+
+import { boardController } from 'controllers'
+
+import { authenticate } from 'middlewares'
+
+import { AddBoardSchema, EditBoardSchema } from 'schemas/board'
 
 export const boardRouter = Router()
 

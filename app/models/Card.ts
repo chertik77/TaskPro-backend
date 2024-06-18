@@ -1,5 +1,6 @@
-import { priorities } from '@/constants/priorities'
-import { Schema, model } from 'mongoose'
+import { model, Schema } from 'mongoose'
+
+import { priorities } from 'constants/priorities'
 
 export const cardSchema = new Schema(
   {

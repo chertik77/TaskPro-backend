@@ -1,8 +1,11 @@
-import { columnController } from '@/controllers/column'
-import { AddColumnSchema } from '@/schemas/column'
 import { Router } from 'express'
-import { authenticate } from 'middlewares/authenticate'
 import { validateRequestBody } from 'zod-express-middleware'
+
+import { columnController } from 'controllers'
+
+import { authenticate } from 'middlewares'
+
+import { AddColumnSchema } from 'schemas/column'
 
 export const columnRouter = Router()
 

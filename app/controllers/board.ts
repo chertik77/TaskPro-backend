@@ -1,9 +1,11 @@
-import { Board } from '@/models/Board'
-import { Column } from '@/models/Column'
-import { getBgImage } from '@/utils/bg-image'
 import type { NextFunction, Request, Response } from 'express'
+
 import createHttpError from 'http-errors'
 import { Types } from 'mongoose'
+
+import { Board, Column } from 'models'
+
+import { getBgImage } from 'utils/bg-image'
 
 export const boardController = {
   getAll: async (req: Request, res: Response) => {

@@ -8,5 +8,24 @@
   "bracketSpacing": true,
   "bracketSameLine": true,
   "arrowParens": "avoid",
-  "proseWrap": "preserve"
+  "proseWrap": "preserve",
+  "importOrderTypeScriptVersion": "5.0.0",
+  "importOrder": [
+    "<TYPES>",
+    "<TYPES>^[.]",
+    "",
+    "^(express)(/.*)?$",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "^controllers(/.*)?$",
+    "",
+    "^models(/.*)?$",
+    "",
+    "^middlewares(/.*)?$",
+    "",
+    "^(utils|constants|schemas)(/.*)?$",
+    "",
+    "^[.]"
+  ],
+  "plugins": ["@ianvs/prettier-plugin-sort-imports"]
 }

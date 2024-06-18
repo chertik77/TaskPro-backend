@@ -1,20 +1,22 @@
+import type { NextFunction, Request, Response } from 'express'
+
 import cors from 'cors'
+
 import 'dotenv/config'
-import express, {
-  type NextFunction,
-  type Request,
-  type Response
-} from 'express'
-import { createValidator } from 'express-joi-validation'
+
+import express from 'express'
 import mongoose from 'mongoose'
 import logger from 'morgan'
 import swaggerUi from 'swagger-ui-express'
+
 import swaggerDocument from '../swagger.json'
-import { authRouter } from './routes/api/auth'
-import { boardRouter } from './routes/api/board'
-import { cardRouter } from './routes/api/card'
-import { columnRouter } from './routes/api/column'
-import { userRouter } from './routes/api/user'
+import {
+  authRouter,
+  boardRouter,
+  cardRouter,
+  columnRouter,
+  userRouter
+} from './routes/api'
 
 export type ResponseError = Error & {
   status?: number
@@ -22,7 +24,6 @@ export type ResponseError = Error & {
 }
 
 export const app = express()
-export const validator = createValidator()
 
 app.use(logger('dev'))
 app.use(cors({ origin: process.env.ALLOWED_ORIGINS }))

@@ -1,6 +1,7 @@
-import { themes } from '@/constants/themes'
-import { Schema, model } from 'mongoose'
+import { model, Schema } from 'mongoose'
 import isEmail from 'validator/lib/isEmail'
+
+import { themes } from 'constants/themes'
 
 const userSchema = new Schema(
   {

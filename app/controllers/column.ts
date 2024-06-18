@@ -1,7 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
+
 import createHttpError from 'http-errors'
-import { Board } from 'models/Board'
-import { Column } from 'models/Column'
+
+import { Board, Column } from 'models'
 
 export const columnController = {
   add: async (req: Request, res: Response, next: NextFunction) => {

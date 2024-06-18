@@ -1,9 +1,11 @@
-import { userController } from '@/controllers/user'
-import { upload } from '@/middlewares/multer'
 import { Router } from 'express'
-import { authenticate } from 'middlewares/authenticate'
-import { EditUserSchema, NeedHelpSchema, ThemeSchema } from 'schemas/user'
 import { validateRequestBody } from 'zod-express-middleware'
+
+import { userController } from 'controllers'
+
+import { authenticate, upload } from 'middlewares'
+
+import { EditUserSchema, NeedHelpSchema, ThemeSchema } from 'schemas/user'
 
 export const userRouter = Router()
 

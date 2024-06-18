@@ -1,13 +1,16 @@
-import { authController } from '@/controllers/auth'
 import { Router } from 'express'
+import { validateRequestBody } from 'zod-express-middleware'
+
+import { authController } from 'controllers'
+
 import { authenticate } from 'middlewares/authenticate'
+
 import {
   GoogleAuthSchema,
   RefreshTokenSchema,
   SigninSchema,
   SignupSchema
 } from 'schemas/user'
-import { validateRequestBody } from 'zod-express-middleware'
 
 export const authRouter = Router()
 

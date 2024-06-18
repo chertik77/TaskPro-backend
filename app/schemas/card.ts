@@ -1,5 +1,6 @@
-import { priorities } from '@/constants/priorities'
 import * as z from 'zod'
+
+import { priorities } from 'constants/priorities'
 
 export const AddCardSchema = z.object({
   title: z.string().min(3),

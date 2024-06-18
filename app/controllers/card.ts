@@ -1,6 +1,8 @@
-import { Card } from '@/models/Card'
 import type { NextFunction, Request, Response } from 'express'
+
 import createHttpError from 'http-errors'
+
+import { Card } from 'models/Card'
 import { Column } from 'models/Column'
 
 export const cardController = {

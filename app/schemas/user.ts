@@ -1,5 +1,6 @@
-import { themes } from '@/constants/themes'
 import * as z from 'zod'
+
+import { themes } from 'constants/themes'
 
 export const SigninSchema = z.object({
   email: z.string().email(),

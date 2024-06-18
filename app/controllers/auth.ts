@@ -1,20 +1,20 @@
-import bcrypt from 'bcrypt'
 import type { NextFunction, Request, Response } from 'express'
+import type { TypedRequestBody } from 'zod-express-middleware'
+
+import bcrypt from 'bcrypt'
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
 import { jwtDecode } from 'jwt-decode'
-import { Session } from 'models/Session'
-import { User } from 'models/User'
+import { Types } from 'mongoose'
+
+import { Session, User } from 'models'
 
 import {
   GoogleAuthSchema,
   RefreshTokenSchema,
   SigninSchema,
   SignupSchema
-} from '@/schemas/user'
-
-import { Types } from 'mongoose'
-import { TypedRequestBody } from 'zod-express-middleware'
+} from 'schemas/user'
 
 const { JWT_SECRET } = process.env
 
