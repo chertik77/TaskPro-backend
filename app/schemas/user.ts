@@ -1,49 +1,24 @@
-import Joi from 'joi'
-import isEmail from 'validator/lib/isEmail'
+import { themes } from '@/constants/themes'
+import * as z from 'zod'
 
-export const signinSchema = Joi.object({
-  email: Joi.string()
-    .required()
-    .custom((value, helper) => {
-      if (!isEmail(value)) {
-        return helper.message({ custom: 'email is invalid' })
-      }
-      return value
-    }),
-  password: Joi.string().min(8).required().max(64)
+export const SigninSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8).max(64)
 })
 
-export const signupSchema = signinSchema.append({
-  name: Joi.string().required().min(2)
+export const SignupSchema = SigninSchema.extend({
+  name: z.string().min(2)
 })
 
-export const editUserSchema = Joi.object({
-  name: Joi.string().min(2),
-  email: Joi.string().custom((value, helper) => {
-    if (!isEmail(value)) {
-      return helper.message({ custom: 'email is invalid' })
-    }
-    return value
-  }),
-  password: Joi.string().min(8)
+export const EditUserSchema = SignupSchema.partial()
+
+export const NeedHelpSchema = z.object({
+  email: z.string().email(),
+  comment: z.string().min(5)
 })
 
-export const needHelpSchema = Joi.object({
-  email: Joi.string()
-    .custom((value, helper) => {
-      if (!isEmail(value)) {
-        return helper.message({ custom: 'email is invalid' })
-      }
-      return value
-    })
-    .required(),
-  comment: Joi.string().min(5).required()
-})
+export const ThemeSchema = z.object({ theme: z.enum(themes) })
 
-export const changeThemeSchema = Joi.object({
-  theme: Joi.string().valid('light', 'dark', 'violet')
-})
+export const RefreshTokenSchema = z.object({ refreshToken: z.string() })
 
-export const refreshTokenSchema = Joi.object({
-  refreshToken: Joi.string().required()
-})
+export const GoogleAuthSchema = z.object({ credential: z.string() })

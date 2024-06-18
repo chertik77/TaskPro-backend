@@ -1,7 +1,5 @@
-import Joi from 'joi'
+import * as z from 'zod'
 
-const schema = Joi.object({ title: Joi.string().min(3) })
+export const AddColumnSchema = z.object({ title: z.string().min(3) })
 
-export const addColumnSchema = schema.options({ presence: 'required' })
-
-export const editColumnSchema = schema
+export const EditColumnSchema = AddColumnSchema.partial()

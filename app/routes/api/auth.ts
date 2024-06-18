@@ -1,23 +1,38 @@
-import { AuthController } from '@/controllers/auth'
+import { authController } from '@/controllers/auth'
 import { Router } from 'express'
-import { createValidator } from 'express-joi-validation'
 import { authenticate } from 'middlewares/authenticate'
-import { refreshTokenSchema, signinSchema, signupSchema } from 'schemas/user'
-
-const validator = createValidator()
+import {
+  GoogleAuthSchema,
+  RefreshTokenSchema,
+  SigninSchema,
+  SignupSchema
+} from 'schemas/user'
+import { validateRequestBody } from 'zod-express-middleware'
 
 export const authRouter = Router()
 
-authRouter.post('/signup', validator.body(signupSchema), AuthController.signup)
+authRouter.post(
+  '/signup',
+  validateRequestBody(SignupSchema),
+  authController.signup
+)
 
-authRouter.post('/signin', validator.body(signinSchema), AuthController.signin)
+authRouter.post(
+  '/signin',
+  validateRequestBody(SigninSchema),
+  authController.signin
+)
 
-authRouter.post('/logout', authenticate, AuthController.logout)
+authRouter.post(
+  '/google',
+  validateRequestBody(GoogleAuthSchema),
+  authController.signupByGoogle
+)
 
 authRouter.post(
   '/tokens',
-  validator.body(refreshTokenSchema),
-  AuthController.updateTokens
+  validateRequestBody(RefreshTokenSchema),
+  authController.updateTokens
 )
 
-authRouter.post('/google', AuthController.signupByGoogle)
+authRouter.post('/logout', authenticate, authController.logout)

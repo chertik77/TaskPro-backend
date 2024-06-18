@@ -1,11 +1,9 @@
-import Joi from 'joi'
+import * as z from 'zod'
 
-const schema = Joi.object({
-  title: Joi.string().min(3),
-  icon: Joi.string(),
-  background: Joi.string()
+export const AddBoardSchema = z.object({
+  title: z.string().min(3),
+  icon: z.string(),
+  background: z.string()
 })
 
-export const addNewBoardSchema = schema.options({ presence: 'required' })
-
-export const editBoardSchema = schema
+export const EditBoardSchema = AddBoardSchema.partial()

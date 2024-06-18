@@ -1,13 +1,11 @@
-import { priorityList } from '@/models/Card'
-import Joi from 'joi'
+import { priorities } from '@/constants/priorities'
+import * as z from 'zod'
 
-const schema = Joi.object({
-  title: Joi.string().min(3),
-  description: Joi.string().min(3),
-  priority: Joi.string().valid(...priorityList),
-  deadline: Joi.date()
+export const AddCardSchema = z.object({
+  title: z.string().min(3),
+  description: z.string().min(3),
+  priority: z.enum(priorities),
+  deadline: z.date()
 })
 
-export const addNewCardSchema = schema.options({ presence: 'required' })
-
-export const editCardSchema = schema
+export const EditCardSchema = AddCardSchema.partial()

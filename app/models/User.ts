@@ -49,4 +49,6 @@ userSchema.pre('findOneAndUpdate', runValidateAtUpdate)
 
 userSchema.post('findOneAndUpdate', handleSaveError)
 
-export const User = model('user', userSchema)
+const UserModel = model('user', userSchema)
+
+export class User extends UserModel {}

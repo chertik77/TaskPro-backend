@@ -5,6 +5,7 @@ import express, {
   type Request,
   type Response
 } from 'express'
+import { createValidator } from 'express-joi-validation'
 import mongoose from 'mongoose'
 import logger from 'morgan'
 import swaggerUi from 'swagger-ui-express'
@@ -21,6 +22,7 @@ export type ResponseError = Error & {
 }
 
 export const app = express()
+export const validator = createValidator()
 
 app.use(logger('dev'))
 app.use(cors())
@@ -38,10 +40,6 @@ app.use((_, res) => {
 })
 
 app.use((err: ResponseError, _: Request, res: Response, __: NextFunction) => {
-  if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-    err.status = 400
-  }
-
   const { status = 500, message = 'Server error' } = err
   res.status(status).json({ message })
 })

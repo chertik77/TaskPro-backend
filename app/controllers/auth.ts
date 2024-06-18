@@ -7,40 +7,47 @@ import { Session } from 'models/Session'
 import { User } from 'models/User'
 import { Types } from 'mongoose'
 
+import { SignupSchema } from '@/schemas/user'
+
+import { TypedRequestBody } from 'zod-express-middleware'
+
 const { JWT_SECRET } = process.env
 
 class Controller {
-  signup = async (req: Request, res: Response, next: NextFunction) => {
+  signup = async (
+    req: TypedRequestBody<typeof SignupSchema>,
+    res: Response,
+    next: NextFunction
+  ) => {
     const isUserExists = await User.findOne({ email: req.body.email })
 
     if (isUserExists) {
       return next(createHttpError(409, 'Email already exist'))
     }
 
-    const newUser = await User.create({
+    const user = await User.create({
       ...req.body,
       password: await bcrypt.hash(req.body.password, 10)
     })
 
-    const newSession = await Session.create({ uid: newUser._id })
+    const newSession = await Session.create({ uid: user._id })
 
-    const payload = { id: newUser._id, sid: newSession._id }
+    const tokens = this.getNewTokens({ id: user._id, sid: newSession._id })
 
-    const tokens = this.getNewTokens(payload)
-
-    res.status(201).json({ user: newUser, ...tokens })
+    res.status(201).json({ user, ...tokens })
   }
 
   signin = async (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = req.body
-
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email: req.body?.email })
 
     if (!user) {
       return next(createHttpError(401, 'Email or password invalid'))
     }
 
-    const isPasswordMatch = await bcrypt.compare(password, user.password)
+    const isPasswordMatch = await bcrypt.compare(
+      req.body?.password as string,
+      user.password
+    )
 
     if (!isPasswordMatch) {
       return next(createHttpError(401, 'Email or password invalid'))
@@ -152,4 +159,4 @@ class Controller {
   }
 }
 
-export const AuthController = new Controller()
+export const authController = new Controller()

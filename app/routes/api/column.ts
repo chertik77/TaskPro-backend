@@ -1,9 +1,10 @@
 import { columnController } from '@/controllers/column'
-import { addColumnSchema } from '@/schemas/column'
+import { AddColumnSchema } from '@/schemas/column'
 import { Router } from 'express'
 import { createValidator } from 'express-joi-validation'
 import { authenticate } from 'middlewares/authenticate'
 import { isValidId } from 'middlewares/isValidId'
+import { validateRequestBody } from 'zod-express-middleware'
 
 export const columnRouter = Router()
 
@@ -13,7 +14,7 @@ columnRouter.use(authenticate)
 
 columnRouter.post(
   '/:boardId',
-  validator.body(addColumnSchema),
+  validateRequestBody(AddColumnSchema),
   columnController.add
 )
 

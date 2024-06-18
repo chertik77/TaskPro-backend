@@ -1,27 +1,25 @@
 import { cardController } from '@/controllers/card'
-import { addNewCardSchema, editCardSchema } from '@/schemas/card'
+import { AddCardSchema, EditCardSchema } from '@/schemas/card'
 import { Router } from 'express'
-import { createValidator } from 'express-joi-validation'
 import { authenticate } from 'middlewares/authenticate'
 import { isValidId } from 'middlewares/isValidId'
+import { validateRequestBody } from 'zod-express-middleware'
 
 export const cardRouter = Router()
-
-const validator = createValidator()
 
 cardRouter.use(authenticate)
 
 cardRouter.post(
   '/:columnId',
   isValidId,
-  validator.body(addNewCardSchema),
+  validateRequestBody(AddCardSchema),
   cardController.add
 )
 
 cardRouter.put(
   '/:cardId',
   isValidId,
-  validator.body(editCardSchema),
+  validateRequestBody(EditCardSchema),
   cardController.updateById
 )
 

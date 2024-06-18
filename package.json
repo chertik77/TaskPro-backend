@@ -7,7 +7,7 @@
   },
   "scripts": {
     "start": "ts-node -r tsconfig-paths/register app/server.ts",
-    "dev": "ts-node-dev -r tsconfig-paths/register --files app/server.ts",
+    "dev": "ts-node-dev -r tsconfig-paths/register --files --quiet app/server.ts",
     "lint": "eslint app/**/*.ts",
     "lint:fix": "eslint --fix app/**/*.ts",
     "prepare": "husky"
@@ -19,8 +19,11 @@
     "dotenv": "^16.3.1",
     "express": "4.17.1",
     "express-joi-validation": "^5.0.1",
+    "express-validator": "^7.1.0",
+    "express-zod-safe": "^1.1.1",
     "http-errors": "^2.0.0",
     "joi": "^17.10.1",
+    "joi-extract-type": "^15.0.8",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.0",
     "morgan": "1.10.0",
@@ -28,7 +31,10 @@
     "nodemailer": "^6.9.9",
     "normalize-mongoose": "^1.0.0",
     "swagger-ui-express": "^5.0.0",
-    "validator": "^13.11.0"
+    "types-joi": "^2.1.0",
+    "validator": "^13.11.0",
+    "zod": "^3.23.8",
+    "zod-express-middleware": "^1.4.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.6.0",
