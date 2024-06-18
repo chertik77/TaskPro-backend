@@ -46,8 +46,10 @@
     "@typescript-eslint/parser": "^6.20.0",
     "eslint": "^8.56.0",
     "husky": "^9.0.6",
+    "lint-staged": "^15.2.7",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsc-files": "^1.1.4",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5"
   }
