@@ -1,12 +1,5 @@
-import { handleSaveError } from './hooks'
+import { Schema, Types, model } from 'mongoose'
 
-import { Schema, model } from 'mongoose'
-
-const sessionSchema = new Schema(
-  { uid: Schema.Types.ObjectId },
-  { versionKey: false }
-)
-
-sessionSchema.post('save', handleSaveError)
+const sessionSchema = new Schema({ uid: Types.ObjectId }, { versionKey: false })
 
 export const Session = model('session', sessionSchema)

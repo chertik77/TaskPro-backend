@@ -1,12 +1,9 @@
-import { UserController } from '@/controllers/user'
+import { userController } from '@/controllers/user'
 import { upload } from '@/middlewares/multer'
 import { Router } from 'express'
-import { createValidator } from 'express-joi-validation'
 import { authenticate } from 'middlewares/authenticate'
-import { EditUserSchema, ThemeSchema } from 'schemas/user'
+import { EditUserSchema, NeedHelpSchema, ThemeSchema } from 'schemas/user'
 import { validateRequestBody } from 'zod-express-middleware'
-
-const validator = createValidator()
 
 export const userRouter = Router()
 
@@ -16,19 +13,19 @@ userRouter.put(
   '/',
   upload.single('avatar'),
   validateRequestBody(EditUserSchema),
-  UserController.update
+  userController.update
 )
 
 userRouter.post(
   '/help',
-  validateRequestBody(EditUserSchema),
-  UserController.help
+  validateRequestBody(NeedHelpSchema),
+  userController.help
 )
 
 userRouter.put(
   '/theme',
   validateRequestBody(ThemeSchema),
-  UserController.changeTheme
+  userController.changeTheme
 )
 
-userRouter.get('/me', UserController.me)
+userRouter.get('/me', userController.me)

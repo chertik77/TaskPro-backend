@@ -3,30 +3,24 @@ import createHttpError from 'http-errors'
 import { Board } from 'models/Board'
 import { Column } from 'models/Column'
 
-class Controller {
-  add = async (req: Request, res: Response, next: NextFunction) => {
+export const columnController = {
+  add: async (req: Request, res: Response, next: NextFunction) => {
     const { id: owner } = req.user
 
-    const { boardId: board } = req.params
+    const board = await Board.findOne({ _id: req.params.boardId, owner })
 
-    const isCurrentBoard = await Board.findOne({ _id: board, owner })
-
-    if (!isCurrentBoard) {
+    if (!board) {
       return next(createHttpError(404, `Board not found`))
     }
 
     const newColumn = await Column.create({ ...req.body, board, owner })
 
     res.status(201).json(newColumn)
-  }
+  },
 
-  updateById = async (req: Request, res: Response, next: NextFunction) => {
-    const { id: owner } = req.user
-
-    const { columnId: _id } = req.params
-
+  updateById: async (req: Request, res: Response, next: NextFunction) => {
     const updatedColumn = await Column.findOneAndUpdate(
-      { _id, owner },
+      { _id: req.params.columnId, owner: req.user.id },
       req.body
     )
 
@@ -35,9 +29,9 @@ class Controller {
     }
 
     res.json(updatedColumn)
-  }
+  },
 
-  deleteById = async (req: Request, res: Response, next: NextFunction) => {
+  deleteById: async (req: Request, res: Response, next: NextFunction) => {
     const { id: owner } = req.user
     const { columnId: _id } = req.params
 
@@ -47,10 +41,8 @@ class Controller {
       return next(createHttpError(404, `Column Not Found`))
     }
 
-    const deletedColumn = await Column.findOneAndDelete({ _id, owner })
+    await Column.findOneAndDelete({ _id, owner })
 
-    res.json(deletedColumn)
+    res.status(204).json()
   }
 }
-
-export const columnController = new Controller()

@@ -5,10 +5,15 @@ import jwt from 'jsonwebtoken'
 import { jwtDecode } from 'jwt-decode'
 import { Session } from 'models/Session'
 import { User } from 'models/User'
+
+import {
+  GoogleAuthSchema,
+  RefreshTokenSchema,
+  SigninSchema,
+  SignupSchema
+} from '@/schemas/user'
+
 import { Types } from 'mongoose'
-
-import { SignupSchema } from '@/schemas/user'
-
 import { TypedRequestBody } from 'zod-express-middleware'
 
 const { JWT_SECRET } = process.env
@@ -37,15 +42,19 @@ class Controller {
     res.status(201).json({ user, ...tokens })
   }
 
-  signin = async (req: Request, res: Response, next: NextFunction) => {
-    const user = await User.findOne({ email: req.body?.email })
+  signin = async (
+    req: TypedRequestBody<typeof SigninSchema>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const user = await User.findOne({ email: req.body.email })
 
     if (!user) {
       return next(createHttpError(401, 'Email or password invalid'))
     }
 
     const isPasswordMatch = await bcrypt.compare(
-      req.body?.password as string,
+      req.body.password,
       user.password
     )
 
@@ -55,40 +64,39 @@ class Controller {
 
     const newSession = await Session.create({ uid: user._id })
 
-    const payload = { id: user._id, sid: newSession._id }
-
-    const tokens = this.getNewTokens(payload)
+    const tokens = this.getNewTokens({ id: user._id, sid: newSession._id })
 
     res.json({ user, ...tokens })
   }
 
-  signupByGoogle = async (req: Request, res: Response) => {
-    const decoded = jwtDecode<{
+  signinByGoogle = async (
+    req: TypedRequestBody<typeof GoogleAuthSchema>,
+    res: Response
+  ) => {
+    const { email, name, picture, sub } = jwtDecode<{
       name: string
       email: string
       sub: string
       picture: string
     }>(req.body.credential)
 
-    const user = await User.findOne({ email: decoded.email })
+    const user = await User.findOne({ email })
 
     if (!user) {
-      const hashPassword = await bcrypt.hash(decoded.sub, 10)
+      const hashPassword = await bcrypt.hash(sub, 10)
 
-      const newUser = await User.create({
-        name: decoded.name,
-        email: decoded.email,
+      const user = await User.create({
+        name,
+        email,
         password: hashPassword,
-        avatar: { url: decoded.picture, publicId: 'google-picture' }
+        avatar: { url: picture, publicId: 'google-picture' }
       })
 
-      const newSession = await Session.create({ uid: newUser._id })
+      const newSession = await Session.create({ uid: user._id })
 
-      await newUser.save()
+      const tokens = this.getNewTokens({ id: user._id, sid: newSession._id })
 
-      const tokens = this.getNewTokens({ id: newUser._id, sid: newSession._id })
-
-      res.json({ user: newUser, ...tokens })
+      res.json({ user, ...tokens })
     } else {
       const newSession = await Session.create({ uid: user._id })
 
@@ -98,11 +106,13 @@ class Controller {
     }
   }
 
-  updateTokens = async (req: Request, res: Response, next: NextFunction) => {
-    const { refreshToken: incomingRefreshToken } = req.body
-
+  updateTokens = async (
+    req: TypedRequestBody<typeof RefreshTokenSchema>,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
-      const { id, sid } = jwt.verify(incomingRefreshToken, JWT_SECRET!) as {
+      const { id, sid } = jwt.verify(req.body.refreshToken, JWT_SECRET!) as {
         id: string
         sid: string
       }
@@ -123,37 +133,27 @@ class Controller {
 
       const newSid = await Session.create({ uid: user._id })
 
-      const payload = { id: user._id, sid: newSid._id }
-
-      const tokens = this.getNewTokens(payload)
+      const tokens = this.getNewTokens({ id: user._id, sid: newSid._id })
 
       res.json({ ...tokens })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      console.log(e)
-      if (e.message === 'jwt expired') {
-        res.status(403).json({ error: 'jwt expired' })
-      }
+    } catch (e) {
+      return next(createHttpError(403))
     }
   }
 
   logout = async (req: Request, res: Response) => {
     await Session.findByIdAndDelete(req.session._id)
 
-    res.status(204).json({})
+    res.status(204).json()
   }
 
   private getNewTokens = (payload: {
     id: Types.ObjectId
     sid: Types.ObjectId
   }) => {
-    const accessToken = jwt.sign(payload, JWT_SECRET as jwt.Secret, {
-      expiresIn: '1h'
-    })
+    const accessToken = jwt.sign(payload, JWT_SECRET!, { expiresIn: '1h' })
 
-    const refreshToken = jwt.sign(payload, JWT_SECRET as jwt.Secret, {
-      expiresIn: '7d'
-    })
+    const refreshToken = jwt.sign(payload, JWT_SECRET!, { expiresIn: '7d' })
 
     return { accessToken, refreshToken }
   }

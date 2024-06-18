@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose'
-import { handleSaveError, runValidateAtUpdate } from './hooks'
 
 const boardSchema = new Schema(
   {
@@ -22,11 +21,5 @@ const boardSchema = new Schema(
   },
   { versionKey: false }
 )
-
-boardSchema.post('save', handleSaveError)
-
-boardSchema.pre('findOneAndUpdate', runValidateAtUpdate)
-
-boardSchema.post('findOneAndUpdate', handleSaveError)
 
 export const Board = model('board', boardSchema)

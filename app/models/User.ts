@@ -1,8 +1,6 @@
+import { themes } from '@/constants/themes'
 import { Schema, model } from 'mongoose'
 import isEmail from 'validator/lib/isEmail'
-import { handleSaveError, runValidateAtUpdate } from './hooks'
-
-export const userThemes = ['light', 'dark', 'violet']
 
 const userSchema = new Schema(
   {
@@ -25,7 +23,7 @@ const userSchema = new Schema(
     },
     theme: {
       type: String,
-      enum: userThemes,
+      enum: themes,
       default: 'light'
     },
     avatar: {
@@ -43,12 +41,4 @@ const userSchema = new Schema(
   { versionKey: false }
 )
 
-userSchema.post('save', handleSaveError)
-
-userSchema.pre('findOneAndUpdate', runValidateAtUpdate)
-
-userSchema.post('findOneAndUpdate', handleSaveError)
-
-const UserModel = model('user', userSchema)
-
-export class User extends UserModel {}
+export const User = model('user', userSchema)

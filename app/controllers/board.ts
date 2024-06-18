@@ -5,18 +5,18 @@ import type { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 import { Types } from 'mongoose'
 
-class Controller {
-  getAll = async (req: Request, res: Response) => {
+export const boardController = {
+  getAll: async (req: Request, res: Response) => {
     const boards = await Board.find({ owner: req.user.id }).select('-columns')
 
     res.json(boards)
-  }
+  },
 
-  getById = async (req: Request, res: Response, next: NextFunction) => {
+  getById: async (req: Request, res: Response, next: NextFunction) => {
     const { id: owner } = req.user
     const { boardId } = req.params
 
-    const board = await Board.findOne({ _id: boardId, owner })
+    const board = await Board.findOne({ _id: boardId, owner: req.user.id })
 
     if (!board) {
       return next(createHttpError(404, `Board not found`))
@@ -60,26 +60,21 @@ class Controller {
     ])
 
     res.json({ ...board.toJSON(), columns: result })
-  }
+  },
 
-  add = async (req: Request, res: Response) => {
-    const { id: owner } = req.user
-
+  add: async (req: Request, res: Response) => {
     const newBoard = await Board.create({
       ...req.body,
-      owner,
+      owner: req.user.id,
       background: getBgImage(req.body.background)
     })
 
     res.status(201).json(newBoard)
-  }
+  },
 
-  updateById = async (req: Request, res: Response, next: NextFunction) => {
-    const { id: owner } = req.user
-    const { boardId: _id } = req.params
-
+  updateById: async (req: Request, res: Response, next: NextFunction) => {
     const updatedBoard = await Board.findOneAndUpdate(
-      { _id, owner },
+      { _id: req.params.boardId, owner: req.user.id },
       { ...req.body, background: getBgImage(req.body.background) }
     )
 
@@ -88,13 +83,13 @@ class Controller {
     }
 
     res.json(updatedBoard)
-  }
+  },
 
-  deleteById = async (req: Request, res: Response, next: NextFunction) => {
-    const { id: owner } = req.user
-    const { boardId: _id } = req.params
-
-    const deletedBoard = await Board.findOneAndDelete({ _id, owner })
+  deleteById: async (req: Request, res: Response, next: NextFunction) => {
+    const deletedBoard = await Board.findOneAndDelete({
+      _id: req.params.boardId,
+      owner: req.user.id
+    })
 
     if (!deletedBoard) {
       return next(createHttpError(404, `Board not found`))
@@ -103,5 +98,3 @@ class Controller {
     res.status(204).json({})
   }
 }
-
-export const boardController = new Controller()

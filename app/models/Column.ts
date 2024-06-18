@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose'
-import { handleSaveError, runValidateAtUpdate } from './hooks'
 
 export const columnSchema = new Schema(
   {
@@ -20,11 +19,5 @@ export const columnSchema = new Schema(
   },
   { versionKey: false }
 )
-
-columnSchema.post('save', handleSaveError)
-
-columnSchema.pre('findOneAndUpdate', runValidateAtUpdate)
-
-columnSchema.post('findOneAndUpdate', handleSaveError)
 
 export const Column = model('column', columnSchema)

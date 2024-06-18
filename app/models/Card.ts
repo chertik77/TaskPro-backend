@@ -1,7 +1,5 @@
+import { priorities } from '@/constants/priorities'
 import { Schema, model } from 'mongoose'
-import { handleSaveError, runValidateAtUpdate } from './hooks'
-
-export const priorityList = ['Low', 'Medium', 'High', 'Without priority']
 
 export const cardSchema = new Schema(
   {
@@ -15,7 +13,7 @@ export const cardSchema = new Schema(
     },
     priority: {
       type: String,
-      enum: priorityList,
+      enum: priorities,
       default: 'Without priority'
     },
     deadline: {
@@ -40,11 +38,5 @@ export const cardSchema = new Schema(
   },
   { versionKey: false }
 )
-
-cardSchema.post('save', handleSaveError)
-
-cardSchema.pre('findOneAndUpdate', runValidateAtUpdate)
-
-cardSchema.post('findOneAndUpdate', handleSaveError)
 
 export const Card = model('card', cardSchema)

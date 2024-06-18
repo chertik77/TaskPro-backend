@@ -25,8 +25,9 @@ export const app = express()
 export const validator = createValidator()
 
 app.use(logger('dev'))
-app.use(cors())
+app.use(cors({ origin: process.env.ALLOWED_ORIGINS }))
 app.use(express.json())
+app.disable('x-powered-by')
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use('/api/auth', authRouter)
@@ -49,13 +50,7 @@ mongoose.set('toJSON', {
   transform(_, ret) {
     if (ret.password) delete ret.password
 
-    if (ret.avatar) {
-      ret.avatar = ret.avatar.url
-    }
-
-    if (ret.owner) {
-      delete ret.owner
-    }
+    if (ret.avatar) ret.avatar = ret.avatar.url
 
     delete ret._id
   }

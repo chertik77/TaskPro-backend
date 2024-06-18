@@ -26,7 +26,7 @@ authRouter.post(
 authRouter.post(
   '/google',
   validateRequestBody(GoogleAuthSchema),
-  authController.signupByGoogle
+  authController.signinByGoogle
 )
 
 authRouter.post(

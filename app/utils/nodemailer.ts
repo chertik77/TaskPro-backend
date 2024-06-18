@@ -1,14 +1,14 @@
 import nodemailer from 'nodemailer'
 
-const { SEND_EMAIL_FROM, SENDER_PASSWORD } = process.env
+const { EMAIL_USER, EMAIL_PASSWORD, EMAIL_PORT, EMAIL_HOST } = process.env
 
 const nodemailerConfig = {
-  host: 'smtp.meta.ua',
-  port: 465,
+  host: EMAIL_HOST,
+  port: Number(EMAIL_PORT),
   secure: true,
   auth: {
-    user: SEND_EMAIL_FROM,
-    pass: SENDER_PASSWORD
+    user: EMAIL_USER,
+    pass: EMAIL_PASSWORD
   }
 }
 
