@@ -2,6 +2,10 @@
 
 Welcome to the Task Pro App Backend, the powerhouse behind the ultimate tool for managing your tasks efficiently. This backend repository handles all the server-side logic, data management, and API integrations needed to support Task Pro's seamless performance.
 
+![Screenshot 2024-06-19 at 18 32 58](https://github.com/chertik77/TaskPro-backend/assets/129002577/35108ea8-7bb8-4473-81a4-aebe3991931c)
+
+*Link to the swagger docs:* https://annoyed-lethia-task-pro-53febb0b.koyeb.app/api/docs
+
 ## Features
 
 - **Authentication and authorization:** Implement secure user authentication mechanisms, allowing users to register, log in securely, and manage sessions effectively.
