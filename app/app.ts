@@ -1,13 +1,12 @@
 import type { NextFunction, Request, Response } from 'express'
 
-import cors from 'cors'
-
-import 'dotenv/config'
-
 import express from 'express'
+import cors from 'cors'
 import mongoose from 'mongoose'
 import logger from 'morgan'
 import swaggerUi from 'swagger-ui-express'
+
+import 'dotenv/config'
 
 import swaggerDocument from '../swagger.json'
 import {

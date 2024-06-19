@@ -2,122 +2,70 @@
   "openapi": "3.1.0",
   "info": {
     "version": "2.2.2",
-    "title": "Task Pro"
+    "title": "Task Pro",
+    "description": "The Task Pro API provides endpoints to manage projects and user assignments, ensuring secure and efficient task management."
   },
-  "consumes": ["application/json", "multipart/form-data"],
-  "produces": ["application/json"],
-  "servers": [{ "url": "https://final-project-backend-wdid.onrender.com" }],
-  "tags": [
+  "servers": [
+    { "url": "http:localhost:7000/api - Development" },
     {
-      "name": "Auth"
-    },
-    {
-      "name": "Dashboard"
-    },
-    {
-      "name": "Board"
-    },
-    {
-      "name": "Column"
-    },
-    {
-      "name": "Card"
+      "url": "https://annoyed-lethia-task-pro-53febb0b.koyeb.app/api - Production"
     }
   ],
   "paths": {
-    "/api/auth/signup": {
+    "/auth/signup": {
       "post": {
         "tags": ["Auth"],
         "summary": "Create a new user",
-        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegistrationRequest"
+              "example": {
+                "name": "John Doe",
+                "email": "user@example.com",
+                "password": "qwerty123"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegistrationAndLoginResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/AuthResponse"
           },
           "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Custom message from validation library"
-                }
-              }
-            }
+            "$ref": "#/components/responses/BadRequest"
           },
           "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Provided email already exists"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Conflict"
           }
         }
       }
     },
-    "/api/auth/signin": {
+    "/auth/signin": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Login user",
-        "parameters": [],
+        "summary": "Signin a new user",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginRequest"
+              "example": {
+                "email": "user@example.com",
+                "password": "qwerty123"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegistrationAndLoginResponse"
-                }
-              }
-            }
+          "201": {
+            "$ref": "#/components/responses/AuthResponse"
           },
           "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Custom message from validation library"
-                }
-              }
-            }
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
-            "description": "Unauthorized",
             "content": {
               "application/json": {
-                "type": "object",
                 "example": {
                   "message": "Email or password invalid"
                 }
@@ -127,45 +75,92 @@
         }
       }
     },
-    "/api/auth/current": {
-      "get": {
+    "/auth/google": {
+      "post": {
         "tags": ["Auth"],
-        "summary": "Get information about the current user",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
+        "summary": "Signin a new user with google",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "credential": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CurrentAndEditUserResponse"
-                }
-              }
-            }
+          "201": {
+            "$ref": "#/components/responses/AuthResponse"
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
           }
         }
       }
     },
-    "/api/auth/user": {
-      "patch": {
+    "/auth/tokens": {
+      "post": {
         "tags": ["Auth"],
-        "summary": "Edit user info",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
+        "summary": "Get new access and refresh tokens",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "requestBody": {
-          "required": false,
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/TokensResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logout a user",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/NoContent"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/user": {
+      "put": {
+        "tags": ["User"],
+        "summary": "Edit user profile",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
@@ -179,174 +174,103 @@
               }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EditUserRequest"
+              "example": {
+                "password": "123456789"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CurrentAndEditUserResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/UserResponse"
           },
           "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Custom message from validation library"
-                }
-              }
-            }
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           },
           "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Provided email already exists"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Uploading avatar error"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Conflict"
           }
         }
       }
     },
-    "/api/auth/logout": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Logout user",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
-        "responses": {
-          "204": {
-            "description": "No Content",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {}
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+    "/user/me": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get current user",
+        "security": [
+          {
+            "Bearer": []
           }
-        }
-      }
-    },
-    "/api/dashboard/theme": {
-      "patch": {
-        "tags": ["Dashboard"],
-        "summary": "Switch theme",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SwitchThemeRequest"
-              }
-            }
-          }
-        },
+        ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CurrentAndEditUserResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Custom message from validation library"
-                }
-              }
-            }
+            "$ref": "#/components/responses/UserResponse"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
     },
-    "/api/dashboard/help": {
-      "post": {
-        "tags": ["Dashboard"],
-        "summary": "Send email 'Need help'",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
+    "/user/theme": {
+      "put": {
+        "tags": ["User"],
+        "summary": "Switch user theme",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SendEmailRequest"
+              "example": {
+                "theme": "light"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "$ref": "#/components/responses/UserResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/user/help": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Send email need help",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "email": "user@example.com",
+                "comment": "Need help"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
             "content": {
               "application/json": {
-                "type": "object",
                 "example": {
                   "message": "Email sent"
                 }
@@ -354,123 +278,66 @@
             }
           },
           "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Custom message from validation library"
-                }
-              }
-            }
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Sending email error"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
     },
-    "/api/dashboard": {
+    "/board": {
       "get": {
         "tags": ["Board"],
         "summary": "Get all boards",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetAllBoardsResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/AllBoardsResponse"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       },
       "post": {
         "tags": ["Board"],
         "summary": "Add new board",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddBoardRequest"
+              "example": {
+                "title": "My office",
+                "icon": "icon-lightning-6",
+                "background": "blue-ball"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AddBoardResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/BoardResponse"
           },
           "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Custom message from validation library"
-                }
-              }
-            }
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
     },
-    "/api/dashboard/{boardId}": {
+    "/board/{boardId}": {
       "get": {
         "tags": ["Board"],
         "summary": "Get board by id",
@@ -481,45 +348,26 @@
             "required": true
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetBoardByIdResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/BoardByIdResponse"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Board not found"
-                }
-              }
-            }
+            "$ref": "#/components/responses/NotFound"
           }
         }
       },
-      "patch": {
+      "put": {
         "tags": ["Board"],
-        "summary": "Edit board",
+        "summary": "Edit board by id",
         "parameters": [
           {
             "in": "path",
@@ -527,66 +375,39 @@
             "required": true
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "requestBody": {
-          "required": false,
+          "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EditBoardRequest"
+              "example": {
+                "title": "My office"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EditAndDeleteBoardResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/BoardResponse"
           },
           "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Custom message from validation library"
-                }
-              }
-            }
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Board not found"
-                }
-              }
-            }
+            "$ref": "#/components/responses/NotFound"
           }
         }
       },
       "delete": {
         "tags": ["Board"],
-        "summary": "Delete board",
+        "summary": "Delete board by id",
         "parameters": [
           {
             "in": "path",
@@ -594,42 +415,25 @@
             "required": true
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EditAndDeleteBoardResponse"
-                }
-              }
-            }
+          "204": {
+            "$ref": "#/components/responses/NoContent"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Board not found"
-                }
-              }
-            }
+            "$ref": "#/components/responses/NotFound"
           }
         }
-      },
+      }
+    },
+    "/column/{boardId}": {
       "post": {
         "tags": ["Column"],
         "summary": "Add new column",
@@ -640,411 +444,225 @@
             "required": true
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddColumnRequest"
+              "example": {
+                "title": "In progress"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AddColumnResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/ColumnResponse"
           },
           "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Custom message from validation library"
-                }
-              }
-            }
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Board not found"
-                }
-              }
-            }
+            "$ref": "#/components/responses/NotFound"
           }
         }
       }
     },
-    "/api/dashboard/{boardId}/{columnId}": {
-      "patch": {
+    "/column/{columnId}": {
+      "put": {
         "tags": ["Column"],
-        "summary": "Edit column",
+        "summary": "Edit column by id",
         "parameters": [
-          {
-            "in": "path",
-            "name": "boardId",
-            "required": true
-          },
           {
             "in": "path",
             "name": "columnId",
             "required": true
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "requestBody": {
-          "required": false,
+          "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EditColumnRequest"
+              "example": {
+                "title": "In progress"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EditAndDeleteColumnResponse"
-                }
-              }
-            }
+          "201": {
+            "$ref": "#/components/responses/ColumnResponse"
           },
           "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Custom message from validation library"
-                }
-              }
-            }
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Column not found"
-                }
-              }
-            }
+            "$ref": "#/components/responses/NotFound"
           }
         }
       },
       "delete": {
         "tags": ["Column"],
-        "summary": "Delete column",
+        "summary": "Delete column by id",
         "parameters": [
-          {
-            "in": "path",
-            "name": "boardId",
-            "required": true
-          },
           {
             "in": "path",
             "name": "columnId",
             "required": true
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EditAndDeleteColumnResponse"
-                }
-              }
-            }
+          "204": {
+            "$ref": "#/components/responses/NoContent"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Column not found"
-                }
-              }
-            }
+            "$ref": "#/components/responses/NotFound"
           }
         }
-      },
+      }
+    },
+    "/card/{columnId}": {
       "post": {
         "tags": ["Card"],
         "summary": "Add new card",
         "parameters": [
           {
             "in": "path",
-            "name": "boardId",
-            "required": true
-          },
-          {
-            "in": "path",
             "name": "columnId",
             "required": true
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddCardRequest"
+              "example": {
+                "title": "Publication of the project",
+                "description": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials.",
+                "deadline": "2025-10-15",
+                "priority": "High"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AddCardResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/CardResponse"
           },
           "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Custom message from validation library"
-                }
-              }
-            }
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Column not found"
-                }
-              }
-            }
+            "$ref": "#/components/responses/NotFound"
           }
         }
       }
     },
-    "/api/dashboard/{boardId}/{columnId}/{cardId}": {
-      "patch": {
+    "/card/{cardId}": {
+      "put": {
         "tags": ["Card"],
-        "summary": "Edit card",
+        "summary": "Edit card by id",
         "parameters": [
-          {
-            "in": "path",
-            "name": "boardId",
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "columnId",
-            "required": true
-          },
           {
             "in": "path",
             "name": "cardId",
             "required": true
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "requestBody": {
-          "required": false,
+          "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EditCardRequest"
+              "example": {
+                "title": "Publication of the project"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EditAndDeleteCardResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/CardResponse"
           },
           "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Custom message from validation library"
-                }
-              }
-            }
+            "$ref": "#/components/responses/BadRequest"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Card not found"
-                }
-              }
-            }
+            "$ref": "#/components/responses/NotFound"
           }
         }
       },
       "delete": {
         "tags": ["Card"],
-        "summary": "Delete card",
+        "summary": "Delete card by id",
         "parameters": [
-          {
-            "in": "path",
-            "name": "boardId",
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "columnId",
-            "required": true
-          },
           {
             "in": "path",
             "name": "cardId",
             "required": true
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EditAndDeleteCardResponse"
-                }
-              }
-            }
+          "204": {
+            "$ref": "#/components/responses/NoContent"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Card not found"
-                }
-              }
-            }
+            "$ref": "#/components/responses/NotFound"
           }
         }
       }
     },
-    "/api/dashboard/{boardId}/{columnId}/{cardId}/{newColumnId}": {
+    "/{cardId}/{newColumnId}": {
       "patch": {
         "tags": ["Card"],
         "summary": "Change column for card",
         "parameters": [
-          {
-            "in": "path",
-            "name": "boardId",
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "columnId",
-            "required": true
-          },
           {
             "in": "path",
             "name": "cardId",
@@ -1056,629 +674,227 @@
             "required": true
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChangeColumnResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/CardResponse"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "type": "object",
-                "example": {
-                  "message": "Card not found"
-                }
-              }
-            }
+            "$ref": "#/components/responses/NotFound"
           }
         }
       }
     }
   },
   "components": {
-    "schemas": {
-      "RegistrationRequest": {
-        "type": "object",
-        "required": ["name", "email", "password"],
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "John Doe"
-          },
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "password": {
-            "type": "string",
-            "example": "qwerty123"
-          }
-        }
-      },
-      "RegistrationAndLoginResponse": {
-        "type": "object",
-        "properties": {
-          "token": {
-            "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YjhmNGE2YjJmZjY4MDU5MDk0YzMyYSIsImlhdCI6MTcwNjYyMDA4OCwiZXhwIjoxNzA2NjIwOTg4fQ.StzrXFqK2u4JR0SmtvYJ_aqbebkHRQb3-6NU5Amiwuc"
-          },
-          "user": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "65c0388ea89738bb0120fed0"
-              },
-              "name": {
-                "type": "string",
-                "example": "John Doe"
-              },
-              "email": {
-                "type": "string",
-                "format": "email"
-              },
-              "userTheme": {
-                "type": "string",
-                "example": "light"
-              },
-              "avatarURL": {
-                "type": "object",
-                "properties": {
-                  "url": {
-                    "type": "string",
-                    "example": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg"
-                  },
-                  "publicId": {
-                    "type": "string",
-                    "example": "avatars/nsd6alpowmw3ska"
-                  }
-                }
-              }
+    "responses": {
+      "NotFound": {
+        "content": {
+          "application/json": {
+            "example": {
+              "message": "Not found"
             }
           }
         }
       },
-      "LoginRequest": {
-        "type": "object",
-        "required": ["email", "password"],
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "password": {
-            "type": "string",
-            "example": "qwerty123"
-          }
-        }
-      },
-      "CurrentAndEditUserResponse": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "65c0388ea89738bb0120fed0"
-              },
-              "name": {
-                "type": "string",
-                "example": "John Doe"
-              },
-              "email": {
-                "type": "string",
-                "format": "email"
-              },
-              "userTheme": {
-                "type": "string",
-                "example": "light"
-              },
-              "avatarURL": {
-                "type": "object",
-                "properties": {
-                  "url": {
-                    "type": "string",
-                    "example": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg"
-                  },
-                  "publicId": {
-                    "type": "string",
-                    "example": "avatars/nsd6alpowmw3ska"
-                  }
-                }
-              }
+      "Conflict": {
+        "content": {
+          "application/json": {
+            "example": {
+              "message": "Provided email already exists"
             }
           }
         }
       },
-      "EditUserRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "John Doe"
-          },
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "password": {
-            "type": "string",
-            "example": "qwerty123"
-          }
-        }
-      },
-      "SwitchThemeRequest": {
-        "type": "object",
-        "properties": {
-          "userTheme": {
-            "type": "string",
-            "example": "violet"
-          }
-        }
-      },
-      "GetAllBoardsResponse": {
-        "type": "object",
-        "properties": {
-          "total": {
-            "type": "integer",
-            "example": "1"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "_id": {
-                  "type": "string",
-                  "example": "65c0388ea89738bb0120fed0"
-                },
-                "title": {
-                  "type": "string",
-                  "example": "Project"
-                },
-                "icon": {
-                  "type": "string",
-                  "example": "star"
-                },
-                "owner": {
-                  "type": "string",
-                  "example": "45g6388ea89738bb0120dw49"
-                }
-              }
+      "NoContent": {
+        "content": {
+          "application/json": {
+            "example": {
+              "message": "No content"
             }
           }
         }
       },
-      "AddBoardRequest": {
-        "type": "object",
-        "required": ["title", "icon", "background"],
-        "properties": {
-          "title": {
-            "type": "string",
-            "example": "Project"
-          },
-          "icon": {
-            "type": "string",
-            "example": "star"
-          },
-          "background": {
-            "type": "string",
-            "example": "default"
+      "Unauthorized": {
+        "content": {
+          "application/json": {
+            "example": {
+              "message": "Unauthorized"
+            }
           }
         }
       },
-      "AddBoardResponse": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "example": "Project"
-          },
-          "icon": {
-            "type": "string",
-            "example": "star"
-          },
-          "background": {
-            "type": "string",
-            "example": "default"
-          },
-          "owner": {
-            "type": "string",
-            "example": "45g6388ea89738bb0120dw49"
-          },
-          "_id": {
-            "type": "string",
-            "example": "65c0388ea89738bb0120fed0"
-          },
-          "columns": {
-            "type": "array"
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "example": {
+              "message": "Custom message from validation library"
+            }
           }
         }
       },
-      "SendEmailRequest": {
-        "type": "object",
-        "required": ["name", "comment"],
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "comment": {
-            "type": "string",
-            "example": "Need help"
+      "AuthResponse": {
+        "content": {
+          "application/json": {
+            "example": {
+              "user": {
+                "id": "65c0388ea89738bb0120fed0",
+                "name": "John Doe",
+                "email": "user@example.com",
+                "theme": "light",
+                "avatar": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg"
+              },
+              "acesssToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE4NzE2MzQwfQ.hwdlZg0fft0PjwN63qwfjFTg1ZeyOOukFdZVbF0VOUU",
+              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
+            }
           }
         }
       },
-      "GetBoardByIdResponse": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "example": "65c0388ea89738bb0120fed0"
-          },
-          "title": {
-            "type": "string",
-            "example": "Project"
-          },
-          "icon": {
-            "type": "string",
-            "example": "star"
-          },
-          "background": {
-            "type": "string",
-            "example": "default"
-          },
-          "owner": {
-            "type": "string",
-            "example": "45g6388ea89738bb0120dw49"
-          },
-          "columns": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string",
-                  "example": "Done"
+      "TokensResponse": {
+        "content": {
+          "application/json": {
+            "example": {
+              "acesssToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE4NzE2MzQwfQ.hwdlZg0fft0PjwN63qwfjFTg1ZeyOOukFdZVbF0VOUU",
+              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
+            }
+          }
+        }
+      },
+      "UserResponse": {
+        "content": {
+          "application/json": {
+            "example": {
+              "id": "65c0388ea89738bb0120fed0",
+              "name": "John Doe",
+              "email": "user@example.com",
+              "theme": "light",
+              "avatar": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg"
+            }
+          }
+        }
+      },
+      "AllBoardsResponse": {
+        "content": {
+          "application/json": {
+            "example": [
+              {
+                "title": "Project office",
+                "icon": "icon-project-1",
+                "background": {
+                  "identifier": "flowers",
+                  "hasWhiteTextColor": true,
+                  "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg"
                 },
-                "board": {
-                  "type": "string",
-                  "example": "65c0388ea89738bb0120fed0"
+                "owner": "6671743db85c96453e04a684",
+                "id": "6672f1d2f02c8b04130c718c"
+              },
+              {
+                "title": "My office",
+                "icon": "icon-lightning-6",
+                "background": {
+                  "identifier": "blue-ball",
+                  "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/desk/dtmqypo6r0v0nktpagku.jpg"
                 },
-                "owner": {
-                  "type": "string",
-                  "example": "45g6388ea89738bb0120dw49"
-                },
-                "cards": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "title": {
-                        "type": "string",
-                        "example": "Add documentation"
-                      },
-                      "description": {
-                        "type": "string",
-                        "example": "bla bla bla bla"
-                      },
-                      "priority": {
-                        "type": "string",
-                        "example": "Without priority"
-                      },
-                      "deadline": {
-                        "type": "string",
-                        "format": "date-time"
-                      },
-                      "column": {
-                        "type": "string",
-                        "example": "76c0388ea89738bb4520hy65"
-                      },
-                      "board": {
-                        "type": "string",
-                        "example": "65c0388ea89738bb0120fed0"
-                      },
-                      "owner": {
-                        "type": "string",
-                        "example": "45g6388ea89738bb0120dw49"
-                      },
-                      "_id": {
-                        "type": "string",
-                        "example": "89u0388ea89738bb4520sp87"
-                      }
+                "owner": "6671743db85c96453e04a684",
+                "id": "6672f211f02c8b04130c7193"
+              }
+            ]
+          }
+        }
+      },
+      "BoardResponse": {
+        "content": {
+          "application/json": {
+            "example": {
+              "title": "My office",
+              "icon": "icon-lightning-6",
+              "background": {
+                "identifier": "blue-ball",
+                "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/desk/dtmqypo6r0v0nktpagku.jpg"
+              },
+              "owner": "6671743db85c96453e04a684",
+              "id": "6672f211f02c8b04130c7193"
+            }
+          }
+        }
+      },
+      "BoardByIdResponse": {
+        "content": {
+          "application/json": {
+            "example": {
+              "title": "Project office",
+              "icon": "icon-project-1",
+              "background": {
+                "identifier": "flowers",
+                "hasWhiteTextColor": true,
+                "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg"
+              },
+              "owner": "6671743db85c96453e04a684",
+              "id": "6672f1d2f02c8b04130c718c",
+              "columns": [
+                {
+                  "title": "To do",
+                  "cards": [
+                    {
+                      "id": "6672fda1c07147fc7ae1bb8a",
+                      "title": "Research and Analysis",
+                      "description": "Conduct in-depth research and analysis on the project's topic, gather relevant data, and identify key insights to inform decision-making and project planning.",
+                      "priority": "Medium",
+                      "deadline": "2025-10-20T00:00:00.000Z",
+                      "column": "6672f5cdc07147fc7ae1bb71"
                     }
-                  }
+                  ],
+                  "id": "6672f5cdc07147fc7ae1bb71"
                 },
-                "_id": {
-                  "type": "string",
-                  "example": "76c0388ea89738bb4520hy65"
+                {
+                  "title": "In progress",
+                  "cards": [
+                    {
+                      "id": "6672fdccc07147fc7ae1bb93",
+                      "title": "Publication of the project",
+                      "description": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials.",
+                      "priority": "High",
+                      "deadline": "2025-10-15T00:00:00.000Z",
+                      "column": "6672f604c07147fc7ae1bb81"
+                    }
+                  ],
+                  "id": "6672f604c07147fc7ae1bb81"
                 }
-              }
+              ]
             }
           }
         }
       },
-      "EditBoardRequest": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "example": "Project"
-          },
-          "icon": {
-            "type": "string",
-            "example": "star"
-          },
-          "background": {
-            "type": "string",
-            "example": "default"
+      "ColumnResponse": {
+        "content": {
+          "application/json": {
+            "example": {
+              "title": "In progress",
+              "id": "6672f604c07147fc7ae1bb81"
+            }
           }
         }
       },
-      "EditAndDeleteBoardResponse": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "example": "65c0388ea89738bb0120fed0"
-          },
-          "title": {
-            "type": "string",
-            "example": "Project"
-          },
-          "icon": {
-            "type": "string",
-            "example": "star"
-          },
-          "background": {
-            "type": "string",
-            "example": "default"
-          },
-          "owner": {
-            "type": "string",
-            "example": "45g6388ea89738bb0120dw49"
-          }
-        }
-      },
-      "AddColumnRequest": {
-        "type": "object",
-        "required": ["title"],
-        "properties": {
-          "title": {
-            "type": "string",
-            "example": "Done"
-          }
-        }
-      },
-      "AddColumnResponse": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "example": "Done"
-          },
-          "board": {
-            "type": "string",
-            "example": "65c0388ea89738bb0120fed0"
-          },
-          "owner": {
-            "type": "string",
-            "example": "45g6388ea89738bb0120dw49"
-          },
-          "_id": {
-            "type": "string",
-            "example": "76c0388ea89738bb4520hy65"
-          },
-          "cards": {
-            "type": "array"
-          }
-        }
-      },
-      "EditColumnRequest": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "example": "Done"
-          }
-        }
-      },
-      "EditAndDeleteColumnResponse": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "example": "76c0388ea89738bb4520hy65"
-          },
-          "title": {
-            "type": "string",
-            "example": "Done"
-          },
-          "board": {
-            "type": "string",
-            "example": "65c0388ea89738bb0120fed0"
-          },
-          "owner": {
-            "type": "string",
-            "example": "45g6388ea89738bb0120dw49"
-          }
-        }
-      },
-      "AddCardRequest": {
-        "type": "object",
-        "required": ["title", "description", "deadline"],
-        "properties": {
-          "title": {
-            "type": "string",
-            "example": "Add documentation"
-          },
-          "description": {
-            "type": "string",
-            "example": "bla bla bla bla"
-          },
-          "priority": {
-            "type": "string",
-            "example": "Without priority"
-          },
-          "deadline": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "AddCardResponse": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "example": "Add documentation"
-          },
-          "description": {
-            "type": "string",
-            "example": "bla bla bla bla"
-          },
-          "priority": {
-            "type": "string",
-            "example": "Without priority"
-          },
-          "deadline": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "column": {
-            "type": "string",
-            "example": "76c0388ea89738bb4520hy65"
-          },
-          "board": {
-            "type": "string",
-            "example": "65c0388ea89738bb0120fed0"
-          },
-          "owner": {
-            "type": "string",
-            "example": "45g6388ea89738bb0120dw49"
-          },
-          "_id": {
-            "type": "string",
-            "example": "89u0388ea89738bb4520sp87"
-          }
-        }
-      },
-      "EditCardRequest": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "example": "Add documentation"
-          },
-          "description": {
-            "type": "string",
-            "example": "bla bla bla bla"
-          },
-          "priority": {
-            "type": "string",
-            "example": "Without priority"
-          },
-          "deadline": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "EditAndDeleteCardResponse": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "example": "89u0388ea89738bb4520sp87"
-          },
-          "title": {
-            "type": "string",
-            "example": "Add documentation"
-          },
-          "description": {
-            "type": "string",
-            "example": "bla bla bla bla"
-          },
-          "priority": {
-            "type": "string",
-            "example": "Without priority"
-          },
-          "deadline": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "column": {
-            "type": "string",
-            "example": "76c0388ea89738bb4520hy65"
-          },
-          "board": {
-            "type": "string",
-            "example": "65c0388ea89738bb0120fed0"
-          },
-          "owner": {
-            "type": "string",
-            "example": "45g6388ea89738bb0120dw49"
-          }
-        }
-      },
-      "ChangeColumnResponse": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "example": "89u0388ea89738bb4520sp87"
-          },
-          "title": {
-            "type": "string",
-            "example": "Add documentation"
-          },
-          "description": {
-            "type": "string",
-            "example": "bla bla bla bla"
-          },
-          "priority": {
-            "type": "string",
-            "example": "Without priority"
-          },
-          "deadline": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "column": {
-            "type": "string",
-            "example": "76c0388ea89738bb4520hy65"
-          },
-          "oldColumn": {
-            "type": "string",
-            "example": "rr63388ea89738bb4520sd32"
-          },
-          "board": {
-            "type": "string",
-            "example": "65c0388ea89738bb0120fed0"
-          },
-          "owner": {
-            "type": "string",
-            "example": "45g6388ea89738bb0120dw49"
+      "CardResponse": {
+        "content": {
+          "application/json": {
+            "example": {
+              "title": "Publication of the project",
+              "description": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials.",
+              "priority": "High",
+              "deadline": "2025-10-15T00:00:00.000Z",
+              "column": "6672f604c07147fc7ae1bb81",
+              "board": "6672f1d2f02c8b04130c718c",
+              "owner": "6671743db85c96453e04a684",
+              "id": "6672fdccc07147fc7ae1bb93"
+            }
           }
         }
       }

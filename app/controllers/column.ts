@@ -14,9 +14,9 @@ export const columnController = {
       return next(createHttpError(404, `Board not found`))
     }
 
-    const newColumn = await Column.create({ ...req.body, board, owner })
+    const { id, title } = await Column.create({ ...req.body, board, owner })
 
-    res.status(201).json(newColumn)
+    res.status(201).json({ id, title })
   },
 
   updateById: async (req: Request, res: Response, next: NextFunction) => {
