@@ -29,15 +29,9 @@
           }
         },
         "responses": {
-          "201": {
-            "$ref": "#/components/responses/AuthResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "409": {
-            "$ref": "#/components/responses/Conflict"
-          }
+          "201": { "$ref": "#/components/responses/AuthResponse" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "409": { "$ref": "#/components/responses/Conflict" }
         }
       }
     },
@@ -57,18 +51,12 @@
           }
         },
         "responses": {
-          "201": {
-            "$ref": "#/components/responses/AuthResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
+          "201": { "$ref": "#/components/responses/AuthResponse" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
           "401": {
             "content": {
               "application/json": {
-                "example": {
-                  "message": "Email or password invalid"
-                }
+                "example": { "message": "Email or password invalid" }
               }
             }
           }
@@ -90,12 +78,8 @@
           }
         },
         "responses": {
-          "201": {
-            "$ref": "#/components/responses/AuthResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
+          "201": { "$ref": "#/components/responses/AuthResponse" },
+          "400": { "$ref": "#/components/responses/BadRequest" }
         }
       }
     },
@@ -103,11 +87,7 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Get new access and refresh tokens",
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -119,15 +99,9 @@
           }
         },
         "responses": {
-          "200": {
-            "$ref": "#/components/responses/TokensResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
+          "200": { "$ref": "#/components/responses/TokensResponse" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -135,18 +109,10 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Logout a user",
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "security": [{ "Bearer": [] }],
         "responses": {
-          "204": {
-            "$ref": "#/components/responses/NoContent"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
+          "204": { "$ref": "#/components/responses/NoContent" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -154,11 +120,7 @@
       "put": {
         "tags": ["User"],
         "summary": "Edit user profile",
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -166,33 +128,18 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "avatar": {
-                    "type": "string",
-                    "format": "binary"
-                  }
+                  "avatar": { "type": "string", "format": "binary" }
                 }
               }
             },
-            "application/json": {
-              "example": {
-                "password": "123456789"
-              }
-            }
+            "application/json": { "example": { "password": "123456789" } }
           }
         },
         "responses": {
-          "200": {
-            "$ref": "#/components/responses/UserResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "409": {
-            "$ref": "#/components/responses/Conflict"
-          }
+          "200": { "$ref": "#/components/responses/UserResponse" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "409": { "$ref": "#/components/responses/Conflict" }
         }
       }
     },
@@ -200,18 +147,10 @@
       "get": {
         "tags": ["User"],
         "summary": "Get current user",
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "security": [{ "Bearer": [] }],
         "responses": {
-          "200": {
-            "$ref": "#/components/responses/UserResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
+          "200": { "$ref": "#/components/responses/UserResponse" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -219,31 +158,17 @@
       "put": {
         "tags": ["User"],
         "summary": "Switch user theme",
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
-              "example": {
-                "theme": "light"
-              }
-            }
+            "application/json": { "example": { "theme": "light" } }
           }
         },
         "responses": {
-          "200": {
-            "$ref": "#/components/responses/UserResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
+          "200": { "$ref": "#/components/responses/UserResponse" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -251,38 +176,23 @@
       "post": {
         "tags": ["User"],
         "summary": "Send email need help",
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "email": "user@example.com",
-                "comment": "Need help"
-              }
+              "example": { "email": "user@example.com", "comment": "Need help" }
             }
           }
         },
         "responses": {
           "200": {
             "content": {
-              "application/json": {
-                "example": {
-                  "message": "Email sent"
-                }
-              }
+              "application/json": { "example": { "message": "Email sent" } }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -290,28 +200,16 @@
       "get": {
         "tags": ["Board"],
         "summary": "Get all boards",
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "security": [{ "Bearer": [] }],
         "responses": {
-          "200": {
-            "$ref": "#/components/responses/AllBoardsResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
+          "200": { "$ref": "#/components/responses/AllBoardsResponse" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       },
       "post": {
         "tags": ["Board"],
         "summary": "Add new board",
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -325,15 +223,9 @@
           }
         },
         "responses": {
-          "201": {
-            "$ref": "#/components/responses/BoardResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
+          "201": { "$ref": "#/components/responses/BoardResponse" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -341,95 +233,41 @@
       "get": {
         "tags": ["Board"],
         "summary": "Get board by id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "boardId",
-            "required": true
-          }
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "parameters": [{ "in": "path", "name": "boardId", "required": true }],
+        "security": [{ "Bearer": [] }],
         "responses": {
-          "200": {
-            "$ref": "#/components/responses/BoardByIdResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
+          "200": { "$ref": "#/components/responses/BoardByIdResponse" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       },
       "put": {
         "tags": ["Board"],
         "summary": "Edit board by id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "boardId",
-            "required": true
-          }
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "parameters": [{ "in": "path", "name": "boardId", "required": true }],
+        "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
-              "example": {
-                "title": "My office"
-              }
-            }
+            "application/json": { "example": { "title": "My office" } }
           }
         },
         "responses": {
-          "200": {
-            "$ref": "#/components/responses/BoardResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
+          "200": { "$ref": "#/components/responses/BoardResponse" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       },
       "delete": {
         "tags": ["Board"],
         "summary": "Delete board by id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "boardId",
-            "required": true
-          }
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "parameters": [{ "in": "path", "name": "boardId", "required": true }],
+        "security": [{ "Bearer": [] }],
         "responses": {
-          "204": {
-            "$ref": "#/components/responses/NoContent"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
+          "204": { "$ref": "#/components/responses/NoContent" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
     },
@@ -437,41 +275,19 @@
       "post": {
         "tags": ["Column"],
         "summary": "Add new column",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "boardId",
-            "required": true
-          }
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "parameters": [{ "in": "path", "name": "boardId", "required": true }],
+        "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
-              "example": {
-                "title": "In progress"
-              }
-            }
+            "application/json": { "example": { "title": "In progress" } }
           }
         },
         "responses": {
-          "201": {
-            "$ref": "#/components/responses/ColumnResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
+          "201": { "$ref": "#/components/responses/ColumnResponse" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
     },
@@ -479,68 +295,30 @@
       "put": {
         "tags": ["Column"],
         "summary": "Edit column by id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "columnId",
-            "required": true
-          }
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "parameters": [{ "in": "path", "name": "columnId", "required": true }],
+        "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
-              "example": {
-                "title": "In progress"
-              }
-            }
+            "application/json": { "example": { "title": "In progress" } }
           }
         },
         "responses": {
-          "201": {
-            "$ref": "#/components/responses/ColumnResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
+          "201": { "$ref": "#/components/responses/ColumnResponse" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       },
       "delete": {
         "tags": ["Column"],
         "summary": "Delete column by id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "columnId",
-            "required": true
-          }
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "parameters": [{ "in": "path", "name": "columnId", "required": true }],
+        "security": [{ "Bearer": [] }],
         "responses": {
-          "204": {
-            "$ref": "#/components/responses/NoContent"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
+          "204": { "$ref": "#/components/responses/NoContent" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
     },
@@ -548,18 +326,8 @@
       "post": {
         "tags": ["Card"],
         "summary": "Add new card",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "columnId",
-            "required": true
-          }
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "parameters": [{ "in": "path", "name": "columnId", "required": true }],
+        "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -574,18 +342,10 @@
           }
         },
         "responses": {
-          "201": {
-            "$ref": "#/components/responses/CardResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
+          "201": { "$ref": "#/components/responses/CardResponse" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
     },
@@ -593,102 +353,48 @@
       "put": {
         "tags": ["Card"],
         "summary": "Edit card by id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "cardId",
-            "required": true
-          }
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "parameters": [{ "in": "path", "name": "cardId", "required": true }],
+        "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "title": "Publication of the project"
-              }
+              "example": { "title": "Publication of the project" }
             }
           }
         },
         "responses": {
-          "200": {
-            "$ref": "#/components/responses/CardResponse"
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
+          "200": { "$ref": "#/components/responses/CardResponse" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       },
       "delete": {
         "tags": ["Card"],
         "summary": "Delete card by id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "cardId",
-            "required": true
-          }
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "parameters": [{ "in": "path", "name": "cardId", "required": true }],
+        "security": [{ "Bearer": [] }],
         "responses": {
-          "204": {
-            "$ref": "#/components/responses/NoContent"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
+          "204": { "$ref": "#/components/responses/NoContent" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
     },
-    "/{cardId}/{newColumnId}": {
+    "/card/{cardId}/{newColumnId}": {
       "patch": {
         "tags": ["Card"],
         "summary": "Change column for card",
         "parameters": [
-          {
-            "in": "path",
-            "name": "cardId",
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "newColumnId",
-            "required": true
-          }
+          { "in": "path", "name": "cardId", "required": true },
+          { "in": "path", "name": "newColumnId", "required": true }
         ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
+        "security": [{ "Bearer": [] }],
         "responses": {
-          "200": {
-            "$ref": "#/components/responses/CardResponse"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
+          "200": { "$ref": "#/components/responses/CardResponse" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
     }
@@ -697,46 +403,30 @@
     "responses": {
       "NotFound": {
         "content": {
-          "application/json": {
-            "example": {
-              "message": "Not found"
-            }
-          }
+          "application/json": { "example": { "message": "Not found" } }
         }
       },
       "Conflict": {
         "content": {
           "application/json": {
-            "example": {
-              "message": "Provided email already exists"
-            }
+            "example": { "message": "Provided email already exists" }
           }
         }
       },
       "NoContent": {
         "content": {
-          "application/json": {
-            "example": {
-              "message": "No content"
-            }
-          }
+          "application/json": { "example": { "message": "No content" } }
         }
       },
       "Unauthorized": {
         "content": {
-          "application/json": {
-            "example": {
-              "message": "Unauthorized"
-            }
-          }
+          "application/json": { "example": { "message": "Unauthorized" } }
         }
       },
       "BadRequest": {
         "content": {
           "application/json": {
-            "example": {
-              "message": "Custom message from validation library"
-            }
+            "example": { "message": "Custom message from validation library" }
           }
         }
       },
@@ -900,11 +590,7 @@
       }
     },
     "securitySchemes": {
-      "Bearer": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
+      "Bearer": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
     }
   }
 }
