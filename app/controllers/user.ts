@@ -2,13 +2,13 @@ import type { NextFunction, Request, Response } from 'express'
 import type { TypedRequestBody } from 'zod-express-middleware'
 
 import bcrypt from 'bcrypt'
+import cloudinary from 'config/cloudinary.config'
+import { transport } from 'config/nodemailer.config'
 import createHttpError from 'http-errors'
 
 import { User } from 'models/User'
 
 import { NeedHelpSchema } from 'schemas/user'
-import cloudinary from 'utils/cloudinary'
-import { transport } from 'utils/nodemailer'
 
 export const userController = {
   update: async (req: Request, res: Response, next: NextFunction) => {
