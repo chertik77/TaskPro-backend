@@ -3,6 +3,6 @@
     "prettier --write",
     "eslint --fix -f mo",
     "eslint -f mo",
-    "tsc-files --noEmit declarations.d.ts"
+    "tsc-files --noEmit ./app/typings/express.d.ts"
   ]
 }

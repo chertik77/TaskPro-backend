@@ -2,7 +2,7 @@ const bgImages = {
   flowers: {
     identifier: 'flowers',
     hasWhiteTextColor: true,
-    url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg'
+    url: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jkpg'
   },
   'mountains-night': {
     identifier: 'mountains-night',

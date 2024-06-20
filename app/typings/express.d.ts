@@ -1,7 +1,5 @@
 import { Types } from 'mongoose'
 
-export {}
-
 declare global {
   namespace Express {
     export interface Request {
@@ -19,3 +17,5 @@ declare global {
     }
   }
 }
+
+export {}
