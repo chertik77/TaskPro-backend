@@ -10,5 +10,6 @@
     "strict": true,
     "resolveJsonModule": true
   },
-  "include": ["./app/**/*"]
+  "include": ["./app/**/*"],
+  "files": ["./app/typings/express.d.ts"]
 }
