@@ -25,7 +25,7 @@ export type ResponseError = Error & {
 export const app = express()
 
 app.use(logger('dev'))
-app.use(cors({ origin: process.env.ALLOWED_ORIGINS.split(',') }))
+app.use(cors({ origin: process.env.ALLOWED_ORIGINS?.split(',') }))
 app.use(express.json())
 app.disable('x-powered-by')
 
