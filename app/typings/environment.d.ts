@@ -6,6 +6,7 @@ declare global {
       CLOUDINARY_CLOUD_NAME: string
       DB_HOST: string
       JWT_SECRET: string
+      ALLOWED_ORIGINS: string
       PORT: number
       EMAIL_HOST: string
       EMAIL_PORT: number
