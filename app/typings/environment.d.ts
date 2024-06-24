@@ -13,6 +13,8 @@ declare global {
       EMAIL_USER: string
       EMAIL_RECEIVER: string
       EMAIL_PASSWORD: string
+      ACESS_TOKEN_EXPIRES_IN: string
+      REFRESH_TOKEN_EXPIRES_IN: string
     }
   }
 }
