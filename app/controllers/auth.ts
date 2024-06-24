@@ -152,7 +152,7 @@ class Controller {
     sid: Types.ObjectId
   }) => {
     const accessToken = jwt.sign(payload, JWT_SECRET!, {
-      expiresIn: process.env.ACESS_TOKEN_EXPIRES_IN
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN
     })
 
     const refreshToken = jwt.sign(payload, JWT_SECRET!, {
