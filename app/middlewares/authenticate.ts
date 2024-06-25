@@ -30,13 +30,7 @@ export const authenticate = async (
       return next(createHttpError(401))
     }
 
-    req.user = user.toObject({
-      virtuals: true,
-      transform(_, ret) {
-        delete ret.password
-        delete ret._id
-      }
-    })
+    req.user = user.toObject()
 
     req.session = session._id
 
