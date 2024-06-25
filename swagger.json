@@ -38,7 +38,7 @@
     "/auth/signin": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Signin a new user",
+        "summary": "Signin a user",
         "requestBody": {
           "required": true,
           "content": {
