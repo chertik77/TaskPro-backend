@@ -5,8 +5,6 @@ import jwt from 'jsonwebtoken'
 
 import { Session, User } from 'models'
 
-const { JWT_SECRET } = process.env
-
 export const authenticate = async (
   req: Request,
   _: Response,
@@ -20,7 +18,7 @@ export const authenticate = async (
   }
 
   try {
-    const { id, sid } = jwt.verify(token, JWT_SECRET!) as {
+    const { id, sid } = jwt.verify(token, process.env.ACCESS_JWT_SECRET!) as {
       id: string
       sid: string
     }

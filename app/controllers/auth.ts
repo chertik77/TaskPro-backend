@@ -8,8 +8,12 @@ import { Types } from 'mongoose'
 
 import { Session, User } from 'models'
 
-const { ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN, JWT_SECRET } =
-  process.env
+const {
+  ACCESS_TOKEN_EXPIRES_IN,
+  REFRESH_TOKEN_EXPIRES_IN,
+  REFRESH_JWT_SECRET,
+  ACCESS_JWT_SECRET
+} = process.env
 
 class Controller {
   signup = async (req: Request, res: Response, next: NextFunction) => {
@@ -88,7 +92,10 @@ class Controller {
 
   updateTokens = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id, sid } = jwt.verify(req.body.refreshToken, JWT_SECRET!) as {
+      const { id, sid } = jwt.verify(
+        req.body.refreshToken,
+        REFRESH_JWT_SECRET
+      ) as {
         id: string
         sid: string
       }
@@ -127,11 +134,11 @@ class Controller {
     id: Types.ObjectId
     sid: Types.ObjectId
   }) => {
-    const accessToken = jwt.sign(payload, JWT_SECRET!, {
+    const accessToken = jwt.sign(payload, ACCESS_JWT_SECRET, {
       expiresIn: ACCESS_TOKEN_EXPIRES_IN
     })
 
-    const refreshToken = jwt.sign(payload, JWT_SECRET!, {
+    const refreshToken = jwt.sign(payload, REFRESH_JWT_SECRET, {
       expiresIn: REFRESH_TOKEN_EXPIRES_IN
     })
 
