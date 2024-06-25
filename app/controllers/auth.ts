@@ -1,5 +1,4 @@
 import type { NextFunction, Request, Response } from 'express'
-import type { TypedRequestBody } from 'zod-express-middleware'
 
 import bcrypt from 'bcrypt'
 import createHttpError from 'http-errors'
@@ -9,21 +8,11 @@ import { Types } from 'mongoose'
 
 import { Session, User } from 'models'
 
-import {
-  GoogleAuthSchema,
-  RefreshTokenSchema,
-  SigninSchema,
-  SignupSchema
-} from 'schemas/user'
-
-const { JWT_SECRET } = process.env
+const { ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN, JWT_SECRET } =
+  process.env
 
 class Controller {
-  signup = async (
-    req: TypedRequestBody<typeof SignupSchema>,
-    res: Response,
-    next: NextFunction
-  ) => {
+  signup = async (req: Request, res: Response, next: NextFunction) => {
     const isUserExists = await User.findOne({ email: req.body.email })
 
     if (isUserExists) {
@@ -42,11 +31,7 @@ class Controller {
     res.status(201).json({ user, ...tokens })
   }
 
-  signin = async (
-    req: TypedRequestBody<typeof SigninSchema>,
-    res: Response,
-    next: NextFunction
-  ) => {
+  signin = async (req: Request, res: Response, next: NextFunction) => {
     const user = await User.findOne({ email: req.body.email })
 
     if (!user) {
@@ -69,10 +54,7 @@ class Controller {
     res.json({ user, ...tokens })
   }
 
-  signinByGoogle = async (
-    req: TypedRequestBody<typeof GoogleAuthSchema>,
-    res: Response
-  ) => {
+  signinByGoogle = async (req: Request, res: Response) => {
     const { email, name, picture, sub } = jwtDecode<{
       name: string
       email: string
@@ -83,12 +65,10 @@ class Controller {
     const user = await User.findOne({ email })
 
     if (!user) {
-      const hashPassword = await bcrypt.hash(sub, 10)
-
       const user = await User.create({
         name,
         email,
-        password: hashPassword,
+        password: await bcrypt.hash(sub, 10),
         avatar: { url: picture, publicId: 'google-picture' }
       })
 
@@ -106,11 +86,7 @@ class Controller {
     }
   }
 
-  updateTokens = async (
-    req: TypedRequestBody<typeof RefreshTokenSchema>,
-    res: Response,
-    next: NextFunction
-  ) => {
+  updateTokens = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id, sid } = jwt.verify(req.body.refreshToken, JWT_SECRET!) as {
         id: string
@@ -123,13 +99,13 @@ class Controller {
         return next(createHttpError(403))
       }
 
-      const currentSession = await Session.findOne({ _id: sid })
+      const currentSession = await Session.findById(sid)
 
       if (!currentSession) {
         return next(createHttpError(403))
       }
 
-      await Session.deleteOne({ _id: sid })
+      await Session.findByIdAndDelete(sid)
 
       const newSid = await Session.create({ uid: user._id })
 
@@ -142,9 +118,9 @@ class Controller {
   }
 
   logout = async (req: Request, res: Response) => {
-    await Session.findByIdAndDelete(req.session._id)
+    await Session.findByIdAndDelete(req.session.id)
 
-    res.status(204).json()
+    res.status(204).send()
   }
 
   private getNewTokens = (payload: {
@@ -152,11 +128,11 @@ class Controller {
     sid: Types.ObjectId
   }) => {
     const accessToken = jwt.sign(payload, JWT_SECRET!, {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN
+      expiresIn: ACCESS_TOKEN_EXPIRES_IN
     })
 
     const refreshToken = jwt.sign(payload, JWT_SECRET!, {
-      expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN
+      expiresIn: REFRESH_TOKEN_EXPIRES_IN
     })
 
     return { accessToken, refreshToken }

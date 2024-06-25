@@ -33,16 +33,14 @@ export const columnController = {
   },
 
   deleteById: async (req: Request, res: Response, next: NextFunction) => {
-    const { id: owner } = req.user
-    const { columnId: _id } = req.params
+    const deletedColumn = await Column.findOneAndDelete({
+      _id: req.params.columnId,
+      owner: req.user.id
+    })
 
-    const column = await Column.findById(_id)
-
-    if (!column) {
+    if (!deletedColumn) {
       return next(createHttpError(404, `Column Not Found`))
     }
-
-    await Column.findOneAndDelete({ _id, owner })
 
     res.status(204).json()
   }

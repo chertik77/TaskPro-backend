@@ -40,17 +40,17 @@ export const cardController = {
   },
 
   deleteById: async (req: Request, res: Response, next: NextFunction) => {
-    const deletedCard = await Card.findOneAndDelete({ _id: req.params.cardId })
+    const deletedCard = await Card.findByIdAndDelete(req.params.cardId)
 
     if (!deletedCard) {
       return next(createHttpError(404, 'Card not found'))
     }
 
-    res.status(204).json()
+    res.status(204).send()
   },
 
   changeCardColumn: async (req: Request, res: Response, next: NextFunction) => {
-    const { newColumnId } = req.params
+    const { newColumnId, cardId } = req.params
 
     const existColumn = await Column.findById(newColumnId)
 
@@ -59,7 +59,7 @@ export const cardController = {
     }
 
     const result = await Card.findOneAndUpdate(
-      { _id: req.params.cardId, owner: req.user.id },
+      { _id: cardId, owner: req.user.id },
       { column: newColumnId }
     )
 

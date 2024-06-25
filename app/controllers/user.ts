@@ -1,5 +1,4 @@
 import type { NextFunction, Request, Response } from 'express'
-import type { TypedRequestBody } from 'zod-express-middleware'
 
 import bcrypt from 'bcrypt'
 import cloudinary from 'config/cloudinary.config'
@@ -8,7 +7,7 @@ import createHttpError from 'http-errors'
 
 import { User } from 'models/User'
 
-import { NeedHelpSchema } from 'schemas/user'
+import { themeAvatarUrls } from 'utils/theme-avatar-urls'
 
 export const userController = {
   update: async (req: Request, res: Response, next: NextFunction) => {
@@ -64,11 +63,7 @@ export const userController = {
     res.json(updatedUser)
   },
 
-  help: async (
-    req: TypedRequestBody<typeof NeedHelpSchema>,
-    res: Response,
-    next: NextFunction
-  ) => {
+  help: async (req: Request, res: Response, next: NextFunction) => {
     const emailBody = {
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_RECEIVER,
@@ -93,19 +88,11 @@ export const userController = {
 
     const user = await User.findById(id)
 
-    const themeUrls = {
-      light:
-        'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png',
-      dark: 'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_dark.png',
-      violet:
-        'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_violet.png'
-    }
-
-    const theme: keyof typeof themeUrls =
-      req.body.theme in themeUrls ? req.body.theme : 'light'
+    const theme: keyof typeof themeAvatarUrls =
+      req.body.theme in themeAvatarUrls ? req.body.theme : 'light'
 
     const updateData = !user?.avatar?.publicId
-      ? { ...req.body, avatar: { url: themeUrls[theme], publicId: '' } }
+      ? { ...req.body, avatar: { url: themeAvatarUrls[theme], publicId: '' } }
       : req.body
 
     const editedUser = await User.findByIdAndUpdate(id, updateData)

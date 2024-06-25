@@ -39,26 +39,19 @@ export const boardController = {
           as: 'cards'
         }
       },
-      { $addFields: { id: '$_id' } },
-      { $project: { _id: 0, owner: 0, board: 0 } },
       {
         $addFields: {
+          id: '$_id',
           cards: {
             $map: {
               input: '$cards',
               as: 'card',
-              in: {
-                id: '$$card._id',
-                title: '$$card.title',
-                description: '$$card.description',
-                priority: '$$card.priority',
-                deadline: '$$card.deadline',
-                column: '$$card.column'
-              }
+              in: { $mergeObjects: ['$$card', { id: '$$card._id' }] }
             }
           }
         }
-      }
+      },
+      { $unset: ['_id', 'cards._id'] }
     ])
 
     res.json({ ...board.toJSON(), columns: result })
@@ -97,6 +90,6 @@ export const boardController = {
       return next(createHttpError(404, `Board not found`))
     }
 
-    res.status(204).json({})
+    res.status(204).send()
   }
 }
