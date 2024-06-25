@@ -94,7 +94,7 @@ class Controller {
     try {
       const { id, sid } = jwt.verify(
         req.body.refreshToken,
-        REFRESH_JWT_SECRET
+        REFRESH_JWT_SECRET!
       ) as {
         id: string
         sid: string
@@ -134,11 +134,11 @@ class Controller {
     id: Types.ObjectId
     sid: Types.ObjectId
   }) => {
-    const accessToken = jwt.sign(payload, ACCESS_JWT_SECRET, {
+    const accessToken = jwt.sign(payload, ACCESS_JWT_SECRET!, {
       expiresIn: ACCESS_TOKEN_EXPIRES_IN
     })
 
-    const refreshToken = jwt.sign(payload, REFRESH_JWT_SECRET, {
+    const refreshToken = jwt.sign(payload, REFRESH_JWT_SECRET!, {
       expiresIn: REFRESH_TOKEN_EXPIRES_IN
     })
 
