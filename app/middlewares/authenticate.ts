@@ -30,7 +30,7 @@ export const authenticate = async (
       return next(createHttpError(401))
     }
 
-    req.user = user.toObject()
+    req.user = user.toObject({ virtuals: true })
 
     req.session = session._id
 
