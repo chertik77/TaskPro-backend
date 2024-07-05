@@ -125,7 +125,7 @@ class Controller {
   }
 
   logout = async (req: Request, res: Response) => {
-    await Session.findOneAndDelete(req.session._id)
+    await Session.findByIdAndDelete(req.session._id)
 
     res.status(204).send()
   }
