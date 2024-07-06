@@ -11,7 +11,12 @@ const boardSchema = new Schema(
       required: true
     },
     background: {
-      type: Object
+      url: String,
+      identifier: String,
+      hasWhiteTextColor: {
+        type: Boolean,
+        required: false
+      }
     },
     owner: {
       type: Schema.Types.ObjectId,
