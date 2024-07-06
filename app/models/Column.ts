@@ -4,7 +4,8 @@ export const columnSchema = new Schema(
   {
     title: {
       type: String,
-      required: true
+      required: true,
+      minLength: 3
     },
     board: {
       type: Schema.Types.ObjectId,

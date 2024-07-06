@@ -4,7 +4,8 @@ const boardSchema = new Schema(
   {
     title: {
       type: String,
-      required: true
+      required: true,
+      minLength: 3
     },
     icon: {
       type: String,
@@ -13,10 +14,7 @@ const boardSchema = new Schema(
     background: {
       url: String,
       identifier: String,
-      hasWhiteTextColor: {
-        type: Boolean,
-        required: false
-      }
+      hasWhiteTextColor: Boolean
     },
     owner: {
       type: Schema.Types.ObjectId,
