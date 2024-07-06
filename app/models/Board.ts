@@ -5,7 +5,7 @@ const boardSchema = new Schema(
     title: {
       type: String,
       required: true,
-      minLength: 3
+      minlength: 3
     },
     icon: {
       type: String,

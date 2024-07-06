@@ -7,12 +7,12 @@ export const cardSchema = new Schema(
     title: {
       type: String,
       required: true,
-      minLength: 3
+      minlength: 3
     },
     description: {
       type: String,
       required: true,
-      minLength: 3
+      minlength: 3
     },
     priority: {
       type: String,

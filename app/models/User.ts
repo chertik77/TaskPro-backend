@@ -19,7 +19,7 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      minLength: 8,
+      minlength: 8,
       required: true
     },
     theme: {

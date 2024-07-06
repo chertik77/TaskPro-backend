@@ -5,7 +5,7 @@ export const columnSchema = new Schema(
     title: {
       type: String,
       required: true,
-      minLength: 3
+      minlength: 3
     },
     board: {
       type: Schema.Types.ObjectId,
