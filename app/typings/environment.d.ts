@@ -4,7 +4,7 @@ declare global {
       CLOUDINARY_API_KEY: string
       CLOUDINARY_API_SECRET: string
       CLOUDINARY_CLOUD_NAME: string
-      DB_HOST: string
+      DATABASE_URL: string
       ACCESS_JWT_SECRET: string
       REFRESH_JWT_SECRET: string
       ALLOWED_ORIGINS: string
