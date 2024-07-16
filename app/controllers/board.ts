@@ -18,7 +18,7 @@ export const boardController = {
     const { id: owner } = req.user
     const { boardId } = req.params
 
-    const board = await Board.findOne({ _id: boardId, owner: req.user.id })
+    const board = await Board.findOne({ _id: boardId, owner })
 
     if (!board) {
       return next(createHttpError(404, `Board not found`))
