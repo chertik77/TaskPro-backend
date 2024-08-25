@@ -38,8 +38,7 @@ appRouter.use('/board', boardRouter)
 appRouter.use('/column', columnRouter)
 appRouter.use('/card', cardRouter)
 
-console.log(app.get('env'))
-app.use(app.get('env') === 'production' ? '' : '/api', appRouter)
+app.use(process.env.API_PREFIX!, appRouter)
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Not found' })
