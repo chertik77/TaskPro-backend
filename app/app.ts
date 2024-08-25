@@ -27,7 +27,7 @@ export const app = express()
 const appRouter = express.Router()
 
 app.use(logger('dev'))
-app.use(process.env.API_PREFIX!, appRouter)
+app.use(process.env.API_PREFIX as string, appRouter)
 app.use(cors({ origin: process.env.ALLOWED_ORIGINS?.split(',') }))
 app.use(express.json())
 app.disable('x-powered-by')
