@@ -28,7 +28,6 @@ const appRouter = express.Router()
 
 app.use(logger('dev'))
 app.use(cors({ origin: process.env.ALLOWED_ORIGINS?.split(',') }))
-app.use(process.env.API_PREFIX!, appRouter)
 app.use(express.json())
 app.disable('x-powered-by')
 
@@ -38,6 +37,8 @@ appRouter.use('/user', userRouter)
 appRouter.use('/board', boardRouter)
 appRouter.use('/column', columnRouter)
 appRouter.use('/card', cardRouter)
+
+app.use(process.env.API_PREFIX!, appRouter)
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Not found' })
