@@ -24,17 +24,19 @@ export type ResponseError = Error & {
 
 export const app = express()
 
+const apiPrefix = process.env.API_PREFIX
+
 app.use(logger('dev'))
 app.use(cors({ origin: process.env.ALLOWED_ORIGINS?.split(',') }))
 app.use(express.json())
 app.disable('x-powered-by')
 
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
-app.use('/api/auth', authRouter)
-app.use('/api/user', userRouter)
-app.use('/api/board', boardRouter)
-app.use('/api/column', columnRouter)
-app.use('/api/card', cardRouter)
+app.use(`${apiPrefix}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+app.use(`${apiPrefix}/auth`, authRouter)
+app.use(`${apiPrefix}/user`, userRouter)
+app.use(`${apiPrefix}/board`, boardRouter)
+app.use(`${apiPrefix}/column`, columnRouter)
+app.use(`${apiPrefix}/card`, cardRouter)
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Not found' })

@@ -9,6 +9,7 @@ declare global {
       REFRESH_JWT_SECRET: string
       ALLOWED_ORIGINS: string
       PORT: number
+      API_PREFIX: string
       EMAIL_HOST: string
       EMAIL_PORT: number
       EMAIL_USER: string
