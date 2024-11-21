@@ -5,6 +5,8 @@ declare global {
       CLOUDINARY_API_SECRET: string
       CLOUDINARY_CLOUD_NAME: string
       DATABASE_URL: string
+      GOOGLE_CLIENT_ID: string
+      GOOGLE_CLIENT_SECRET: string
       ACCESS_JWT_SECRET: string
       REFRESH_JWT_SECRET: string
       ALLOWED_ORIGINS: string

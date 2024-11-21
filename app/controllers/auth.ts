@@ -1,18 +1,22 @@
 import type { NextFunction, Request, Response } from 'express'
 
 import bcrypt from 'bcrypt'
+import { OAuth2Client } from 'google-auth-library'
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
-import { jwtDecode } from 'jwt-decode'
 import { Types } from 'mongoose'
 
 import { Session, User } from 'models'
+
+import { getUserInfoFromGoogleApi } from 'utils/getUserInfoFromGoogleApi'
 
 const {
   ACCESS_TOKEN_EXPIRES_IN,
   REFRESH_TOKEN_EXPIRES_IN,
   REFRESH_JWT_SECRET,
-  ACCESS_JWT_SECRET
+  ACCESS_JWT_SECRET,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET
 } = process.env
 
 class Controller {
@@ -59,12 +63,17 @@ class Controller {
   }
 
   signinByGoogle = async (req: Request, res: Response) => {
-    const { email, name, picture, sub } = jwtDecode<{
-      name: string
-      email: string
-      sub: string
-      picture: string
-    }>(req.body.credential)
+    const oAuth2Client = new OAuth2Client(
+      GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET,
+      'postmessage'
+    )
+
+    const { tokens } = await oAuth2Client.getToken(req.body.code)
+
+    const { name, sub, email, picture } = await getUserInfoFromGoogleApi(
+      tokens.access_token!
+    )
 
     const user = await User.findOne({ email })
 

@@ -22,4 +22,4 @@ export const ThemeSchema = z.object({ theme: z.enum(themes) })
 
 export const RefreshTokenSchema = z.object({ refreshToken: z.string() })
 
-export const GoogleAuthSchema = z.object({ credential: z.string() })
+export const GoogleAuthSchema = z.object({ code: z.string() })
