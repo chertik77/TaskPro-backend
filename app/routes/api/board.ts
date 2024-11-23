@@ -4,14 +4,21 @@ import boardImages from 'data/board-bg-images.json'
 import createHttpError from 'http-errors'
 import {
   validateRequestBody,
-  validateRequestParams
+  validateRequestParams,
+  validateRequestQuery
 } from 'zod-express-middleware'
 
 import { authenticate } from 'middlewares'
 
-import { AddBoardSchema, BoardParams, EditBoardSchema } from 'schemas/board'
+import {
+  AddBoardSchema,
+  BoardParams,
+  BoardQuery,
+  EditBoardSchema
+} from 'schemas/board'
 
 export const boardRouter = Router()
+
 boardRouter.use(authenticate)
 
 boardRouter.get('/', async ({ user }, res) => {
@@ -22,11 +29,21 @@ boardRouter.get('/', async ({ user }, res) => {
 
 boardRouter.get(
   '/:boardId',
+  validateRequestQuery(BoardQuery),
   validateRequestParams(BoardParams),
-  async ({ user, params }, res, next) => {
+  async ({ user, params, query }, res, next) => {
     const board = await prisma.board.findFirst({
       where: { id: params.boardId, userId: user.id },
-      include: { columns: { include: { cards: true } } }
+      include: {
+        columns: {
+          include: {
+            cards: {
+              orderBy: { deadline: query.sortBy },
+              where: { priority: query.priority }
+            }
+          }
+        }
+      }
     })
 
     if (!board) {
