@@ -2,11 +2,12 @@ import type { NextFunction, Request, Response } from 'express'
 
 import express from 'express'
 import cors from 'cors'
-import mongoose from 'mongoose'
 import logger from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 
 import 'dotenv/config'
+
+import { PrismaClient } from '@prisma/client'
 
 import swaggerDocument from '../swagger.json'
 import {
@@ -22,7 +23,13 @@ export type ResponseError = Error & {
   code?: number | string
 }
 
-export const app = express()
+const app = express()
+
+export const prisma = new PrismaClient()
+
+app.listen(Number(process.env.PORT) || 5432, () => {
+  console.log(`Server started on port ${process.env.PORT || 5432}`)
+})
 
 const appRouter = express.Router()
 
@@ -47,15 +54,4 @@ app.use((_, res) => {
 app.use((err: ResponseError, _: Request, res: Response, __: NextFunction) => {
   const { status = 500, message = 'Server error' } = err
   res.status(status).json({ message })
-})
-
-mongoose.set('toJSON', {
-  virtuals: true,
-  transform(_, ret) {
-    if (ret.password) delete ret.password
-
-    if (ret.avatar) ret.avatar = ret.avatar.url
-
-    delete ret._id
-  }
 })

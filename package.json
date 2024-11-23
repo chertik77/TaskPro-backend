@@ -1,19 +1,20 @@
 {
-  "name": "template",
+  "name": "taskpro-backend",
   "version": "0.0.0",
   "private": true,
   "engines": {
     "node": ">16.17.1"
   },
   "scripts": {
-    "start": "ts-node -r tsconfig-paths/register app/server.ts",
-    "dev": "ts-node-dev -r tsconfig-paths/register --files --quiet app/server.ts",
+    "start": "ts-node -r tsconfig-paths/register app/app.ts",
+    "dev": "ts-node-dev -r tsconfig-paths/register --files --quiet app/app.ts",
     "lint": "eslint --fix app/**/*.ts",
     "format": "prettier --write ./app",
     "format:check": "prettier --check ./app",
     "prepare": "husky"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.0.0",
     "cors": "2.8.5",
@@ -22,7 +23,6 @@
     "google-auth-library": "^9.15.0",
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^7.5.0",
     "morgan": "1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.9",
@@ -52,6 +52,7 @@
     "husky": "^9.0.6",
     "lint-staged": "^15.2.7",
     "prettier": "^3.3.2",
+    "prisma": "^5.22.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "tsc-files": "^1.1.4",

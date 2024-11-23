@@ -1,9 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
 
+import { prisma } from 'app'
 import createHttpError from 'http-errors'
 import jwt from 'jsonwebtoken'
-
-import { Session, User } from 'models'
 
 export const authenticate = async (
   req: Request,
@@ -23,16 +22,15 @@ export const authenticate = async (
       sid: string
     }
 
-    const user = await User.findById(id)
-    const session = await Session.findById(sid)
+    const user = await prisma.user.findFirst({ where: { id } })
+    const session = await prisma.session.findFirst({ where: { id: sid } })
 
     if (!user || !session) {
       return next(createHttpError(401))
     }
 
-    req.user = user.toObject({ virtuals: true })
-
-    req.session = session._id
+    req.user = user
+    req.session = session.id
 
     next()
   } catch {

@@ -1,6 +1,5 @@
+import { Theme } from '@prisma/client'
 import * as z from 'zod'
-
-import { themes } from 'constants/themes'
 
 export const SigninSchema = z.object({
   email: z.string().email(),
@@ -18,7 +17,7 @@ export const NeedHelpSchema = z.object({
   comment: z.string().min(5)
 })
 
-export const ThemeSchema = z.object({ theme: z.enum(themes) })
+export const ThemeSchema = z.object({ theme: z.nativeEnum(Theme) })
 
 export const RefreshTokenSchema = z.object({ refreshToken: z.string() })
 
