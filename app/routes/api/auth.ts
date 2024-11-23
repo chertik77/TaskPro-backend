@@ -99,20 +99,22 @@ authRouter.post(
 
     const { tokens } = await oAuth2Client.getToken(body.code)
 
-    const userInfo = await getUserInfoFromGoogleApi(tokens.access_token!)
+    const { name, email, sub, picture } = await getUserInfoFromGoogleApi(
+      tokens.access_token!
+    )
 
-    const user = await prisma.user.findUnique({
-      where: { email: userInfo.email }
-    })
+    const user = await prisma.user.findUnique({ where: { email } })
 
     if (!user) {
       const user = await prisma.user.create({
         data: {
-          ...userInfo,
-          password: await bcrypt.hash(userInfo.sub, 10),
-          avatar: userInfo.picture,
+          name,
+          email,
+          password: await bcrypt.hash(sub, 10),
+          avatar: picture,
           avatarPublicId: 'google-picture'
-        }
+        },
+        omit: { password: true }
       })
 
       const newSession = await prisma.session.create({
