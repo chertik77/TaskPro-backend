@@ -6,7 +6,7 @@
     "description": "The Task Pro API provides endpoints to manage projects and user assignments, ensuring secure and efficient task management."
   },
   "servers": [
-    { "url": "http:localhost:7000/api - Development" },
+    { "url": "http:localhost:8000/api - Development" },
     { "url": "https://api.taskpro.uk - Production" }
   ],
   "paths": {
@@ -70,7 +70,7 @@
           "content": {
             "application/json": {
               "example": {
-                "credential": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
+                "code": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
               }
             }
           }
@@ -380,17 +380,24 @@
         }
       }
     },
-    "/card/{cardId}/{newColumnId}": {
+    "/card/{columnId}/order": {
       "patch": {
         "tags": ["Card"],
-        "summary": "Change column for card",
-        "parameters": [
-          { "in": "path", "name": "cardId", "required": true },
-          { "in": "path", "name": "newColumnId", "required": true }
-        ],
+        "summary": "Update cards order",
+        "parameters": [{ "in": "path", "name": "columnId", "required": true }],
         "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "ids": ["6672fdccc07147fc7ae1bb93", "6743474be4006eca6c8122e7"]
+              }
+            }
+          }
+        },
         "responses": {
-          "200": { "$ref": "#/components/responses/CardResponse" },
+          "200": { "$ref": "#/components/responses/UpdateCardOrderResponse" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
@@ -437,7 +444,8 @@
                 "name": "John Doe",
                 "email": "user@example.com",
                 "theme": "light",
-                "avatar": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg"
+                "avatar": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg",
+                "avatarPublicId": null
               },
               "acesssToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE4NzE2MzQwfQ.hwdlZg0fft0PjwN63qwfjFTg1ZeyOOukFdZVbF0VOUU",
               "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
@@ -463,7 +471,8 @@
               "name": "John Doe",
               "email": "user@example.com",
               "theme": "light",
-              "avatar": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg"
+              "avatar": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg",
+              "avatarPublicId": "TaskPro/user_avatars/jcczofobbijvvg066xjo"
             }
           }
         }
@@ -477,10 +486,10 @@
                 "icon": "icon-project-1",
                 "background": {
                   "identifier": "flowers",
-                  "hasWhiteTextColor": true,
-                  "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg"
+                  "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg",
+                  "hasWhiteTextColor": true
                 },
-                "owner": "6671743db85c96453e04a684",
+                "userId": "6671743db85c96453e04a684",
                 "id": "6672f1d2f02c8b04130c718c"
               },
               {
@@ -488,9 +497,10 @@
                 "icon": "icon-lightning-6",
                 "background": {
                   "identifier": "blue-ball",
-                  "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/desk/dtmqypo6r0v0nktpagku.jpg"
+                  "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/desk/dtmqypo6r0v0nktpagku.jpg",
+                  "hasWhiteTextColor": false
                 },
-                "owner": "6671743db85c96453e04a684",
+                "userId": "6671743db85c96453e04a684",
                 "id": "6672f211f02c8b04130c7193"
               }
             ]
@@ -501,13 +511,14 @@
         "content": {
           "application/json": {
             "example": {
-              "title": "My office",
-              "icon": "icon-lightning-6",
               "background": {
                 "identifier": "blue-ball",
-                "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/desk/dtmqypo6r0v0nktpagku.jpg"
+                "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/desk/dtmqypo6r0v0nktpagku.jpg",
+                "hasWhiteTextColor": false
               },
-              "owner": "6671743db85c96453e04a684",
+              "title": "My office",
+              "icon": "icon-lightning-6",
+              "userId": "6671743db85c96453e04a684",
               "id": "6672f211f02c8b04130c7193"
             }
           }
@@ -521,14 +532,16 @@
               "icon": "icon-project-1",
               "background": {
                 "identifier": "flowers",
-                "hasWhiteTextColor": true,
-                "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg"
+                "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg",
+                "hasWhiteTextColor": true
               },
-              "owner": "6671743db85c96453e04a684",
+              "userId": "6671743db85c96453e04a684",
               "id": "6672f1d2f02c8b04130c718c",
               "columns": [
                 {
+                  "id": "6672f5cdc07147fc7ae1bb71",
                   "title": "To do",
+                  "boardId": "674345e37634766f05c4f7b1",
                   "cards": [
                     {
                       "id": "6672fda1c07147fc7ae1bb8a",
@@ -536,10 +549,10 @@
                       "description": "Conduct in-depth research and analysis on the project's topic, gather relevant data, and identify key insights to inform decision-making and project planning.",
                       "priority": "Medium",
                       "deadline": "2025-10-20T00:00:00.000Z",
-                      "column": "6672f5cdc07147fc7ae1bb71"
+                      "order": 1,
+                      "columnId": "6672f5cdc07147fc7ae1bb71"
                     }
-                  ],
-                  "id": "6672f5cdc07147fc7ae1bb71"
+                  ]
                 },
                 {
                   "title": "In progress",
@@ -550,7 +563,8 @@
                       "description": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials.",
                       "priority": "High",
                       "deadline": "2025-10-15T00:00:00.000Z",
-                      "column": "6672f604c07147fc7ae1bb81"
+                      "order": 1,
+                      "columnId": "6672f604c07147fc7ae1bb81"
                     }
                   ],
                   "id": "6672f604c07147fc7ae1bb81"
@@ -574,15 +588,40 @@
         "content": {
           "application/json": {
             "example": {
+              "id": "6672fdccc07147fc7ae1bb93",
               "title": "Publication of the project",
               "description": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials.",
               "priority": "High",
               "deadline": "2025-10-15T00:00:00.000Z",
-              "column": "6672f604c07147fc7ae1bb81",
-              "board": "6672f1d2f02c8b04130c718c",
-              "owner": "6671743db85c96453e04a684",
-              "id": "6672fdccc07147fc7ae1bb93"
+              "order": 1,
+              "columnId": "6671743db85c96453e04a684"
             }
+          }
+        }
+      },
+      "UpdateCardOrderResponse": {
+        "content": {
+          "application/json": {
+            "example": [
+              {
+                "id": "6672fdccc07147fc7ae1bb93",
+                "title": "Publication of the project",
+                "description": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials.",
+                "priority": "High",
+                "deadline": "2025-10-15T00:00:00.000Z",
+                "order": 0,
+                "columnId": "6671743db85c96453e04a684"
+              },
+              {
+                "id": "6743474be4006eca6c8122e7",
+                "title": "Publication of the project 2",
+                "description": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials.",
+                "priority": "High",
+                "deadline": "2025-10-15T00:00:00.000Z",
+                "order": 1,
+                "columnId": "6671743db85c96453e04a684"
+              }
+            ]
           }
         }
       }

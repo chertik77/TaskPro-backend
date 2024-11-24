@@ -16,13 +16,13 @@ _Link to the frontend repo:_ https://github.com/chertik77/TaskPro-frontend
   Enable users to create, update, and delete boards programmatically. Boards can be personalized with unique metadata and user-specific configurations.
 
 - **Task Management:**
-  Develop robust APIs for creating, updating, and prioritizing tasks within boards. Implement advanced features such as filtering by priority and sorting by deadline to optimize task handling.
+  Develop robust APIs for creating, updating, and prioritizing tasks within boards. Implement advanced features such as filtering by priority and ordering to optimize task handling.
 
 - **Database Integration:**
   Utilize efficient database management (MongoDB) for storing board configurations, tasks, and user data securely.
 
 - **Theme Configuration:**
-  Implement backend logic to support theme switching functionalities. Ensure seamless integration with frontend capabilities for light, dark, and custom themes.
+  Implement backend logic to support theme switching functionalities. Ensure seamless integration with frontend capabilities for light, dark, and violet themes.
 
 - **Profile Management:**
   Enable users to manage their profiles through APIs for updating avatars and other user-specific details.
@@ -41,4 +41,4 @@ _Link to the frontend repo:_ https://github.com/chertik77/TaskPro-frontend
 
 ## Languages and Tools
 
-<a href="#"><img src="https://skillicons.dev/icons?i=nodejs,ts,express,mongodb,githubactions,postman,vscode" alt="tools"></a>
+<a href="#"><img src="https://skillicons.dev/icons?i=nodejs,ts,express,prisma,mongodb,gcp,githubactions,postman,vscode" alt="tools"></a>
