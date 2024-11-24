@@ -12,8 +12,8 @@ import { authenticate } from 'middlewares'
 
 import {
   AddBoardSchema,
-  BoardParams,
-  BoardQuery,
+  BoardParamsSchema,
+  BoardQuerySchema,
   EditBoardSchema
 } from 'schemas/board'
 
@@ -29,8 +29,8 @@ boardRouter.get('/', async ({ user }, res) => {
 
 boardRouter.get(
   '/:boardId',
-  validateRequestQuery(BoardQuery),
-  validateRequestParams(BoardParams),
+  validateRequestQuery(BoardQuerySchema),
+  validateRequestParams(BoardParamsSchema),
   async ({ user, params, query }, res, next) => {
     const board = await prisma.board.findFirst({
       where: { id: params.boardId, userId: user.id },
@@ -38,7 +38,7 @@ boardRouter.get(
         columns: {
           include: {
             cards: {
-              orderBy: { deadline: query.sortBy },
+              orderBy: { order: 'asc' },
               where: { priority: query.priority }
             }
           }
@@ -72,7 +72,7 @@ boardRouter.post(
 
 boardRouter.put(
   '/:boardId',
-  validateRequestParams(BoardParams),
+  validateRequestParams(BoardParamsSchema),
   validateRequestBody(EditBoardSchema),
   async ({ body, params, user }, res, next) => {
     const updatedBoard = await prisma.board.update({
@@ -93,7 +93,7 @@ boardRouter.put(
 
 boardRouter.delete(
   '/:boardId',
-  validateRequestParams(BoardParams),
+  validateRequestParams(BoardParamsSchema),
   async ({ params, user }, res, next) => {
     const deletedBoard = await prisma.board.delete({
       where: { id: params.boardId, userId: user.id }

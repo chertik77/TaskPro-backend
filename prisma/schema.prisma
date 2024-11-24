@@ -68,6 +68,7 @@ model Card {
   description String
   priority    Priority
   deadline    DateTime
+  order       Int      @default(1)
   columnId    String   @map("column_id") @db.ObjectId
   column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
 

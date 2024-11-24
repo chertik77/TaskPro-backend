@@ -10,11 +10,11 @@ import { authenticate } from 'middlewares'
 
 import {
   AddCardSchema,
-  CardParams,
-  ChangeCardColumnParams,
-  EditCardSchema
+  CardParamsSchema,
+  EditCardSchema,
+  UpdateCardOrderSchema
 } from 'schemas/card'
-import { ColumnParams } from 'schemas/column'
+import { ColumnParamsSchema } from 'schemas/column'
 
 export const cardRouter = Router()
 
@@ -22,7 +22,7 @@ cardRouter.use(authenticate)
 
 cardRouter.post(
   '/:columnId',
-  validateRequestParams(ColumnParams),
+  validateRequestParams(ColumnParamsSchema),
   validateRequestBody(AddCardSchema),
   async ({ params, body }, res, next) => {
     const isCurrentColumn = await prisma.column.findFirst({
@@ -43,7 +43,7 @@ cardRouter.post(
 
 cardRouter.put(
   '/:cardId',
-  validateRequestParams(CardParams),
+  validateRequestParams(CardParamsSchema),
   validateRequestBody(EditCardSchema),
   async ({ params, body }, res, next) => {
     const updatedCard = await prisma.card.update({
@@ -61,7 +61,7 @@ cardRouter.put(
 
 cardRouter.delete(
   '/:cardId',
-  validateRequestParams(CardParams),
+  validateRequestParams(CardParamsSchema),
   async ({ params }, res, next) => {
     const deletedCard = await prisma.card.delete({
       where: { id: params.cardId }
@@ -76,28 +76,19 @@ cardRouter.delete(
 )
 
 cardRouter.patch(
-  '/:cardId/:newColumnId',
-  validateRequestParams(ChangeCardColumnParams),
-  async ({ params }, res, next) => {
-    const { newColumnId, cardId } = params
+  '/:columnId/order',
+  validateRequestParams(ColumnParamsSchema),
+  validateRequestBody(UpdateCardOrderSchema),
+  async ({ params, body }, res) => {
+    const transaction = body.ids.map((id, order) =>
+      prisma.card.update({
+        where: { id },
+        data: { order, columnId: params.columnId }
+      })
+    )
 
-    const existColumn = await prisma.column.findFirst({
-      where: { id: newColumnId }
-    })
+    const updatedCards = await prisma.$transaction(transaction)
 
-    if (!existColumn) {
-      return next(createHttpError(404, 'Column Not Found'))
-    }
-
-    const result = await prisma.card.update({
-      where: { id: cardId },
-      data: { columnId: newColumnId }
-    })
-
-    if (!result) {
-      return next(createHttpError(404, 'Card Not Found'))
-    }
-
-    res.json(result)
+    res.json(updatedCards)
   }
 )

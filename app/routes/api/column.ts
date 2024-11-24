@@ -8,8 +8,8 @@ import {
 
 import { authenticate } from 'middlewares'
 
-import { BoardParams } from 'schemas/board'
-import { AddColumnSchema, ColumnParams } from 'schemas/column'
+import { BoardParamsSchema } from 'schemas/board'
+import { AddColumnSchema, ColumnParamsSchema } from 'schemas/column'
 
 export const columnRouter = Router()
 
@@ -17,7 +17,7 @@ columnRouter.use(authenticate)
 
 columnRouter.post(
   '/:boardId',
-  validateRequestParams(BoardParams),
+  validateRequestParams(BoardParamsSchema),
   validateRequestBody(AddColumnSchema),
   async ({ params, user, body }, res, next) => {
     const board = await prisma.board.findFirst({
@@ -38,7 +38,7 @@ columnRouter.post(
 
 columnRouter.put(
   '/:columnId',
-  validateRequestParams(ColumnParams),
+  validateRequestParams(ColumnParamsSchema),
   async ({ params, body }, res, next) => {
     const updatedColumn = await prisma.column.update({
       where: { id: params.columnId },
@@ -55,7 +55,7 @@ columnRouter.put(
 
 columnRouter.delete(
   '/:columnId',
-  validateRequestParams(ColumnParams),
+  validateRequestParams(ColumnParamsSchema),
   async ({ params }, res, next) => {
     const deletedColumn = await prisma.column.delete({
       where: { id: params.columnId }
