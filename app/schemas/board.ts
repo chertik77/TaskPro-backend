@@ -1,4 +1,3 @@
-import { Priority } from '@prisma/client'
 import boardImages from 'data/board-bg-images.json'
 import * as z from 'zod'
 
@@ -18,7 +17,3 @@ export const AddBoardSchema = z.object({
 export const EditBoardSchema = AddBoardSchema.partial()
 
 export const BoardParamsSchema = z.object({ boardId: z.string() })
-
-export const BoardQuerySchema = z.object({
-  priority: z.nativeEnum(Priority).optional()
-})
