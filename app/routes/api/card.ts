@@ -79,7 +79,15 @@ cardRouter.patch(
   '/:columnId/order',
   validateRequestParams(ColumnParamsSchema),
   validateRequestBody(UpdateCardOrderSchema),
-  async ({ params, body }, res) => {
+  async ({ params, body }, res, next) => {
+    const column = await prisma.column.findFirst({
+      where: { id: params.columnId }
+    })
+
+    if (!column) {
+      return next(createHttpError(404, 'Column not found'))
+    }
+
     const transaction = body.ids.map((id, order) =>
       prisma.card.update({
         where: { id },
@@ -87,8 +95,11 @@ cardRouter.patch(
       })
     )
 
-    const updatedCards = await prisma.$transaction(transaction)
-
-    res.json(updatedCards)
+    try {
+      const updatedCards = await prisma.$transaction(transaction)
+      res.json(updatedCards)
+    } catch {
+      return next(createHttpError(400, 'Invalid order'))
+    }
   }
 )

@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 
 import express from 'express'
-import cors from 'cors'
 import logger from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 
@@ -34,7 +33,7 @@ app.listen(Number(process.env.PORT) || 5432, () => {
 const appRouter = express.Router()
 
 app.use(logger('dev'))
-app.use(cors({ origin: process.env.ALLOWED_ORIGINS }))
+// app.use(cors({ origin: process.env.ALLOWED_ORIGINS }))
 app.use(express.json())
 app.disable('x-powered-by')
 
