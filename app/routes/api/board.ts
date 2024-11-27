@@ -32,7 +32,10 @@ boardRouter.get(
     const board = await prisma.board.findFirst({
       where: { id: params.boardId, userId: user.id },
       include: {
-        columns: { include: { cards: { orderBy: { order: 'asc' } } } }
+        columns: {
+          orderBy: { order: 'asc' },
+          include: { cards: { orderBy: { order: 'asc' } } }
+        }
       }
     })
 

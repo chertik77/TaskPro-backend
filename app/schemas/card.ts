@@ -11,7 +11,3 @@ export const AddCardSchema = z.object({
 export const EditCardSchema = AddCardSchema.partial()
 
 export const CardParamsSchema = z.object({ cardId: z.string() })
-
-export const UpdateCardOrderSchema = z.object({
-  ids: z.array(z.string())
-})

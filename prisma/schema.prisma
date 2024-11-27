@@ -55,6 +55,7 @@ type Background {
 model Column {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   title   String
+  order   Int
   boardId String @map("board_id") @db.ObjectId
   board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
   cards   Card[]
@@ -68,7 +69,7 @@ model Card {
   description String
   priority    Priority
   deadline    DateTime
-  order       Int      @default(1)
+  order       Int
   columnId    String   @map("column_id") @db.ObjectId
   column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
 

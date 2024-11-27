@@ -114,6 +114,41 @@
         }
       }
     },
+    "/user/me": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get current user",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": { "$ref": "#/components/responses/UserResponse" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/user/help": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Send email need help",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": { "email": "user@example.com", "comment": "Need help" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": { "example": { "message": "Email sent" } }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
     "/user": {
       "put": {
         "tags": ["User"],
@@ -141,17 +176,6 @@
         }
       }
     },
-    "/user/me": {
-      "get": {
-        "tags": ["User"],
-        "summary": "Get current user",
-        "security": [{ "Bearer": [] }],
-        "responses": {
-          "200": { "$ref": "#/components/responses/UserResponse" },
-          "401": { "$ref": "#/components/responses/Unauthorized" }
-        }
-      }
-    },
     "/user/theme": {
       "put": {
         "tags": ["User"],
@@ -165,30 +189,6 @@
         },
         "responses": {
           "200": { "$ref": "#/components/responses/UserResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "401": { "$ref": "#/components/responses/Unauthorized" }
-        }
-      }
-    },
-    "/user/help": {
-      "post": {
-        "tags": ["User"],
-        "summary": "Send email need help",
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "example": { "email": "user@example.com", "comment": "Need help" }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": { "example": { "message": "Email sent" } }
-            }
-          },
           "400": { "$ref": "#/components/responses/BadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         }
@@ -578,8 +578,10 @@
         "content": {
           "application/json": {
             "example": {
+              "id": "6672f604c07147fc7ae1bb81",
               "title": "In progress",
-              "id": "6672f604c07147fc7ae1bb81"
+              "order": 1,
+              "boardId": "67470718ed1b2ff3a2e5bd55"
             }
           }
         }

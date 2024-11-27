@@ -8,7 +8,7 @@ import {
 
 import { authenticate } from 'middlewares'
 
-import { BoardParamsSchema } from 'schemas/board'
+import { BoardParamsSchema, UpdateOrderSchema } from 'schemas/board'
 import { AddColumnSchema, ColumnParamsSchema } from 'schemas/column'
 
 export const columnRouter = Router()
@@ -28,11 +28,19 @@ columnRouter.post(
       return next(createHttpError(404, `Board not found`))
     }
 
-    const { id, title } = await prisma.column.create({
-      data: { ...body, boardId: board.id }
+    const lastColumn = await prisma.column.findFirst({
+      where: { boardId: params.boardId },
+      orderBy: { order: 'desc' },
+      select: { order: true }
     })
 
-    res.status(201).json({ id, title })
+    const newOrder = lastColumn ? lastColumn.order + 1 : 1
+
+    const column = await prisma.column.create({
+      data: { ...body, order: newOrder, boardId: board.id }
+    })
+
+    res.status(201).json(column)
   }
 )
 
@@ -50,6 +58,35 @@ columnRouter.put(
     }
 
     res.json(updatedColumn)
+  }
+)
+
+columnRouter.patch(
+  '/:boardId/order',
+  validateRequestParams(BoardParamsSchema),
+  validateRequestBody(UpdateOrderSchema),
+  async ({ params, body }, res, next) => {
+    const board = await prisma.board.findFirst({
+      where: { id: params.boardId }
+    })
+
+    if (!board) {
+      return next(createHttpError(404, 'Board not found'))
+    }
+
+    const transaction = body.ids.map((id, order) =>
+      prisma.column.update({
+        where: { id },
+        data: { order, boardId: params.boardId }
+      })
+    )
+
+    try {
+      const updatedColumns = await prisma.$transaction(transaction)
+      res.json(updatedColumns)
+    } catch {
+      return next(createHttpError(400, 'Invalid order'))
+    }
   }
 )
 

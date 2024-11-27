@@ -8,12 +8,8 @@ import {
 
 import { authenticate } from 'middlewares'
 
-import {
-  AddCardSchema,
-  CardParamsSchema,
-  EditCardSchema,
-  UpdateCardOrderSchema
-} from 'schemas/card'
+import { UpdateOrderSchema } from 'schemas/board'
+import { AddCardSchema, CardParamsSchema, EditCardSchema } from 'schemas/card'
 import { ColumnParamsSchema } from 'schemas/column'
 
 export const cardRouter = Router()
@@ -33,8 +29,16 @@ cardRouter.post(
       return next(createHttpError(404, 'Column not found'))
     }
 
+    const lastCard = await prisma.card.findFirst({
+      where: { columnId: params.columnId },
+      orderBy: { order: 'desc' },
+      select: { order: true }
+    })
+
+    const newOrder = lastCard ? lastCard.order + 1 : 1
+
     const newCard = await prisma.card.create({
-      data: { ...body, columnId: params.columnId }
+      data: { ...body, order: newOrder, columnId: params.columnId }
     })
 
     res.status(201).json(newCard)
@@ -59,26 +63,10 @@ cardRouter.put(
   }
 )
 
-cardRouter.delete(
-  '/:cardId',
-  validateRequestParams(CardParamsSchema),
-  async ({ params }, res, next) => {
-    const deletedCard = await prisma.card.delete({
-      where: { id: params.cardId }
-    })
-
-    if (!deletedCard) {
-      return next(createHttpError(404, 'Card not found'))
-    }
-
-    res.status(204).send()
-  }
-)
-
 cardRouter.patch(
   '/:columnId/order',
   validateRequestParams(ColumnParamsSchema),
-  validateRequestBody(UpdateCardOrderSchema),
+  validateRequestBody(UpdateOrderSchema),
   async ({ params, body }, res, next) => {
     const column = await prisma.column.findFirst({
       where: { id: params.columnId }
@@ -101,5 +89,21 @@ cardRouter.patch(
     } catch {
       return next(createHttpError(400, 'Invalid order'))
     }
+  }
+)
+
+cardRouter.delete(
+  '/:cardId',
+  validateRequestParams(CardParamsSchema),
+  async ({ params }, res, next) => {
+    const deletedCard = await prisma.card.delete({
+      where: { id: params.cardId }
+    })
+
+    if (!deletedCard) {
+      return next(createHttpError(404, 'Card not found'))
+    }
+
+    res.status(204).send()
   }
 )
