@@ -33,7 +33,7 @@ app.listen(Number(process.env.PORT) || 5432, () => {
 const appRouter = express.Router()
 
 app.use(logger('dev'))
-app.use(cors())
+app.use(cors({ origin: process.env.ALLOWED_ORIGINS }))
 app.use(express.json())
 app.disable('x-powered-by')
 

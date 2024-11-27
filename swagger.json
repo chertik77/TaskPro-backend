@@ -76,7 +76,7 @@
           }
         },
         "responses": {
-          "201": { "$ref": "#/components/responses/AuthResponse" },
+          "201": { "$ref": "#/components/responses/GoogleResponse" },
           "400": { "$ref": "#/components/responses/BadRequest" }
         }
       }
@@ -320,6 +320,36 @@
         }
       }
     },
+    "/column/{boardId}/order": {
+      "patch": {
+        "tags": ["Column"],
+        "summary": "Update columns order",
+        "parameters": [{ "in": "path", "name": "boardId", "required": true }],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "ids": [
+                  "67470731ed1b2ff3a2e5bd56",
+                  "67470773c750b6298e1892ad",
+                  "67470737ed1b2ff3a2e5bd57"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/UpdateColumnsOrderResponse"
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
     "/card/{columnId}": {
       "post": {
         "tags": ["Card"],
@@ -398,6 +428,7 @@
         },
         "responses": {
           "200": { "$ref": "#/components/responses/UpdateCardOrderResponse" },
+          "400": { "$ref": "#/components/responses/BadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
@@ -440,15 +471,33 @@
           "application/json": {
             "example": {
               "user": {
-                "id": "65c0388ea89738bb0120fed0",
+                "id": "674723719b47fd08e6a2d517",
                 "name": "John Doe",
                 "email": "user@example.com",
                 "theme": "light",
-                "avatar": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg",
+                "avatar": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png",
                 "avatarPublicId": null
               },
-              "acesssToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE4NzE2MzQwfQ.hwdlZg0fft0PjwN63qwfjFTg1ZeyOOukFdZVbF0VOUU",
-              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
+              "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NDcyMzcxOWI0N2ZkMDhlNmEyZDUxNyIsInNpZCI6IjY3NDcyMzcyOWI0N2ZkMDhlNmEyZDUxOCIsImlhdCI6MTczMjcxNTM3OCwiZXhwIjoxNzMyNzE4OTc4fQ.ZCaaWh4rc4AHzTSljDbc7mq5gbHvjMx54y6LoJsXX-4",
+              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NDcyMzcxOWI0N2ZkMDhlNmEyZDUxNyIsInNpZCI6IjY3NDcyMzcyOWI0N2ZkMDhlNmEyZDUxOCIsImlhdCI6MTczMjcxNTM3OCwiZXhwIjoxNzMzMzIwMTc4fQ.y17k3eWBJ4WeqNZeuguOh_5UQDiyaCPYFmn_Ir-Ftog"
+            }
+          }
+        }
+      },
+      "GoogleResponse": {
+        "content": {
+          "application/json": {
+            "example": {
+              "user": {
+                "id": "674723719b47fd08e6a2d517",
+                "name": "John Doe",
+                "email": "user@example.com",
+                "theme": "light",
+                "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLWRkQo4yOicLduVfTehM7hCPx1Q7WGFjgOFu1GT",
+                "avatarPublicId": "google-picture"
+              },
+              "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NDcyMzcxOWI0N2ZkMDhlNmEyZDUxNyIsInNpZCI6IjY3NDcyMzcyOWI0N2ZkMDhlNmEyZDUxOCIsImlhdCI6MTczMjcxNTM3OCwiZXhwIjoxNzMyNzE4OTc4fQ.ZCaaWh4rc4AHzTSljDbc7mq5gbHvjMx54y6LoJsXX-4",
+              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NDcyMzcxOWI0N2ZkMDhlNmEyZDUxNyIsInNpZCI6IjY3NDcyMzcyOWI0N2ZkMDhlNmEyZDUxOCIsImlhdCI6MTczMjcxNTM3OCwiZXhwIjoxNzMzMzIwMTc4fQ.y17k3eWBJ4WeqNZeuguOh_5UQDiyaCPYFmn_Ir-Ftog"
             }
           }
         }
@@ -528,19 +577,20 @@
         "content": {
           "application/json": {
             "example": {
-              "title": "Project office",
-              "icon": "icon-project-1",
               "background": {
                 "identifier": "flowers",
                 "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg",
                 "hasWhiteTextColor": true
               },
-              "userId": "6671743db85c96453e04a684",
               "id": "6672f1d2f02c8b04130c718c",
+              "title": "Project office",
+              "icon": "icon-project-1",
+              "userId": "6671743db85c96453e04a684",
               "columns": [
                 {
                   "id": "6672f5cdc07147fc7ae1bb71",
                   "title": "To do",
+                  "order": 0,
                   "boardId": "674345e37634766f05c4f7b1",
                   "cards": [
                     {
@@ -555,7 +605,10 @@
                   ]
                 },
                 {
+                  "id": "6672f5cdc07147fc7ae1bb71",
                   "title": "In progress",
+                  "order": 1,
+                  "boardId": "674345e37634766f05c4f7b1",
                   "cards": [
                     {
                       "id": "6672fdccc07147fc7ae1bb93",
@@ -566,8 +619,7 @@
                       "order": 1,
                       "columnId": "6672f604c07147fc7ae1bb81"
                     }
-                  ],
-                  "id": "6672f604c07147fc7ae1bb81"
+                  ]
                 }
               ]
             }
@@ -583,6 +635,32 @@
               "order": 1,
               "boardId": "67470718ed1b2ff3a2e5bd55"
             }
+          }
+        }
+      },
+      "UpdateColumnsOrderResponse": {
+        "content": {
+          "application/json": {
+            "example": [
+              {
+                "id": "67470731ed1b2ff3a2e5bd56",
+                "title": "To do",
+                "order": 0,
+                "boardId": "67470718ed1b2ff3a2e5bd55"
+              },
+              {
+                "id": "67470773c750b6298e1892ad",
+                "title": "In progress",
+                "order": 1,
+                "boardId": "67470718ed1b2ff3a2e5bd55"
+              },
+              {
+                "id": "67470737ed1b2ff3a2e5bd57",
+                "title": "Done",
+                "order": 2,
+                "boardId": "67470718ed1b2ff3a2e5bd55"
+              }
+            ]
           }
         }
       },
