@@ -1,9 +1,13 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "version": "2.2.2",
-    "title": "Task Pro",
-    "description": "The Task Pro API provides endpoints to manage projects and user assignments, ensuring secure and efficient task management."
+    "version": "2.2.0",
+    "title": "Task Pro API",
+    "description": "The Task Pro API provides endpoints to manage projects and user assignments, ensuring secure and efficient request handling.",
+    "contact": {
+      "name": "TaskPro",
+      "url": "https://www.taskpro.uk"
+    }
   },
   "servers": [
     { "url": "http:localhost:8000/api - Development" },
