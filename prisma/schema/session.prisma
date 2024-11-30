@@ -1,0 +1,6 @@
+model Session {
+    id     String @id @default(auto()) @map("_id") @db.ObjectId
+    userId String @map("user_id")
+
+    @@map("sessions")
+}

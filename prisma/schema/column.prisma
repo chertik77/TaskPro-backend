@@ -1,0 +1,10 @@
+model Column {
+    id      String @id @default(auto()) @map("_id") @db.ObjectId
+    title   String
+    order   Int
+    boardId String @map("board_id") @db.ObjectId
+    board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+    cards   Card[]
+
+    @@map("columns")
+}
