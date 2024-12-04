@@ -140,8 +140,6 @@ authRouter.post(
   '/tokens',
   validateRequestBody(RefreshTokenSchema),
   async ({ body }, res, next) => {
-    let sessionId = ''
-
     try {
       const { id, sid } = jwt.verify(
         body.refreshToken,
@@ -151,8 +149,6 @@ authRouter.post(
         sid: string
       }
 
-      sessionId = sid
-
       const user = await prisma.user.findFirst({ where: { id } })
 
       if (!user) {
@@ -160,14 +156,14 @@ authRouter.post(
       }
 
       const currentSession = await prisma.session.findFirst({
-        where: { id: sessionId }
+        where: { id: sid }
       })
 
       if (!currentSession) {
         return next(createHttpError(403))
       }
 
-      await prisma.session.delete({ where: { id: sessionId } })
+      await prisma.session.delete({ where: { id: sid } })
 
       const newSid = await prisma.session.create({ data: { userId: user.id } })
 
@@ -175,8 +171,6 @@ authRouter.post(
 
       res.json({ ...tokens })
     } catch (e) {
-      await prisma.session.delete({ where: { id: sessionId } })
-
       return next(createHttpError(403))
     }
   }
