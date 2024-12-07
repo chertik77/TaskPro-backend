@@ -13,5 +13,5 @@ model Board {
 type Background {
     url               String
     identifier        String
-    hasWhiteTextColor Boolean @default(false)
+    hasWhiteTextColor Boolean @default(false) @map("has_white_text_color")
 }
