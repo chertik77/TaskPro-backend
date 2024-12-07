@@ -218,7 +218,7 @@
             "application/json": {
               "example": {
                 "title": "My office",
-                "icon": "icon-lightning-6",
+                "icon": "lightning",
                 "background": "blue-ball"
               }
             }
@@ -536,7 +536,7 @@
             "example": [
               {
                 "title": "Project office",
-                "icon": "icon-project-1",
+                "icon": "project",
                 "background": {
                   "identifier": "flowers",
                   "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg",
@@ -547,7 +547,7 @@
               },
               {
                 "title": "My office",
-                "icon": "icon-lightning-6",
+                "icon": "lightning",
                 "background": {
                   "identifier": "blue-ball",
                   "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/desk/dtmqypo6r0v0nktpagku.jpg",
@@ -570,7 +570,7 @@
                 "hasWhiteTextColor": false
               },
               "title": "My office",
-              "icon": "icon-lightning-6",
+              "icon": "lightning",
               "userId": "6671743db85c96453e04a684",
               "id": "6672f211f02c8b04130c7193"
             }
@@ -588,7 +588,7 @@
               },
               "id": "6672f1d2f02c8b04130c718c",
               "title": "Project office",
-              "icon": "icon-project-1",
+              "icon": "project",
               "userId": "6671743db85c96453e04a684",
               "columns": [
                 {
