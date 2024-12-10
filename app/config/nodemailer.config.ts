@@ -1,8 +1,8 @@
-import nodemailer from 'nodemailer'
+import { createTransport } from 'nodemailer'
 
 const { EMAIL_USER, EMAIL_PASSWORD, EMAIL_PORT, EMAIL_HOST } = process.env
 
-const nodemailerConfig = {
+export const transport = createTransport({
   host: EMAIL_HOST,
   port: Number(EMAIL_PORT),
   secure: true,
@@ -10,6 +10,4 @@ const nodemailerConfig = {
     user: EMAIL_USER,
     pass: EMAIL_PASSWORD
   }
-}
-
-export const transport = nodemailer.createTransport(nodemailerConfig)
+})
