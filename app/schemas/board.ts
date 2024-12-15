@@ -1,16 +1,6 @@
+import { Icons } from '@prisma/client'
 import boardImages from 'data/board-bg-images.json'
 import * as z from 'zod'
-
-export const icons = [
-  'project',
-  'star',
-  'loading',
-  'puzzle',
-  'container',
-  'lightning',
-  'colors',
-  'hexagon'
-] as const
 
 function zodEnumFromObjKeys<K extends string>(
   obj: Record<K, unknown>
@@ -23,7 +13,7 @@ export const zodObjectId = () => z.string().regex(/^[0-9a-f]{24}$/)
 
 export const AddBoardSchema = z.object({
   title: z.string().min(3),
-  icon: z.enum(icons),
+  icon: z.nativeEnum(Icons),
   background: zodEnumFromObjKeys(boardImages)
 })
 
