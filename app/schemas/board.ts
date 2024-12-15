@@ -19,6 +19,8 @@ function zodEnumFromObjKeys<K extends string>(
   return z.enum([firstKey, ...otherKeys])
 }
 
+export const zodObjectId = () => z.string().regex(/^[0-9a-f]{24}$/)
+
 export const AddBoardSchema = z.object({
   title: z.string().min(3),
   icon: z.enum(icons),
@@ -27,8 +29,8 @@ export const AddBoardSchema = z.object({
 
 export const EditBoardSchema = AddBoardSchema.partial()
 
-export const BoardParamsSchema = z.object({ boardId: z.string() })
+export const BoardParamsSchema = z.object({ boardId: zodObjectId() })
 
 export const UpdateOrderSchema = z.object({
-  ids: z.array(z.string())
+  ids: z.array(zodObjectId())
 })
