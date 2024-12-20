@@ -35,9 +35,7 @@ authRouter.post(
       where: { email: body.email }
     })
 
-    if (isUserExists) {
-      return next(Conflict('Email already exist'))
-    }
+    if (isUserExists) return next(Conflict('Email already exist'))
 
     const user = await prisma.user.create({
       data: {
@@ -65,17 +63,13 @@ authRouter.post(
       where: { email: body.email }
     })
 
-    if (!user) {
-      return next(Unauthorized('Email or password invalid'))
-    }
+    if (!user) return next(Unauthorized('Email or password invalid'))
 
     const { password, ...userWithoutPassword } = user
 
     const isPasswordMatch = await compare(body.password, password)
 
-    if (!isPasswordMatch) {
-      return next(Unauthorized('Email or password invalid'))
-    }
+    if (!isPasswordMatch) return next(Unauthorized('Email or password invalid'))
 
     const newSession = await prisma.session.create({
       data: { userId: user.id }
