@@ -5,9 +5,11 @@ import { hash } from 'bcrypt'
 import cloudinary from 'config/cloudinary.config'
 import { transport } from 'config/nodemailer.config'
 import defaultAvatars from 'data/default-avatars.json'
-import { BadRequest, Conflict, InternalServerError } from 'http-errors'
+import { Conflict, InternalServerError, NotAcceptable } from 'http-errors'
+import { Options } from 'nodemailer/lib/mailer'
 
-import { authenticate, upload, validateRequest } from 'middlewares'
+import { authenticate, validateRequest } from 'middlewares'
+import { upload } from 'middlewares/multer'
 
 import { EditUserSchema, NeedHelpSchema, ThemeSchema } from 'schemas/user'
 
@@ -50,7 +52,7 @@ userRouter.put(
       const ext = file.mimetype.split('/').pop()
 
       if (!extArr.includes(ext!)) {
-        return next(BadRequest('File must have .jpeg or .png extension'))
+        return next(NotAcceptable('File must have .jpeg or .png extension'))
       }
 
       try {
@@ -86,7 +88,7 @@ userRouter.post(
   '/help',
   validateRequest({ body: NeedHelpSchema }),
   async (req, res, next) => {
-    const emailBody = {
+    const emailBody: Options = {
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_RECEIVER,
       subject: 'Need help',
@@ -110,12 +112,7 @@ userRouter.put(
   '/theme',
   validateRequest({ body: ThemeSchema }),
   async (req, res) => {
-    const user = await prisma.user.findFirst({
-      where: { id: req.user.id },
-      omit: { password: true }
-    })
-
-    const updateData = !user?.avatarPublicId
+    const updateData = !req.user.avatarPublicId
       ? {
           ...req.body,
           avatar: defaultAvatars[req.body.theme],
@@ -125,7 +122,8 @@ userRouter.put(
 
     const editedUser = await prisma.user.update({
       where: { id: req.user.id },
-      data: updateData
+      data: updateData,
+      omit: { password: true }
     })
 
     res.json(editedUser)

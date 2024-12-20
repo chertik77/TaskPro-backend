@@ -42,12 +42,12 @@ cardRouter.put(
   '/:cardId',
   validateRequest({ body: EditCardSchema, params: CardParamsSchema }),
   async ({ params, body }, res, next) => {
-    const updatedCard = await prisma.card.update({
+    const updatedCard = await prisma.card.updateMany({
       where: { id: params.cardId },
       data: body
     })
 
-    if (!updatedCard) return next(NotFound('Card not found'))
+    if (!updatedCard.count) return next(NotFound('Card not found'))
 
     res.json(updatedCard)
   }
@@ -83,11 +83,11 @@ cardRouter.delete(
   '/:cardId',
   validateRequest({ params: CardParamsSchema }),
   async ({ params }, res, next) => {
-    const deletedCard = await prisma.card.delete({
+    const deletedCard = await prisma.card.deleteMany({
       where: { id: params.cardId }
     })
 
-    if (!deletedCard) return next(NotFound('Card not found'))
+    if (!deletedCard.count) return next(NotFound('Card not found'))
 
     res.status(204).send()
   }

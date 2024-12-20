@@ -61,7 +61,7 @@ boardRouter.put(
   '/:boardId',
   validateRequest({ body: EditBoardSchema, params: BoardParamsSchema }),
   async ({ body, params, user }, res, next) => {
-    const updatedBoard = await prisma.board.update({
+    const updatedBoard = await prisma.board.updateMany({
       where: { id: params.boardId, userId: user.id },
       data: {
         ...body,
@@ -69,7 +69,7 @@ boardRouter.put(
       }
     })
 
-    if (!updatedBoard) return next(NotFound('Board not found'))
+    if (!updatedBoard.count) return next(NotFound('Board not found'))
 
     res.json(updatedBoard)
   }
@@ -79,11 +79,11 @@ boardRouter.delete(
   '/:boardId',
   validateRequest({ params: BoardParamsSchema }),
   async ({ params, user }, res, next) => {
-    const deletedBoard = await prisma.board.delete({
+    const deletedBoard = await prisma.board.deleteMany({
       where: { id: params.boardId, userId: user.id }
     })
 
-    if (!deletedBoard) return next(NotFound('Board not found'))
+    if (!deletedBoard.count) return next(NotFound('Board not found'))
 
     res.status(204).send()
   }

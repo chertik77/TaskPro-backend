@@ -3,6 +3,7 @@ import type { NextFunction, Request, Response } from 'express'
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
 import cors from 'cors'
+import { HttpError } from 'http-errors'
 import logger from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 
@@ -17,14 +18,9 @@ import {
   userRouter
 } from './routes/api'
 
-export type ResponseError = Error & {
-  status?: number
-  code?: number | string
-}
+export const prisma = new PrismaClient()
 
 const app = express()
-
-export const prisma = new PrismaClient()
 
 app.listen(Number(process.env.PORT) || 5432, () => {
   console.log(`Server started on port ${process.env.PORT || 5432}`)
@@ -50,7 +46,7 @@ app.use((_, res) => {
   res.status(404).json({ message: 'Not found' })
 })
 
-app.use((err: ResponseError, _: Request, res: Response, __: NextFunction) => {
+app.use((err: HttpError, _: Request, res: Response, __: NextFunction) => {
   const { status = 500, message = 'Server error' } = err
   res.status(status).json({ statusCode: status, message })
 })

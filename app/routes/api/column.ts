@@ -45,12 +45,12 @@ columnRouter.put(
   '/:columnId',
   validateRequest({ body: EditColumnSchema, params: ColumnParamsSchema }),
   async ({ params, body }, res, next) => {
-    const updatedColumn = await prisma.column.update({
+    const updatedColumn = await prisma.column.updateMany({
       where: { id: params.columnId },
       data: body
     })
 
-    if (!updatedColumn) return next(NotFound('Column not found'))
+    if (!updatedColumn.count) return next(NotFound('Column not found'))
 
     res.json(updatedColumn)
   }
@@ -86,11 +86,11 @@ columnRouter.delete(
   '/:columnId',
   validateRequest({ params: ColumnParamsSchema }),
   async ({ params }, res, next) => {
-    const deletedColumn = await prisma.column.delete({
+    const deletedColumn = await prisma.column.deleteMany({
       where: { id: params.columnId }
     })
 
-    if (!deletedColumn) return next(NotFound('Column not found'))
+    if (!deletedColumn.count) return next(NotFound('Column not found'))
 
     res.status(204).send()
   }

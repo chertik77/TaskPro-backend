@@ -233,6 +233,7 @@
         "requestBody": {
           "required": true,
           "content": {
+            "application/json": { "example": { "password": "123456789" } },
             "multipart/form-data": {
               "schema": {
                 "type": "object",
@@ -240,8 +241,7 @@
                   "avatar": { "type": "string", "format": "binary" }
                 }
               }
-            },
-            "application/json": { "example": { "password": "123456789" } }
+            }
           }
         },
         "responses": {
@@ -255,6 +255,16 @@
                     "email": "Email is invalid",
                     "name": "Name must be at least 2 characters"
                   }
+                }
+              }
+            }
+          },
+          "406": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 406,
+                  "message": "File must have .jpeg or .png extension"
                 }
               }
             }
