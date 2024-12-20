@@ -32,7 +32,20 @@
         },
         "responses": {
           "201": { "$ref": "#/components/responses/AuthResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 400,
+                  "messages": {
+                    "email": "Email is invalid",
+                    "password": "Password must be at least 8 characters",
+                    "name": "Name must be at least 2 characters"
+                  }
+                }
+              }
+            }
+          },
           "409": { "$ref": "#/components/responses/Conflict" }
         }
       }
@@ -54,11 +67,26 @@
         },
         "responses": {
           "201": { "$ref": "#/components/responses/AuthResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 400,
+                  "messages": {
+                    "email": "Email is invalid",
+                    "password": "Password must be at least 8 characters"
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "content": {
               "application/json": {
-                "example": { "message": "Email or password invalid" }
+                "example": {
+                  "statusCode": 401,
+                  "message": "Email or password invalid"
+                }
               }
             }
           }
@@ -81,7 +109,18 @@
         },
         "responses": {
           "201": { "$ref": "#/components/responses/GoogleResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" }
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 400,
+                  "messages": {
+                    "code": "Code must be a string"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -102,8 +141,29 @@
         },
         "responses": {
           "200": { "$ref": "#/components/responses/TokensResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" },
-          "401": { "$ref": "#/components/responses/Unauthorized" }
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 400,
+                  "messages": {
+                    "refreshToken": "refreshToken must be a string"
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 403,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -148,7 +208,19 @@
               "application/json": { "example": { "message": "Email sent" } }
             }
           },
-          "400": { "$ref": "#/components/responses/BadRequest" },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 400,
+                  "messages": {
+                    "email": "Email is required",
+                    "comment": "Comment is required"
+                  }
+                }
+              }
+            }
+          },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
@@ -174,7 +246,19 @@
         },
         "responses": {
           "200": { "$ref": "#/components/responses/UserResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 400,
+                  "messages": {
+                    "email": "Email is invalid",
+                    "name": "Name must be at least 2 characters"
+                  }
+                }
+              }
+            }
+          },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "409": { "$ref": "#/components/responses/Conflict" }
         }
@@ -193,7 +277,18 @@
         },
         "responses": {
           "200": { "$ref": "#/components/responses/UserResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 400,
+                  "errors": {
+                    "theme": "Theme must be one of the following: light, dark, violet"
+                  }
+                }
+              }
+            }
+          },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
@@ -226,7 +321,7 @@
         },
         "responses": {
           "201": { "$ref": "#/components/responses/BoardResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" },
+          "400": { "$ref": "#/components/responses/BoardBadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
@@ -256,7 +351,7 @@
         },
         "responses": {
           "200": { "$ref": "#/components/responses/BoardResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" },
+          "400": { "$ref": "#/components/responses/BoardBadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
@@ -287,7 +382,7 @@
         },
         "responses": {
           "201": { "$ref": "#/components/responses/ColumnResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" },
+          "400": { "$ref": "#/components/responses/ColumnBadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
@@ -307,7 +402,7 @@
         },
         "responses": {
           "201": { "$ref": "#/components/responses/ColumnResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" },
+          "400": { "$ref": "#/components/responses/ColumnBadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
@@ -348,7 +443,7 @@
           "200": {
             "$ref": "#/components/responses/UpdateColumnsOrderResponse"
           },
-          "400": { "$ref": "#/components/responses/BadRequest" },
+          "400": { "$ref": "#/components/responses/UpdateOrderBadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
@@ -375,7 +470,7 @@
         },
         "responses": {
           "201": { "$ref": "#/components/responses/CardResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" },
+          "400": { "$ref": "#/components/responses/CardBadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
@@ -397,7 +492,7 @@
         },
         "responses": {
           "200": { "$ref": "#/components/responses/CardResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" },
+          "400": { "$ref": "#/components/responses/CardBadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
@@ -432,7 +527,7 @@
         },
         "responses": {
           "200": { "$ref": "#/components/responses/UpdateCardOrderResponse" },
-          "400": { "$ref": "#/components/responses/BadRequest" },
+          "400": { "$ref": "#/components/responses/UpdateOrderBadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
@@ -443,13 +538,18 @@
     "responses": {
       "NotFound": {
         "content": {
-          "application/json": { "example": { "message": "Not found" } }
+          "application/json": {
+            "example": { "statusCode": 404, "message": "Not found" }
+          }
         }
       },
       "Conflict": {
         "content": {
           "application/json": {
-            "example": { "message": "Provided email already exists" }
+            "example": {
+              "statusCode": 409,
+              "message": "Provided email already exists"
+            }
           }
         }
       },
@@ -460,13 +560,8 @@
       },
       "Unauthorized": {
         "content": {
-          "application/json": { "example": { "message": "Unauthorized" } }
-        }
-      },
-      "BadRequest": {
-        "content": {
           "application/json": {
-            "example": { "message": "Custom message from validation library" }
+            "example": { "statusCode": 401, "message": "Unauthorized" }
           }
         }
       },
@@ -530,6 +625,18 @@
           }
         }
       },
+      "UpdateOrderBadRequest": {
+        "content": {
+          "application/json": {
+            "example": {
+              "statusCode": 400,
+              "messages": {
+                "ids": "Ids must be an array of valid ObjectIds"
+              }
+            }
+          }
+        }
+      },
       "AllBoardsResponse": {
         "content": {
           "application/json": {
@@ -573,6 +680,19 @@
               "icon": "lightning",
               "userId": "6671743db85c96453e04a684",
               "id": "6672f211f02c8b04130c7193"
+            }
+          }
+        }
+      },
+      "BoardBadRequest": {
+        "content": {
+          "application/json": {
+            "example": {
+              "statusCode": 400,
+              "messages": {
+                "title": "Title must be at least 3 characters",
+                "icon": "Invalid enum value. Expected 'project' | 'star' | 'loading' | 'puzzle' | 'container' | 'lightning' | 'colors' | 'hexagon', received 'random-icon'"
+              }
             }
           }
         }
@@ -642,6 +762,19 @@
           }
         }
       },
+      "ColumnBadRequest": {
+        "content": {
+          "application/json": {
+            "example": {
+              "statusCode": 400,
+              "messages": {
+                "title": "Title must be at least 3 characters",
+                "boardId": "Id must be a valid ObjectId"
+              }
+            }
+          }
+        }
+      },
       "UpdateColumnsOrderResponse": {
         "content": {
           "application/json": {
@@ -679,6 +812,20 @@
               "deadline": "2025-10-15T00:00:00.000Z",
               "order": 1,
               "columnId": "6671743db85c96453e04a684"
+            }
+          }
+        }
+      },
+      "CardBadRequest": {
+        "content": {
+          "application/json": {
+            "example": {
+              "statusCode": 400,
+              "messages": {
+                "description": "Title must be a string",
+                "priority": "Priority must be one of the following: Without, Low, Medium, High",
+                "columnId": "Id must be a valid ObjectId"
+              }
             }
           }
         }

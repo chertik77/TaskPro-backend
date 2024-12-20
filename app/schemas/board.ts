@@ -35,5 +35,7 @@ export const EditBoardSchema = AddBoardSchema.partial()
 export const BoardParamsSchema = z.object({ boardId: zodObjectId() })
 
 export const UpdateOrderSchema = z.object({
-  ids: z.array(zodObjectId(), { message: 'Ids must be an array of strings' })
+  ids: z.array(zodObjectId(), {
+    message: 'Ids must be an array of valid ObjectIds'
+  })
 })
