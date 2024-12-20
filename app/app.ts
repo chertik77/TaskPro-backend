@@ -52,5 +52,5 @@ app.use((_, res) => {
 
 app.use((err: ResponseError, _: Request, res: Response, __: NextFunction) => {
   const { status = 500, message = 'Server error' } = err
-  res.status(status).json({ message })
+  res.status(status).json({ statusCode: status, message })
 })

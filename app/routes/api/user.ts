@@ -1,14 +1,13 @@
 import { Router } from 'express'
 import { User } from '@prisma/client'
 import { prisma } from 'app'
-import bcrypt from 'bcrypt'
+import { hash } from 'bcrypt'
 import cloudinary from 'config/cloudinary.config'
 import { transport } from 'config/nodemailer.config'
 import defaultAvatars from 'data/default-avatars.json'
-import createHttpError from 'http-errors'
-import { validateRequestBody } from 'zod-express-middleware'
+import { BadRequest, Conflict, InternalServerError } from 'http-errors'
 
-import { authenticate, upload } from 'middlewares'
+import { authenticate, upload, validateRequest } from 'middlewares'
 
 import { EditUserSchema, NeedHelpSchema, ThemeSchema } from 'schemas/user'
 
@@ -28,7 +27,7 @@ userRouter.get('/me', async (req, res) => {
 userRouter.put(
   '/',
   upload.single('avatar'),
-  validateRequestBody(EditUserSchema),
+  validateRequest({ body: EditUserSchema }),
   async ({ user, body, file }, res, next) => {
     const { id, avatarPublicId, email: userEmail } = user
     const { email, password } = body
@@ -37,13 +36,13 @@ userRouter.put(
       email && (await prisma.user.findUnique({ where: { email } }))
 
     if (email && email !== userEmail && isEmailExists) {
-      return next(createHttpError(409, 'Email already exist'))
+      return next(Conflict('Email already exist'))
     }
 
     const updateData: Partial<User> = { ...body }
 
     if (password) {
-      updateData.password = await bcrypt.hash(password, 10)
+      updateData.password = await hash(password, 10)
     }
 
     if (file) {
@@ -51,9 +50,7 @@ userRouter.put(
       const ext = file.mimetype.split('/').pop()
 
       if (!extArr.includes(ext!)) {
-        return next(
-          createHttpError(400, 'File must have .jpeg or .png extension')
-        )
+        return next(BadRequest('File must have .jpeg or .png extension'))
       }
 
       try {
@@ -71,7 +68,7 @@ userRouter.put(
         updateData.avatar = newAvatar.url
         updateData.avatarPublicId = newAvatar.public_id
       } catch {
-        return next(createHttpError(500, 'Uploading avatar error'))
+        return next(InternalServerError('Uploading avatar error'))
       }
     }
 
@@ -87,7 +84,7 @@ userRouter.put(
 
 userRouter.post(
   '/help',
-  validateRequestBody(NeedHelpSchema),
+  validateRequest({ body: NeedHelpSchema }),
   async (req, res, next) => {
     const emailBody = {
       from: process.env.EMAIL_USER,
@@ -103,30 +100,34 @@ userRouter.post(
     try {
       await transport.sendMail(emailBody)
       res.json({ message: 'Email sent' })
-    } catch (e) {
-      return next(createHttpError(500, 'Sending email error'))
+    } catch {
+      return next(InternalServerError('Sending email error'))
     }
   }
 )
 
-userRouter.put('/theme', validateRequestBody(ThemeSchema), async (req, res) => {
-  const user = await prisma.user.findFirst({
-    where: { id: req.user.id },
-    omit: { password: true }
-  })
+userRouter.put(
+  '/theme',
+  validateRequest({ body: ThemeSchema }),
+  async (req, res) => {
+    const user = await prisma.user.findFirst({
+      where: { id: req.user.id },
+      omit: { password: true }
+    })
 
-  const updateData = !user?.avatarPublicId
-    ? {
-        ...req.body,
-        avatar: defaultAvatars[req.body.theme],
-        avatarPublicId: null
-      }
-    : req.body
+    const updateData = !user?.avatarPublicId
+      ? {
+          ...req.body,
+          avatar: defaultAvatars[req.body.theme],
+          avatarPublicId: null
+        }
+      : req.body
 
-  const editedUser = await prisma.user.update({
-    where: { id: req.user.id },
-    data: updateData
-  })
+    const editedUser = await prisma.user.update({
+      where: { id: req.user.id },
+      data: updateData
+    })
 
-  res.json(editedUser)
-})
+    res.json(editedUser)
+  }
+)

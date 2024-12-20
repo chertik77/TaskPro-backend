@@ -1,8 +1,8 @@
 import * as z from 'zod'
 
-import { zodObjectId } from './board'
+import { TitleSchema, zodObjectId } from './board'
 
-export const AddColumnSchema = z.object({ title: z.string().min(3) })
+export const AddColumnSchema = z.object({ title: TitleSchema })
 
 export const EditColumnSchema = AddColumnSchema.partial()
 

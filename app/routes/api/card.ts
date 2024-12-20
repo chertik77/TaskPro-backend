@@ -1,12 +1,8 @@
 import { Router } from 'express'
 import { prisma } from 'app'
-import createHttpError from 'http-errors'
-import {
-  validateRequestBody,
-  validateRequestParams
-} from 'zod-express-middleware'
+import { BadRequest, NotFound } from 'http-errors'
 
-import { authenticate } from 'middlewares'
+import { authenticate, validateRequest } from 'middlewares'
 
 import { UpdateOrderSchema } from 'schemas/board'
 import { AddCardSchema, CardParamsSchema, EditCardSchema } from 'schemas/card'
@@ -18,16 +14,13 @@ cardRouter.use(authenticate)
 
 cardRouter.post(
   '/:columnId',
-  validateRequestParams(ColumnParamsSchema),
-  validateRequestBody(AddCardSchema),
+  validateRequest({ body: AddCardSchema, params: ColumnParamsSchema }),
   async ({ params, body }, res, next) => {
     const isCurrentColumn = await prisma.column.findFirst({
       where: { id: params.columnId }
     })
 
-    if (!isCurrentColumn) {
-      return next(createHttpError(404, 'Column not found'))
-    }
+    if (!isCurrentColumn) return next(NotFound('Column not found'))
 
     const lastCard = await prisma.card.findFirst({
       where: { columnId: params.columnId },
@@ -41,23 +34,20 @@ cardRouter.post(
       data: { ...body, order: newOrder, columnId: params.columnId }
     })
 
-    res.status(201).json(newCard)
+    res.json(newCard)
   }
 )
 
 cardRouter.put(
   '/:cardId',
-  validateRequestParams(CardParamsSchema),
-  validateRequestBody(EditCardSchema),
+  validateRequest({ body: EditCardSchema, params: CardParamsSchema }),
   async ({ params, body }, res, next) => {
     const updatedCard = await prisma.card.update({
       where: { id: params.cardId },
       data: body
     })
 
-    if (!updatedCard) {
-      return next(createHttpError(404, 'Card not found'))
-    }
+    if (!updatedCard) return next(NotFound('Card not found'))
 
     res.json(updatedCard)
   }
@@ -65,16 +55,13 @@ cardRouter.put(
 
 cardRouter.patch(
   '/:columnId/order',
-  validateRequestParams(ColumnParamsSchema),
-  validateRequestBody(UpdateOrderSchema),
+  validateRequest({ body: UpdateOrderSchema, params: ColumnParamsSchema }),
   async ({ params, body }, res, next) => {
     const column = await prisma.column.findFirst({
       where: { id: params.columnId }
     })
 
-    if (!column) {
-      return next(createHttpError(404, 'Column not found'))
-    }
+    if (!column) return next(NotFound('Column not found'))
 
     const transaction = body.ids.map((id, order) =>
       prisma.card.update({
@@ -87,22 +74,20 @@ cardRouter.patch(
       const updatedCards = await prisma.$transaction(transaction)
       res.json(updatedCards)
     } catch {
-      return next(createHttpError(400, 'Invalid order'))
+      return next(BadRequest('Invalid order'))
     }
   }
 )
 
 cardRouter.delete(
   '/:cardId',
-  validateRequestParams(CardParamsSchema),
+  validateRequest({ params: CardParamsSchema }),
   async ({ params }, res, next) => {
     const deletedCard = await prisma.card.delete({
       where: { id: params.cardId }
     })
 
-    if (!deletedCard) {
-      return next(createHttpError(404, 'Card not found'))
-    }
+    if (!deletedCard) return next(NotFound('Card not found'))
 
     res.status(204).send()
   }

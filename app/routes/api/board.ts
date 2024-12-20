@@ -1,13 +1,9 @@
 import { Router } from 'express'
 import { prisma } from 'app'
 import boardImages from 'data/board-bg-images.json'
-import createHttpError from 'http-errors'
-import {
-  validateRequestBody,
-  validateRequestParams
-} from 'zod-express-middleware'
+import { NotFound } from 'http-errors'
 
-import { authenticate } from 'middlewares'
+import { authenticate, validateRequest } from 'middlewares'
 
 import {
   AddBoardSchema,
@@ -27,7 +23,7 @@ boardRouter.get('/', async ({ user }, res) => {
 
 boardRouter.get(
   '/:boardId',
-  validateRequestParams(BoardParamsSchema),
+  validateRequest({ params: BoardParamsSchema }),
   async ({ user, params }, res, next) => {
     const board = await prisma.board.findFirst({
       where: { id: params.boardId, userId: user.id },
@@ -39,9 +35,7 @@ boardRouter.get(
       }
     })
 
-    if (!board) {
-      return next(createHttpError(404, `Board not found`))
-    }
+    if (!board) return next(NotFound('Board not found'))
 
     res.json(board)
   }
@@ -49,7 +43,7 @@ boardRouter.get(
 
 boardRouter.post(
   '/',
-  validateRequestBody(AddBoardSchema),
+  validateRequest({ body: AddBoardSchema }),
   async ({ body, user }, res) => {
     const newBoard = await prisma.board.create({
       data: {
@@ -59,14 +53,13 @@ boardRouter.post(
       }
     })
 
-    res.status(201).json(newBoard)
+    res.json(newBoard)
   }
 )
 
 boardRouter.put(
   '/:boardId',
-  validateRequestParams(BoardParamsSchema),
-  validateRequestBody(EditBoardSchema),
+  validateRequest({ body: EditBoardSchema, params: BoardParamsSchema }),
   async ({ body, params, user }, res, next) => {
     const updatedBoard = await prisma.board.update({
       where: { id: params.boardId, userId: user.id },
@@ -76,9 +69,7 @@ boardRouter.put(
       }
     })
 
-    if (!updatedBoard) {
-      return next(createHttpError(404, `Board not found`))
-    }
+    if (!updatedBoard) return next(NotFound('Board not found'))
 
     res.json(updatedBoard)
   }
@@ -86,15 +77,13 @@ boardRouter.put(
 
 boardRouter.delete(
   '/:boardId',
-  validateRequestParams(BoardParamsSchema),
+  validateRequest({ params: BoardParamsSchema }),
   async ({ params, user }, res, next) => {
     const deletedBoard = await prisma.board.delete({
       where: { id: params.boardId, userId: user.id }
     })
 
-    if (!deletedBoard) {
-      return next(createHttpError(404, `Board not found`))
-    }
+    if (!deletedBoard) return next(NotFound('Board not found'))
 
     res.status(204).send()
   }

@@ -1,11 +1,11 @@
 import { Router } from 'express'
 import { prisma } from 'app'
-import bcrypt from 'bcrypt'
+import { compare, hash } from 'bcrypt'
 import { OAuth2Client } from 'google-auth-library'
-import createHttpError from 'http-errors'
-import jwt from 'jsonwebtoken'
-import { validateRequestBody } from 'zod-express-middleware'
+import { Conflict, Forbidden, Unauthorized } from 'http-errors'
+import { sign, verify } from 'jsonwebtoken'
 
+import { validateRequest } from 'middlewares'
 import { authenticate } from 'middlewares/authenticate'
 
 import {
@@ -29,20 +29,20 @@ const {
 
 authRouter.post(
   '/signup',
-  validateRequestBody(SignupSchema),
+  validateRequest({ body: SignupSchema }),
   async ({ body }, res, next) => {
     const isUserExists = await prisma.user.findUnique({
       where: { email: body.email }
     })
 
     if (isUserExists) {
-      return next(createHttpError(409, 'Email already exist'))
+      return next(Conflict('Email already exist'))
     }
 
     const user = await prisma.user.create({
       data: {
         ...body,
-        password: await bcrypt.hash(body.password, 10)
+        password: await hash(body.password, 10)
       },
       omit: { password: true }
     })
@@ -53,28 +53,28 @@ authRouter.post(
 
     const tokens = getNewTokens({ id: user.id, sid: newSession.id })
 
-    res.status(201).json({ user, ...tokens })
+    res.json({ user, ...tokens })
   }
 )
 
 authRouter.post(
   '/signin',
-  validateRequestBody(SigninSchema),
+  validateRequest({ body: SigninSchema }),
   async ({ body }, res, next) => {
     const user = await prisma.user.findUnique({
       where: { email: body.email }
     })
 
     if (!user) {
-      return next(createHttpError(401, 'Email or password invalid'))
+      return next(Unauthorized('Email or password invalid'))
     }
 
     const { password, ...userWithoutPassword } = user
 
-    const isPasswordMatch = await bcrypt.compare(body.password, password)
+    const isPasswordMatch = await compare(body.password, password)
 
     if (!isPasswordMatch) {
-      return next(createHttpError(401, 'Email or password invalid'))
+      return next(Unauthorized('Email or password invalid'))
     }
 
     const newSession = await prisma.session.create({
@@ -89,7 +89,7 @@ authRouter.post(
 
 authRouter.post(
   '/google',
-  validateRequestBody(GoogleAuthSchema),
+  validateRequest({ body: GoogleAuthSchema }),
   async ({ body }, res) => {
     const oAuth2Client = new OAuth2Client(
       GOOGLE_CLIENT_ID,
@@ -110,7 +110,7 @@ authRouter.post(
         data: {
           name,
           email,
-          password: await bcrypt.hash(sub, 10),
+          password: await hash(sub, 10),
           avatar: picture,
           avatarPublicId: 'google-picture'
         },
@@ -138,30 +138,23 @@ authRouter.post(
 
 authRouter.post(
   '/tokens',
-  validateRequestBody(RefreshTokenSchema),
+  validateRequest({ body: RefreshTokenSchema }),
   async ({ body }, res, next) => {
     try {
-      const { id, sid } = jwt.verify(
-        body.refreshToken,
-        REFRESH_JWT_SECRET!
-      ) as {
+      const { id, sid } = verify(body.refreshToken, REFRESH_JWT_SECRET!) as {
         id: string
         sid: string
       }
 
       const user = await prisma.user.findFirst({ where: { id } })
 
-      if (!user) {
-        return next(createHttpError(403))
-      }
+      if (!user) return next(Forbidden())
 
       const currentSession = await prisma.session.findFirst({
         where: { id: sid }
       })
 
-      if (!currentSession) {
-        return next(createHttpError(403))
-      }
+      if (!currentSession) return next(Forbidden())
 
       await prisma.session.delete({ where: { id: sid } })
 
@@ -169,9 +162,9 @@ authRouter.post(
 
       const tokens = getNewTokens({ id: user.id, sid: newSid.id })
 
-      res.json({ ...tokens })
-    } catch (e) {
-      return next(createHttpError(403))
+      res.json(tokens)
+    } catch {
+      return next(Forbidden())
     }
   }
 )
@@ -183,11 +176,11 @@ authRouter.post('/logout', authenticate, async ({ session }, res) => {
 })
 
 const getNewTokens = (payload: { id: string; sid: string }) => {
-  const accessToken = jwt.sign(payload, ACCESS_JWT_SECRET!, {
+  const accessToken = sign(payload, ACCESS_JWT_SECRET!, {
     expiresIn: ACCESS_TOKEN_EXPIRES_IN
   })
 
-  const refreshToken = jwt.sign(payload, REFRESH_JWT_SECRET!, {
+  const refreshToken = sign(payload, REFRESH_JWT_SECRET!, {
     expiresIn: REFRESH_TOKEN_EXPIRES_IN
   })
 
