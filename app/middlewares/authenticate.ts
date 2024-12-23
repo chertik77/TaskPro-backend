@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
 
-import { prisma } from 'app'
 import { Unauthorized } from 'http-errors'
 import { verify } from 'jsonwebtoken'
+import { prisma } from 'prisma.client'
 
 export const authenticate = async (
   req: Request,

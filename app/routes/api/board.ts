@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { prisma } from 'app'
 import boardImages from 'data/board-bg-images.json'
 import { NotFound } from 'http-errors'
+import { prisma } from 'prisma.client'
 
 import { authenticate, validateRequest } from 'middlewares'
 
@@ -61,7 +61,7 @@ boardRouter.put(
   '/:boardId',
   validateRequest({ body: EditBoardSchema, params: BoardParamsSchema }),
   async ({ body, params, user }, res, next) => {
-    const updatedBoard = await prisma.board.updateMany({
+    const updatedBoard = await prisma.board.updateIgnoreNotFound({
       where: { id: params.boardId, userId: user.id },
       data: {
         ...body,
@@ -69,7 +69,7 @@ boardRouter.put(
       }
     })
 
-    if (!updatedBoard.count) return next(NotFound('Board not found'))
+    if (!updatedBoard) return next(NotFound('Board not found'))
 
     res.json(updatedBoard)
   }
@@ -79,11 +79,11 @@ boardRouter.delete(
   '/:boardId',
   validateRequest({ params: BoardParamsSchema }),
   async ({ params, user }, res, next) => {
-    const deletedBoard = await prisma.board.deleteMany({
+    const deletedBoard = await prisma.board.deleteIgnoreNotFound({
       where: { id: params.boardId, userId: user.id }
     })
 
-    if (!deletedBoard.count) return next(NotFound('Board not found'))
+    if (!deletedBoard) return next(NotFound('Board not found'))
 
     res.status(204).send()
   }

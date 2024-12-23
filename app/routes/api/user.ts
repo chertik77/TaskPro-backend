@@ -1,12 +1,12 @@
 import { Router } from 'express'
 import { User } from '@prisma/client'
-import { prisma } from 'app'
 import { hash } from 'bcrypt'
 import cloudinary from 'config/cloudinary.config'
 import { transport } from 'config/nodemailer.config'
 import defaultAvatars from 'data/default-avatars.json'
 import { Conflict, InternalServerError, NotAcceptable } from 'http-errors'
 import { Options } from 'nodemailer/lib/mailer'
+import { prisma } from 'prisma.client'
 
 import { authenticate, validateRequest } from 'middlewares'
 import { upload } from 'middlewares/multer'

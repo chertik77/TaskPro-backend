@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 
 import express from 'express'
-import { PrismaClient } from '@prisma/client'
 import cors from 'cors'
 import { HttpError } from 'http-errors'
 import logger from 'morgan'
@@ -17,8 +16,6 @@ import {
   columnRouter,
   userRouter
 } from './routes/api'
-
-export const prisma = new PrismaClient()
 
 const app = express()
 

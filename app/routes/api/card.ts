@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { prisma } from 'app'
 import { BadRequest, NotFound } from 'http-errors'
+import { prisma } from 'prisma.client'
 
 import { authenticate, validateRequest } from 'middlewares'
 
@@ -42,12 +42,12 @@ cardRouter.put(
   '/:cardId',
   validateRequest({ body: EditCardSchema, params: CardParamsSchema }),
   async ({ params, body }, res, next) => {
-    const updatedCard = await prisma.card.updateMany({
+    const updatedCard = await prisma.card.updateIgnoreNotFound({
       where: { id: params.cardId },
       data: body
     })
 
-    if (!updatedCard.count) return next(NotFound('Card not found'))
+    if (!updatedCard) return next(NotFound('Card not found'))
 
     res.json(updatedCard)
   }
@@ -83,11 +83,11 @@ cardRouter.delete(
   '/:cardId',
   validateRequest({ params: CardParamsSchema }),
   async ({ params }, res, next) => {
-    const deletedCard = await prisma.card.deleteMany({
+    const deletedCard = await prisma.card.deleteIgnoreNotFound({
       where: { id: params.cardId }
     })
 
-    if (!deletedCard.count) return next(NotFound('Card not found'))
+    if (!deletedCard) return next(NotFound('Card not found'))
 
     res.status(204).send()
   }
