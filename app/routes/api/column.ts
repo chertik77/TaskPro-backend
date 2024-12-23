@@ -26,7 +26,7 @@ columnRouter.post(
     if (!board) return next(NotFound('Board not found'))
 
     const lastColumn = await prisma.column.findFirst({
-      where: { boardId: params.boardId },
+      where: { boardId: board.id },
       orderBy: { order: 'desc' },
       select: { order: true }
     })
@@ -69,7 +69,7 @@ columnRouter.patch(
     const transaction = body.ids.map((id, order) =>
       prisma.column.update({
         where: { id },
-        data: { order, boardId: params.boardId }
+        data: { order, boardId: board.id }
       })
     )
 

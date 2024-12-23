@@ -16,14 +16,14 @@ cardRouter.post(
   '/:columnId',
   validateRequest({ body: AddCardSchema, params: ColumnParamsSchema }),
   async ({ params, body }, res, next) => {
-    const isCurrentColumn = await prisma.column.findFirst({
+    const column = await prisma.column.findFirst({
       where: { id: params.columnId }
     })
 
-    if (!isCurrentColumn) return next(NotFound('Column not found'))
+    if (!column) return next(NotFound('Column not found'))
 
     const lastCard = await prisma.card.findFirst({
-      where: { columnId: params.columnId },
+      where: { columnId: column.id },
       orderBy: { order: 'desc' },
       select: { order: true }
     })
@@ -31,7 +31,7 @@ cardRouter.post(
     const newOrder = lastCard ? lastCard.order + 1 : 1
 
     const newCard = await prisma.card.create({
-      data: { ...body, order: newOrder, columnId: params.columnId }
+      data: { ...body, order: newOrder, columnId: column.id }
     })
 
     res.json(newCard)
@@ -66,7 +66,7 @@ cardRouter.patch(
     const transaction = body.ids.map((id, order) =>
       prisma.card.update({
         where: { id },
-        data: { order, columnId: params.columnId }
+        data: { order, columnId: column.id }
       })
     )
 
