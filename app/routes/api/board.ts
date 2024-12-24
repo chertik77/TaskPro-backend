@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import boardImages from 'data/board-bg-images.json'
 import { NotFound } from 'http-errors'
-import { prisma } from 'prisma.client'
+import { prisma } from 'prisma/prisma.client'
 
 import { authenticate, validateRequest } from 'middlewares'
 

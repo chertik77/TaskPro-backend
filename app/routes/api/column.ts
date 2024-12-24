@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { BadRequest, NotFound } from 'http-errors'
-import { prisma } from 'prisma.client'
+import { prisma } from 'prisma/prisma.client'
 
 import { authenticate, validateRequest } from 'middlewares'
 

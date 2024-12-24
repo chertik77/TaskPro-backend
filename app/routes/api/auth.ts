@@ -3,10 +3,9 @@ import { compare, hash } from 'bcrypt'
 import { OAuth2Client } from 'google-auth-library'
 import { Conflict, Forbidden, Unauthorized } from 'http-errors'
 import { sign, verify } from 'jsonwebtoken'
-import { prisma } from 'prisma.client'
+import { prisma } from 'prisma/prisma.client'
 
-import { validateRequest } from 'middlewares'
-import { authenticate } from 'middlewares/authenticate'
+import { authenticate, validateRequest } from 'middlewares'
 
 import {
   GoogleAuthSchema,

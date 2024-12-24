@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 
 import { Unauthorized } from 'http-errors'
 import { verify } from 'jsonwebtoken'
-import { prisma } from 'prisma.client'
+import { prisma } from 'prisma/prisma.client'
 
 export const authenticate = async (
   req: Request,
