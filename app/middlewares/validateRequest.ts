@@ -2,27 +2,25 @@ import type { NextFunction, Request, Response } from 'express'
 
 import * as z from 'zod'
 
-type ValidateRequest<B, P, Q> = {
+type ValidateRequest<B, P> = {
   body?: B
   params?: P
-  query?: Q
 }
 
 export const validateRequest =
-  <B extends z.ZodSchema, P extends z.ZodSchema, Q extends z.ZodSchema>({
+  <B extends z.ZodSchema, P extends z.ZodSchema>({
     body: bodySchema,
-    params: paramsSchema,
-    query: querySchema
-  }: ValidateRequest<B, P, Q>) =>
+    params: paramsSchema
+  }: ValidateRequest<B, P>) =>
   (
-    req: Request<z.infer<P>, unknown, z.infer<B>, z.infer<Q>>,
+    req: Request<z.infer<P>, unknown, z.infer<B>, unknown>,
     res: Response,
     next: NextFunction
   ) => {
     const errors: Record<string, string> = {}
 
     const parseAndValidate = <T extends z.ZodSchema>(
-      data: Pick<Request, 'body' | 'params' | 'query'>,
+      data: Pick<Request, 'body' | 'params'>,
       schema?: T
     ) => {
       if (!schema) return data
@@ -41,7 +39,6 @@ export const validateRequest =
 
     parseAndValidate(req.body, bodySchema)
     parseAndValidate(req.params, paramsSchema)
-    parseAndValidate(req.query, querySchema)
 
     if (Object.keys(errors).length > 0) {
       return res.status(400).json({ statusCode: 400, messages: errors })

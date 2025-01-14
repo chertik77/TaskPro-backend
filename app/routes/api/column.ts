@@ -1,15 +1,16 @@
 import { Router } from 'express'
-import { BadRequest, NotFound } from 'http-errors'
-import { prisma } from 'prisma/prisma.client'
+
+import { columnController } from 'controllers'
 
 import { authenticate, validateRequest } from 'middlewares'
 
-import { BoardParamsSchema, UpdateOrderSchema } from 'schemas/board'
 import {
   AddColumnSchema,
+  BoardParamsSchema,
   ColumnParamsSchema,
-  EditColumnSchema
-} from 'schemas/column'
+  EditColumnSchema,
+  UpdateOrderSchema
+} from 'utils/schemas'
 
 export const columnRouter = Router()
 
@@ -18,80 +19,23 @@ columnRouter.use(authenticate)
 columnRouter.post(
   '/:boardId',
   validateRequest({ body: AddColumnSchema, params: BoardParamsSchema }),
-  async ({ params, user, body }, res, next) => {
-    const board = await prisma.board.findFirst({
-      where: { id: params.boardId, userId: user.id }
-    })
-
-    if (!board) return next(NotFound('Board not found'))
-
-    const lastColumn = await prisma.column.findFirst({
-      where: { boardId: board.id },
-      orderBy: { order: 'desc' },
-      select: { order: true }
-    })
-
-    const newOrder = lastColumn ? lastColumn.order + 1 : 1
-
-    const column = await prisma.column.create({
-      data: { ...body, order: newOrder, boardId: board.id }
-    })
-
-    res.json(column)
-  }
+  columnController.add
 )
 
 columnRouter.put(
   '/:columnId',
   validateRequest({ body: EditColumnSchema, params: ColumnParamsSchema }),
-  async ({ params, body }, res, next) => {
-    const updatedColumn = await prisma.column.updateIgnoreNotFound({
-      where: { id: params.columnId },
-      data: body
-    })
-
-    if (!updatedColumn) return next(NotFound('Column not found'))
-
-    res.json(updatedColumn)
-  }
+  columnController.updateById
 )
 
 columnRouter.patch(
   '/:boardId/order',
   validateRequest({ body: UpdateOrderSchema, params: BoardParamsSchema }),
-  async ({ params, body }, res, next) => {
-    const board = await prisma.board.findFirst({
-      where: { id: params.boardId }
-    })
-
-    if (!board) return next(NotFound('Board not found'))
-
-    const transaction = body.ids.map((id, order) =>
-      prisma.column.update({
-        where: { id },
-        data: { order, boardId: board.id }
-      })
-    )
-
-    try {
-      const updatedColumns = await prisma.$transaction(transaction)
-      res.json(updatedColumns)
-    } catch {
-      return next(BadRequest('Invalid order'))
-    }
-  }
+  columnController.updateOrder
 )
 
 columnRouter.delete(
   '/:columnId',
   validateRequest({ params: ColumnParamsSchema }),
-  async ({ params }, res, next) => {
-    const deletedColumn = await prisma.column.deleteIgnoreNotFound({
-      where: { id: params.columnId }
-    })
-
-    if (!deletedColumn) return next(NotFound('Column not found'))
-
-    res.status(204).send()
-  }
+  columnController.deleteById
 )

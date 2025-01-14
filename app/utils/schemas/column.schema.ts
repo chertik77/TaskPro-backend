@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-import { TitleSchema, zodObjectId } from './board'
+import { TitleSchema, zodObjectId } from './board.schema'
 
 export const AddColumnSchema = z.object({ title: TitleSchema })
 

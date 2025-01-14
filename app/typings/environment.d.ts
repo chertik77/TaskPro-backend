@@ -9,7 +9,6 @@ declare global {
       GOOGLE_CLIENT_SECRET: string
       ACCESS_JWT_SECRET: string
       REFRESH_JWT_SECRET: string
-      ALLOWED_ORIGINS: string
       PORT: number
       API_PREFIX: string
       EMAIL_HOST: string

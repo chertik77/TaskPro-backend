@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
+import type { HttpError } from 'http-errors'
 
 import express from 'express'
 import cors from 'cors'
-import { HttpError } from 'http-errors'
 import logger from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 
