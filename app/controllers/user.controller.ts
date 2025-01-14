@@ -12,7 +12,7 @@ import { prisma } from 'prisma/prisma.client'
 import { EditUserSchema, NeedHelpSchema, ThemeSchema } from 'utils/schemas'
 
 class UserController {
-  async me(req: Request, res: Response) {
+  me = async (req: Request, res: Response) => {
     const user = await prisma.user.findFirst({
       where: { id: req.user.id },
       omit: { password: true }
@@ -21,11 +21,11 @@ class UserController {
     res.json(user)
   }
 
-  async update(
+  update = async (
     { user, body, file }: TypedRequestBody<typeof EditUserSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const { id, avatarPublicId, email: userEmail } = user
     const { email, password } = body
 
@@ -78,11 +78,11 @@ class UserController {
     res.json(updatedUser)
   }
 
-  async help(
+  help = async (
     { body }: TypedRequestBody<typeof NeedHelpSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const emailBody: Options = {
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_RECEIVER,
@@ -102,10 +102,10 @@ class UserController {
     }
   }
 
-  async updateTheme(
+  updateTheme = async (
     { body, user }: TypedRequestBody<typeof ThemeSchema>,
     res: Response
-  ) {
+  ) => {
     const updateData = !user.avatarPublicId
       ? {
           ...body,

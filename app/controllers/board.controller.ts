@@ -16,17 +16,17 @@ import {
 } from 'utils/schemas'
 
 class BoardController {
-  async getAll({ user }: Request, res: Response) {
+  getAll = async ({ user }: Request, res: Response) => {
     const boards = await prisma.board.findMany({ where: { userId: user.id } })
 
     res.json(boards)
   }
 
-  async getById(
+  getById = async (
     { user, params }: TypedRequestParams<typeof BoardParamsSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const board = await prisma.board.findFirst({
       where: { id: params.boardId, userId: user.id },
       include: {
@@ -42,10 +42,10 @@ class BoardController {
     res.json(board)
   }
 
-  async add(
+  add = async (
     { body, user }: TypedRequestBody<typeof AddBoardSchema>,
     res: Response
-  ) {
+  ) => {
     const newBoard = await prisma.board.create({
       data: {
         ...body,
@@ -57,7 +57,7 @@ class BoardController {
     res.json(newBoard)
   }
 
-  async updateById(
+  updateById = async (
     {
       body,
       params,
@@ -65,7 +65,7 @@ class BoardController {
     }: TypedRequest<typeof EditBoardSchema, typeof BoardParamsSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const updatedBoard = await prisma.board.updateIgnoreNotFound({
       where: { id: params.boardId, userId: user.id },
       data: {
@@ -79,11 +79,11 @@ class BoardController {
     res.json(updatedBoard)
   }
 
-  async deleteById(
+  deleteById = async (
     { params, user }: TypedRequestParams<typeof BoardParamsSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const deletedBoard = await prisma.board.deleteIgnoreNotFound({
       where: { id: params.boardId, userId: user.id }
     })

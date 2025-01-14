@@ -20,11 +20,11 @@ const {
 } = process.env
 
 class AuthController {
-  async signup(
+  signup = async (
     { body }: TypedRequestBody<typeof SignupSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const isUserExists = await prisma.user.findUnique({
       where: { email: body.email }
     })
@@ -48,11 +48,11 @@ class AuthController {
     res.json({ user, ...tokens })
   }
 
-  async signin(
+  signin = async (
     { body }: TypedRequestBody<typeof SigninSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const user = await prisma.user.findUnique({
       where: { email: body.email }
     })
@@ -74,10 +74,10 @@ class AuthController {
     res.json({ user: userWithoutPassword, ...tokens })
   }
 
-  async google(
+  google = async (
     { body }: TypedRequestBody<typeof GoogleAuthSchema>,
     res: Response
-  ) {
+  ) => {
     const oAuth2Client = new OAuth2Client(
       GOOGLE_CLIENT_ID,
       GOOGLE_CLIENT_SECRET,
@@ -122,7 +122,7 @@ class AuthController {
     }
   }
 
-  async tokens({ body }: Request, res: Response, next: NextFunction) {
+  tokens = async ({ body }: Request, res: Response, next: NextFunction) => {
     try {
       const { id, sid } = verify(body.refreshToken, REFRESH_JWT_SECRET!) as {
         id: string
@@ -153,7 +153,7 @@ class AuthController {
     }
   }
 
-  async logout({ session }: Request, res: Response) {
+  logout = async ({ session }: Request, res: Response) => {
     await prisma.session.delete({ where: { id: session } })
 
     res.status(204).send()

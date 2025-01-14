@@ -17,11 +17,7 @@ import {
   userRouter
 } from './routes/api'
 
-const app = express()
-
-app.listen(Number(process.env.PORT) || 5432, () => {
-  console.log(`Server started on port ${process.env.PORT || 5432}`)
-})
+export const app = express()
 
 const appRouter = express.Router()
 
