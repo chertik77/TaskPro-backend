@@ -27,7 +27,6 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.9",
     "swagger-ui-express": "^5.0.0",
-    "validator": "^13.11.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -54,7 +53,6 @@
     "prisma": "^5.22.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "tsc-files": "^1.1.4",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5"
   }
