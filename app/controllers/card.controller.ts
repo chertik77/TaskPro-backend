@@ -1,4 +1,4 @@
-import type { TypedRequest, TypedRequestParams } from '@/typings/typed-request'
+import type { TypedRequest, TypedRequestParams } from '@/types/typed-request'
 import type { NextFunction, Response } from 'express'
 
 import { prisma } from '@prisma'

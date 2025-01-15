@@ -1,4 +1,4 @@
-import type { TypedRequestBody } from '@/typings/typed-request'
+import type { TypedRequestBody } from '@/types/typed-request'
 import type { NextFunction, Request, Response } from 'express'
 import type { Options } from 'nodemailer/lib/mailer'
 

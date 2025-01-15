@@ -2,7 +2,7 @@ import type {
   TypedRequest,
   TypedRequestBody,
   TypedRequestParams
-} from '@/typings/typed-request'
+} from '@/types/typed-request'
 import type { NextFunction, Request, Response } from 'express'
 
 import { prisma } from '@prisma'

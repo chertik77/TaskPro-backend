@@ -11,7 +11,8 @@
     "paths": {
       "@/*": ["./app/*"],
       "@prisma": ["./prisma/prisma.client.ts"]
-    }
+    },
+    "typeRoots": ["./app/types", "./node_modules/@types"]
   },
   "include": ["./app/**/*"]
 }
