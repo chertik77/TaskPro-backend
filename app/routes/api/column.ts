@@ -1,8 +1,8 @@
 import { Router } from 'express'
 
-import { columnController } from 'controllers'
+import { columnController } from '@/controllers'
 
-import { authenticate, validateRequest } from 'middlewares'
+import { authenticate, validateRequest } from '@/middlewares'
 
 import {
   AddColumnSchema,
@@ -10,7 +10,7 @@ import {
   ColumnParamsSchema,
   EditColumnSchema,
   UpdateOrderSchema
-} from 'utils/schemas'
+} from '@/utils/schemas'
 
 export const columnRouter = Router()
 

@@ -1,15 +1,15 @@
 import { Router } from 'express'
 
-import { authController } from 'controllers'
+import { authController } from '@/controllers'
 
-import { authenticate, validateRequest } from 'middlewares'
+import { authenticate, validateRequest } from '@/middlewares'
 
 import {
   GoogleAuthSchema,
   RefreshTokenSchema,
   SigninSchema,
   SignupSchema
-} from 'utils/schemas'
+} from '@/utils/schemas'
 
 export const authRouter = Router()
 

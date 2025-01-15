@@ -1,8 +1,8 @@
+import type { TypedRequest, TypedRequestParams } from '@/typings/typed-request'
 import type { NextFunction, Response } from 'express'
-import type { TypedRequest, TypedRequestParams } from 'typings/typed-request'
 
+import { prisma } from '@prisma'
 import { BadRequest, NotFound } from 'http-errors'
-import { prisma } from 'prisma/prisma.client'
 
 import {
   AddCardSchema,
@@ -10,7 +10,7 @@ import {
   ColumnParamsSchema,
   EditCardSchema,
   UpdateOrderSchema
-} from 'utils/schemas'
+} from '@/utils/schemas'
 
 class CardController {
   async add(

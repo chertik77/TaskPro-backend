@@ -1,15 +1,16 @@
+import type { TypedRequestBody } from '@/typings/typed-request'
 import type { NextFunction, Request, Response } from 'express'
 import type { Options } from 'nodemailer/lib/mailer'
-import type { TypedRequestBody } from 'typings/typed-request'
 
+import { prisma } from '@prisma'
 import { User } from '@prisma/client'
 import { hash } from 'bcrypt'
-import cloudinary, { transport } from 'config'
-import defaultAvatars from 'data/default-avatars.json'
 import { Conflict, InternalServerError, NotAcceptable } from 'http-errors'
-import { prisma } from 'prisma/prisma.client'
 
-import { EditUserSchema, NeedHelpSchema, ThemeSchema } from 'utils/schemas'
+import cloudinary, { transport } from '@/config'
+import defaultAvatars from '@/data/default-avatars.json'
+
+import { EditUserSchema, NeedHelpSchema, ThemeSchema } from '@/utils/schemas'
 
 class UserController {
   me = async (req: Request, res: Response) => {

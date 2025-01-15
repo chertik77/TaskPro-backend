@@ -1,6 +1,7 @@
 import { Icons } from '@prisma/client'
-import boardImages from 'data/board-bg-images.json'
 import * as z from 'zod'
+
+import boardImages from '@/data/board-bg-images.json'
 
 function zodEnumFromObjKeys<K extends string>(
   obj: Record<K, unknown>

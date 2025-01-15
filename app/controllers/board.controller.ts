@@ -1,19 +1,20 @@
-import type { NextFunction, Request, Response } from 'express'
 import type {
   TypedRequest,
   TypedRequestBody,
   TypedRequestParams
-} from 'typings/typed-request'
+} from '@/typings/typed-request'
+import type { NextFunction, Request, Response } from 'express'
 
-import boardImages from 'data/board-bg-images.json'
+import { prisma } from '@prisma'
 import { NotFound } from 'http-errors'
-import { prisma } from 'prisma/prisma.client'
+
+import boardImages from '@/data/board-bg-images.json'
 
 import {
   AddBoardSchema,
   BoardParamsSchema,
   EditBoardSchema
-} from 'utils/schemas'
+} from '@/utils/schemas'
 
 class BoardController {
   getAll = async ({ user }: Request, res: Response) => {

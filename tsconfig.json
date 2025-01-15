@@ -3,13 +3,15 @@
     "target": "es2016",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "baseUrl": "./app",
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@/*": ["./app/*"],
+      "@prisma": ["./prisma/prisma.client.ts"]
+    }
   },
-  "include": ["./app/**/*"],
-  "files": ["./app/typings/express.d.ts"]
+  "include": ["./app/**/*"]
 }

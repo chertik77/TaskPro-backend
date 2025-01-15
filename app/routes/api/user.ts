@@ -1,10 +1,10 @@
 import { Router } from 'express'
 
-import { userController } from 'controllers'
+import { userController } from '@/controllers'
 
-import { authenticate, upload, validateRequest } from 'middlewares'
+import { authenticate, upload, validateRequest } from '@/middlewares'
 
-import { EditUserSchema, NeedHelpSchema, ThemeSchema } from 'utils/schemas'
+import { EditUserSchema, NeedHelpSchema, ThemeSchema } from '@/utils/schemas'
 
 export const userRouter = Router()
 

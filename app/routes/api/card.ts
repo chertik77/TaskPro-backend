@@ -1,8 +1,8 @@
 import { Router } from 'express'
 
-import { cardController } from 'controllers'
+import { cardController } from '@/controllers'
 
-import { authenticate, validateRequest } from 'middlewares'
+import { authenticate, validateRequest } from '@/middlewares'
 
 import {
   AddCardSchema,
@@ -10,7 +10,7 @@ import {
   ColumnParamsSchema,
   EditCardSchema,
   UpdateOrderSchema
-} from 'utils/schemas'
+} from '@/utils/schemas'
 
 export const cardRouter = Router()
 
