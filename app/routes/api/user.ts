@@ -10,8 +10,6 @@ export const userRouter = Router()
 
 userRouter.use(authenticate)
 
-userRouter.get('/me', userController.me)
-
 userRouter.put(
   '/',
   upload.single('avatar'),

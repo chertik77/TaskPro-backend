@@ -1,5 +1,5 @@
 import type { TypedRequestBody } from '@/types/typed-request'
-import type { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Response } from 'express'
 import type { Options } from 'nodemailer/lib/mailer'
 
 import { prisma } from '@prisma'
@@ -13,15 +13,6 @@ import defaultAvatars from '@/data/default-avatars.json'
 import { EditUserSchema, NeedHelpSchema, ThemeSchema } from '@/utils/schemas'
 
 class UserController {
-  me = async (req: Request, res: Response) => {
-    const user = await prisma.user.findFirst({
-      where: { id: req.user.id },
-      omit: { password: true }
-    })
-
-    res.json(user)
-  }
-
   update = async (
     { user, body, file }: TypedRequestBody<typeof EditUserSchema>,
     res: Response,
