@@ -148,7 +148,9 @@ class AuthController {
       const tokens = this.getNewTokens({ id: user.id, sid: newSid.id })
 
       res.json(tokens)
-    } catch {
+    } catch (e) {
+      if (e instanceof Error) return next(Forbidden(e.message))
+
       return next(Forbidden())
     }
   }
