@@ -1,11 +1,10 @@
 import eslintPluginJs from '@eslint/js'
-import eslintTsParser from '@typescript-eslint/parser'
 import eslintTypescript from 'typescript-eslint'
 
 export default eslintTypescript.config(
   {
     languageOptions: {
-      parser: eslintTsParser,
+      parser: eslintTypescript.parser,
       ecmaVersion: 2018,
       sourceType: 'module',
       parserOptions: { warnOnUnsupportedTypeScriptVersion: false }
