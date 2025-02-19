@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 
+import createHttpError from 'http-errors'
 import * as z from 'zod'
 
 type ValidateRequest<B, P> = {
@@ -41,7 +42,7 @@ export const validateRequest =
     parseAndValidate(req.params, paramsSchema)
 
     if (Object.keys(errors).length > 0) {
-      return res.status(400).json({ statusCode: 400, messages: errors })
+      return next(createHttpError(400, errors))
     }
 
     next()
