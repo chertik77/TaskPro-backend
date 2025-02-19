@@ -1,5 +1,6 @@
 declare global {
   namespace NodeJS {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
     interface ProcessEnv {
       CLOUDINARY_API_KEY: string
       CLOUDINARY_API_SECRET: string
