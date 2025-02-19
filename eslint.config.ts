@@ -1,9 +1,11 @@
 import eslintPluginJs from '@eslint/js'
+import globals from 'globals'
 import eslintTypescript from 'typescript-eslint'
 
 export default eslintTypescript.config(
   {
     languageOptions: {
+      globals: { ...globals.node },
       parser: eslintTypescript.parser,
       ecmaVersion: 2018,
       sourceType: 'module',
@@ -12,9 +14,9 @@ export default eslintTypescript.config(
   },
   eslintPluginJs.configs.recommended,
   eslintTypescript.configs.recommended,
-  { rules: { 'newline-before-return': 'error' } },
   {
     rules: {
+      'newline-before-return': 'error',
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_' }
