@@ -6,10 +6,7 @@ export default eslintTypescript.config(
   {
     languageOptions: {
       globals: { ...globals.node },
-      parser: eslintTypescript.parser,
-      ecmaVersion: 2018,
-      sourceType: 'module',
-      parserOptions: { warnOnUnsupportedTypeScriptVersion: false }
+      parser: eslintTypescript.parser
     }
   },
   eslintPluginJs.configs.recommended,
