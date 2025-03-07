@@ -26,7 +26,11 @@ app.use(cors())
 app.use(express.json())
 app.disable('x-powered-by')
 
-appRouter.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+appRouter.use(
+  '/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, { customSiteTitle: 'TaskPro API Docs' })
+)
 appRouter.use('/auth', authRouter)
 appRouter.use('/user', userRouter)
 appRouter.use('/board', boardRouter)
