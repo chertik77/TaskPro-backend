@@ -6,7 +6,7 @@
     "node": ">16.17.1"
   },
   "scripts": {
-    "start": "ts-node -r tsconfig-paths/register app/server.ts",
+    "start": "ts-node -r tsconfig-paths/register --files app/server.ts",
     "dev": "ts-node-dev -r tsconfig-paths/register --files --quiet app/server.ts",
     "lint": "eslint --fix app/**/*.ts",
     "format": "prettier --write ./app",
