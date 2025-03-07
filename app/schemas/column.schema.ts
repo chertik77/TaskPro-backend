@@ -1,9 +1,9 @@
 import * as z from 'zod'
 
-import { TitleSchema, zodObjectId } from './board.schema'
+import { objectIdSchema, TitleSchema } from './shared.schema'
 
 export const AddColumnSchema = z.object({ title: TitleSchema })
 
 export const EditColumnSchema = AddColumnSchema.partial()
 
-export const ColumnParamsSchema = z.object({ columnId: zodObjectId() })
+export const ColumnParamsSchema = z.object({ columnId: objectIdSchema() })

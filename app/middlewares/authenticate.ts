@@ -1,8 +1,9 @@
 import type { NextFunction, Request, Response } from 'express'
 
-import { prisma } from '@prisma'
 import { Unauthorized } from 'http-errors'
 import { verify } from 'jsonwebtoken'
+
+import { prisma } from '@/config/prisma'
 
 export const authenticate = async (
   req: Request,
@@ -15,7 +16,7 @@ export const authenticate = async (
   if (bearer !== 'Bearer') return next(Unauthorized())
 
   try {
-    const { id, sid } = verify(token, process.env.ACCESS_JWT_SECRET!) as {
+    const { id, sid } = verify(token, process.env.ACCESS_JWT_SECRET) as {
       id: string
       sid: string
     }

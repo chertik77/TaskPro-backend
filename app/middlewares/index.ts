@@ -1,3 +1,3 @@
-export * from './authenticate'
-export * from './multer'
-export * from './validateRequest'
+export { authenticate } from './authenticate'
+export { upload } from './multer'
+export { validateRequest } from './validate-request'

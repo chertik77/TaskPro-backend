@@ -1,0 +1,1 @@
+export { getUserInfoFromGoogleApi } from './getUserInfoFromGoogleApi'

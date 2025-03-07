@@ -10,7 +10,7 @@ import {
   ColumnParamsSchema,
   EditColumnSchema,
   UpdateOrderSchema
-} from '@/utils/schemas'
+} from '@/schemas'
 
 export const columnRouter = Router()
 

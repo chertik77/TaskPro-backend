@@ -4,7 +4,7 @@ import { userController } from '@/controllers'
 
 import { authenticate, upload, validateRequest } from '@/middlewares'
 
-import { EditUserSchema, NeedHelpSchema, ThemeSchema } from '@/utils/schemas'
+import { EditUserSchema, NeedHelpSchema, ThemeSchema } from '@/schemas'
 
 export const userRouter = Router()
 

@@ -4,11 +4,7 @@ import { boardController } from '@/controllers'
 
 import { authenticate, validateRequest } from '@/middlewares'
 
-import {
-  AddBoardSchema,
-  BoardParamsSchema,
-  EditBoardSchema
-} from '@/utils/schemas'
+import { AddBoardSchema, BoardParamsSchema, EditBoardSchema } from '@/schemas'
 
 export const boardRouter = Router()
 

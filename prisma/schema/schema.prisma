@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["omitApi", "prismaSchemaFolder"]
+  previewFeatures = ["prismaSchemaFolder"]
 }
 
 datasource db {

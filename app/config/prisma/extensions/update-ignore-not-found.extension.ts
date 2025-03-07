@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 
-export const updateIgnoreNotFoundExtension = Prisma.defineExtension(client => {
-  return client.$extends({
+export const updateIgnoreNotFoundExtension = Prisma.defineExtension(client =>
+  client.$extends({
     name: 'updateIgnoreNotFound',
     model: {
       $allModels: {
@@ -12,6 +12,7 @@ export const updateIgnoreNotFoundExtension = Prisma.defineExtension(client => {
           try {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const context = Prisma.getExtensionContext(this) as any
+
             return await context.update(args)
           } catch (err) {
             if (
@@ -26,4 +27,4 @@ export const updateIgnoreNotFoundExtension = Prisma.defineExtension(client => {
       }
     }
   })
-})
+)

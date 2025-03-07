@@ -9,7 +9,7 @@ import {
   RefreshTokenSchema,
   SigninSchema,
   SignupSchema
-} from '@/utils/schemas'
+} from '@/schemas'
 
 export const authRouter = Router()
 

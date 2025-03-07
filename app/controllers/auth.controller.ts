@@ -1,14 +1,15 @@
-import type { TypedRequestBody } from '@/types/typed-request'
 import type { NextFunction, Request, Response } from 'express'
 
-import { prisma } from '@prisma'
+import { TypedRequestBody } from '@/types'
 import { compare, hash } from 'bcrypt'
 import { OAuth2Client } from 'google-auth-library'
 import { Conflict, Forbidden, Unauthorized } from 'http-errors'
 import { sign, verify } from 'jsonwebtoken'
 
-import { getUserInfoFromGoogleApi } from '@/utils/getUserInfoFromGoogleApi'
-import { GoogleAuthSchema, SigninSchema, SignupSchema } from '@/utils/schemas'
+import { prisma } from '@/config/prisma'
+
+import { GoogleAuthSchema, SigninSchema, SignupSchema } from '@/schemas'
+import { getUserInfoFromGoogleApi } from '@/utils'
 
 const {
   ACCESS_TOKEN_EXPIRES_IN,

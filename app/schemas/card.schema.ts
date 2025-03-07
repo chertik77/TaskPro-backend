@@ -1,7 +1,7 @@
 import { Priority } from '@prisma/client'
 import * as z from 'zod'
 
-import { TitleSchema, zodObjectId } from './board.schema'
+import { objectIdSchema, TitleSchema } from './shared.schema'
 
 export const AddCardSchema = z.object({
   title: TitleSchema,
@@ -14,4 +14,4 @@ export const AddCardSchema = z.object({
 
 export const EditCardSchema = AddCardSchema.partial()
 
-export const CardParamsSchema = z.object({ cardId: zodObjectId() })
+export const CardParamsSchema = z.object({ cardId: objectIdSchema() })

@@ -1,16 +1,16 @@
-import type { TypedRequestBody } from '@/types/typed-request'
+import type { TypedRequestBody } from '@/types'
 import type { NextFunction, Request, Response } from 'express'
 import type { Options } from 'nodemailer/lib/mailer'
 
-import { prisma } from '@prisma'
 import { User } from '@prisma/client'
 import { hash } from 'bcrypt'
 import { Conflict, InternalServerError, NotAcceptable } from 'http-errors'
 
-import cloudinary, { transport } from '@/config'
-import defaultAvatars from '@/data/default-avatars.json'
+import cloudinary from '@/config/cloudinary.config'
+import { transport } from '@/config/mailer.config'
+import { prisma } from '@/config/prisma'
 
-import { EditUserSchema, NeedHelpSchema, ThemeSchema } from '@/utils/schemas'
+import { EditUserSchema, NeedHelpSchema, ThemeSchema } from '@/schemas'
 
 class UserController {
   me = async (req: Request, res: Response) => {
@@ -107,17 +107,9 @@ class UserController {
     { body, user }: TypedRequestBody<typeof ThemeSchema>,
     res: Response
   ) => {
-    const updateData = !user.avatarPublicId
-      ? {
-          ...body,
-          avatar: defaultAvatars[body.theme],
-          avatarPublicId: null
-        }
-      : body
-
     const editedUser = await prisma.user.update({
       where: { id: user.id },
-      data: updateData,
+      data: body,
       omit: { password: true }
     })
 
