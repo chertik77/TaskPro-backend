@@ -178,6 +178,17 @@
         }
       }
     },
+    "/user/me": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get current user",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": { "$ref": "#/components/responses/UserResponse" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
     "/user/help": {
       "post": {
         "tags": ["User"],
