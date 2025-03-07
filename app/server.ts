@@ -1,6 +1,6 @@
 import { app } from './app'
 
-const port = Number(process.env.PORT ?? 5432)
+const port = parseInt(process.env.PORT ?? 5432)
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`)

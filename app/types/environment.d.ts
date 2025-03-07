@@ -1,3 +1,5 @@
+import type { StringValue } from 'ms'
+
 declare global {
   namespace NodeJS {
     // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -10,15 +12,15 @@ declare global {
       GOOGLE_CLIENT_SECRET: string
       ACCESS_JWT_SECRET: string
       REFRESH_JWT_SECRET: string
-      PORT: number
+      PORT: string
       API_PREFIX: string
       EMAIL_HOST: string
-      EMAIL_PORT: number
+      EMAIL_PORT: string
       EMAIL_USER: string
       EMAIL_RECEIVER: string
       EMAIL_PASSWORD: string
-      ACCESS_TOKEN_EXPIRES_IN: string
-      REFRESH_TOKEN_EXPIRES_IN: string
+      ACCESS_TOKEN_EXPIRES_IN: StringValue
+      REFRESH_TOKEN_EXPIRES_IN: StringValue
     }
   }
 }
