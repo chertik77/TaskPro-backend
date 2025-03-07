@@ -3,14 +3,15 @@ import globals from 'globals'
 import eslintTypescript from 'typescript-eslint'
 
 export default eslintTypescript.config(
+  eslintPluginJs.configs.recommended,
+  eslintTypescript.configs.recommended,
   {
     languageOptions: {
       globals: { ...globals.node },
-      parser: eslintTypescript.parser
+      parser: eslintTypescript.parser,
+      parserOptions: { warnOnUnsupportedTypeScriptVersion: false }
     }
   },
-  eslintPluginJs.configs.recommended,
-  eslintTypescript.configs.recommended,
   {
     rules: {
       'newline-before-return': 'error',
