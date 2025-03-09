@@ -14,6 +14,27 @@ export default eslintTypescript.config(
   },
   {
     rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            "ImportSpecifier[local.name='env'][parent.source.value='node:process']",
+          message:
+            "Importing env from 'node:process' is not allowed. Use env config from utils instead."
+        },
+        {
+          selector:
+            "ImportSpecifier[local.name='env'][parent.source.value='process']",
+          message:
+            "Importing 'env' from 'process' is not allowed. Use env config from utils instead."
+        },
+        {
+          selector:
+            "MemberExpression[object.name='process'][property.name='env']",
+          message:
+            "Accessing 'process.env' is not allowed. Use env config from utils instead."
+        }
+      ],
       'newline-before-return': 'error',
       '@typescript-eslint/no-unused-vars': [
         'error',

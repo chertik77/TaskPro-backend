@@ -16,6 +16,7 @@ import {
   columnRouter,
   userRouter
 } from './routes/api'
+import { env } from './utils'
 
 export const app = express()
 
@@ -37,7 +38,7 @@ appRouter.use('/board', boardRouter)
 appRouter.use('/column', columnRouter)
 appRouter.use('/card', cardRouter)
 
-app.use(process.env.API_PREFIX!, appRouter)
+app.use(env.API_PREFIX, appRouter)
 
 app.use((_, res) => {
   res.status(404).json({ message: 'Not found' })

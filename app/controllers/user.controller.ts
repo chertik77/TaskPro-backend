@@ -11,6 +11,7 @@ import { transport } from '@/config/mailer.config'
 import { prisma } from '@/config/prisma'
 
 import { EditUserSchema, NeedHelpSchema, ThemeSchema } from '@/schemas'
+import { env } from '@/utils'
 
 class UserController {
   me = async (req: Request, res: Response) => {
@@ -85,8 +86,8 @@ class UserController {
     next: NextFunction
   ) => {
     const emailBody: Options = {
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_RECEIVER,
+      from: env.EMAIL_USER,
+      to: env.EMAIL_RECEIVER,
       subject: 'Need help',
       html: `
         <div>

@@ -5,6 +5,8 @@ import { verify } from 'jsonwebtoken'
 
 import { prisma } from '@/config/prisma'
 
+import { env } from '@/utils'
+
 export const authenticate = async (
   req: Request,
   _: Response,
@@ -16,7 +18,7 @@ export const authenticate = async (
   if (bearer !== 'Bearer') return next(Unauthorized())
 
   try {
-    const { id, sid } = verify(token, process.env.ACCESS_JWT_SECRET) as {
+    const { id, sid } = verify(token, env.ACCESS_JWT_SECRET) as {
       id: string
       sid: string
     }

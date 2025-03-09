@@ -9,7 +9,7 @@ import { sign, verify } from 'jsonwebtoken'
 import { prisma } from '@/config/prisma'
 
 import { GoogleAuthSchema, SigninSchema, SignupSchema } from '@/schemas'
-import { getUserInfoFromGoogleApi } from '@/utils'
+import { env, getUserInfoFromGoogleApi } from '@/utils'
 
 const {
   ACCESS_TOKEN_EXPIRES_IN,
@@ -18,7 +18,7 @@ const {
   ACCESS_JWT_SECRET,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET
-} = process.env
+} = env
 
 class AuthController {
   signup = async (
@@ -125,7 +125,7 @@ class AuthController {
 
   tokens = async ({ body }: Request, res: Response, next: NextFunction) => {
     try {
-      const { id, sid } = verify(body.refreshToken, REFRESH_JWT_SECRET!) as {
+      const { id, sid } = verify(body.refreshToken, REFRESH_JWT_SECRET) as {
         id: string
         sid: string
       }
@@ -163,11 +163,11 @@ class AuthController {
   }
 
   private getNewTokens = (payload: { id: string; sid: string }) => {
-    const accessToken = sign(payload, ACCESS_JWT_SECRET!, {
+    const accessToken = sign(payload, ACCESS_JWT_SECRET, {
       expiresIn: ACCESS_TOKEN_EXPIRES_IN
     })
 
-    const refreshToken = sign(payload, REFRESH_JWT_SECRET!, {
+    const refreshToken = sign(payload, REFRESH_JWT_SECRET, {
       expiresIn: REFRESH_TOKEN_EXPIRES_IN
     })
 
