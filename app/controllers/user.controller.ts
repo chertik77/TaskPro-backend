@@ -16,8 +16,7 @@ import { env } from '@/utils'
 class UserController {
   me = async (req: Request, res: Response) => {
     const user = await prisma.user.findFirst({
-      where: { id: req.user.id },
-      omit: { password: true }
+      where: { id: req.user.id }
     })
 
     res.json(user)
@@ -73,8 +72,7 @@ class UserController {
 
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: updateData,
-      omit: { password: true }
+      data: updateData
     })
 
     res.json(updatedUser)
@@ -110,8 +108,7 @@ class UserController {
   ) => {
     const editedUser = await prisma.user.update({
       where: { id: user.id },
-      data: body,
-      omit: { password: true }
+      data: body
     })
 
     res.json(editedUser)

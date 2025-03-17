@@ -36,8 +36,7 @@ class AuthController {
       data: {
         ...body,
         password: await hash(body.password, 10)
-      },
-      omit: { password: true }
+      }
     })
 
     const newSession = await prisma.session.create({
@@ -55,7 +54,8 @@ class AuthController {
     next: NextFunction
   ) => {
     const user = await prisma.user.findUnique({
-      where: { email: body.email }
+      where: { email: body.email },
+      omit: { password: false }
     })
 
     if (!user) return next(Unauthorized('Email or password invalid'))
@@ -101,8 +101,7 @@ class AuthController {
           password: await hash(sub, 10),
           avatar: picture,
           avatarPublicId: 'google-picture'
-        },
-        omit: { password: true }
+        }
       })
 
       const newSession = await prisma.session.create({
