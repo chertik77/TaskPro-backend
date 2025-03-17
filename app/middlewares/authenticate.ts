@@ -23,7 +23,11 @@ export const authenticate = async (
       sid: string
     }
 
-    const user = await prisma.user.findFirst({ where: { id } })
+    const user = await prisma.user.findFirst({
+      where: { id },
+      omit: { password: false }
+    })
+
     const session = await prisma.session.findFirst({ where: { id: sid } })
 
     if (!user || !session) return next(Unauthorized())
