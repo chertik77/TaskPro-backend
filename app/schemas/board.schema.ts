@@ -1,4 +1,4 @@
-import { Icons } from '@prisma/client'
+import { Icon } from '@prisma/client'
 import * as z from 'zod'
 
 import boardImages from '@/data/board-bg-images.json'
@@ -15,7 +15,7 @@ function zodEnumFromObjKeys<K extends string>(
 
 export const AddBoardSchema = z.object({
   title: TitleSchema,
-  icon: z.nativeEnum(Icons),
+  icon: z.nativeEnum(Icon),
   background: zodEnumFromObjKeys(boardImages)
 })
 

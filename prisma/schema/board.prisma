@@ -1,7 +1,7 @@
 model Board {
     id         String     @id @default(auto()) @map("_id") @db.ObjectId
     title      String
-    icon       Icons
+    icon       Icon
     background Background
     userId     String     @map("user_id") @db.ObjectId
     user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -10,7 +10,7 @@ model Board {
     @@map("boards")
 }
 
-enum Icons {
+enum Icon {
     project
     star
     loading

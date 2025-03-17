@@ -4,7 +4,7 @@ model User {
     email          String  @unique
     password       String
     theme          Theme   @default(light)
-    avatar         String? @default("https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png")
+    avatar         String?
     avatarPublicId String? @map("avatar_public_id")
     boards         Board[]
 
