@@ -1,0 +1,21 @@
+backend:
+    functions:
+        - entry: server.ts
+          handler: handler
+          name: express
+          path: .
+          type: httpServer
+    language:
+        name: js
+        runtime: nodejs20.x
+    path: .
+    scripts:
+        deploy:
+            - npm install
+            - npm run build
+        local:
+            - npm install
+            - npm run build
+name: TaskPro-backend
+region: eu-central-1
+yamlVersion: 2
