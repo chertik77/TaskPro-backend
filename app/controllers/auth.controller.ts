@@ -123,12 +123,12 @@ class AuthController {
   }
 
   tokens = async ({ body }: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id, sid } = verify(body.refreshToken, REFRESH_JWT_SECRET) as {
-        id: string
-        sid: string
-      }
+    const { id, sid } = verify(body.refreshToken, REFRESH_JWT_SECRET) as {
+      id: string
+      sid: string
+    }
 
+    try {
       const user = await prisma.user.findFirst({ where: { id } })
 
       if (!user) return next(Forbidden())
@@ -149,6 +149,8 @@ class AuthController {
 
       res.json(tokens)
     } catch (e) {
+      await prisma.session.delete({ where: { id: sid } })
+
       if (e instanceof Error) return next(Forbidden(e.message))
 
       return next(Forbidden())
