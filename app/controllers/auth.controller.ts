@@ -4,7 +4,7 @@ import { TypedRequestBody } from '@/types'
 import { compare, hash } from 'bcrypt'
 import { OAuth2Client } from 'google-auth-library'
 import { Conflict, Forbidden, Unauthorized } from 'http-errors'
-import { sign, verify } from 'jsonwebtoken'
+import { sign, verify, VerifyErrors } from 'jsonwebtoken'
 
 import { prisma } from '@/config/prisma'
 
@@ -123,12 +123,12 @@ class AuthController {
   }
 
   tokens = async ({ body }: Request, res: Response, next: NextFunction) => {
-    const { id, sid } = verify(body.refreshToken, REFRESH_JWT_SECRET) as {
-      id: string
-      sid: string
-    }
-
     try {
+      const { id, sid } = verify(body.refreshToken, REFRESH_JWT_SECRET) as {
+        id: string
+        sid: string
+      }
+
       const user = await prisma.user.findFirst({ where: { id } })
 
       if (!user) return next(Forbidden())
@@ -148,12 +148,8 @@ class AuthController {
       const tokens = this.getNewTokens({ id: user.id, sid: newSid.id })
 
       res.json(tokens)
-    } catch (e) {
-      await prisma.session.delete({ where: { id: sid } })
-
-      if (e instanceof Error) return next(Forbidden(e.message))
-
-      return next(Forbidden())
+    } catch (error) {
+      return next(Forbidden((error as VerifyErrors).message))
     }
   }
 
