@@ -42,7 +42,7 @@ export const validateRequest =
     parseAndValidate(req.params, paramsSchema)
 
     if (Object.keys(errors).length > 0) {
-      return next(createHttpError(400, errors))
+      return next(createHttpError(400, { message: errors }))
     }
 
     next()
