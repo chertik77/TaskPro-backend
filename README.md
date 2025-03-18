@@ -4,7 +4,7 @@ Welcome to the Task Pro App Backend, the powerhouse behind the ultimate tool for
 
 ![Screenshot 2024-11-28 at 22 33 21](https://github.com/user-attachments/assets/91ab39d9-3a59-4dd4-b990-ca11c38dbfcc)
 
-_Link to the swagger docs:_ https://api.taskpro.uk/docs
+_Link to the swagger docs:_ https://api.taskpro.online/docs
 
 _Link to the frontend repo:_ https://github.com/chertik77/TaskPro-frontend
 
