@@ -6,8 +6,6 @@ import cors from 'cors'
 import logger from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 
-import 'dotenv/config'
-
 import swaggerDocument from '../swagger.json'
 import {
   authRouter,
