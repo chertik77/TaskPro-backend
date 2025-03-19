@@ -37,7 +37,7 @@
               "application/json": {
                 "example": {
                   "statusCode": 400,
-                  "messages": {
+                  "message": {
                     "email": "Email is invalid",
                     "password": "Password must be at least 8 characters",
                     "name": "Name must be at least 2 characters"
@@ -72,7 +72,7 @@
               "application/json": {
                 "example": {
                   "statusCode": 400,
-                  "messages": {
+                  "message": {
                     "email": "Email is invalid",
                     "password": "Password must be at least 8 characters"
                   }
@@ -114,7 +114,7 @@
               "application/json": {
                 "example": {
                   "statusCode": 400,
-                  "messages": {
+                  "message": {
                     "code": "Code must be a string"
                   }
                 }
@@ -146,7 +146,7 @@
               "application/json": {
                 "example": {
                   "statusCode": 400,
-                  "messages": {
+                  "message": {
                     "refreshToken": "refreshToken must be a string"
                   }
                 }
@@ -213,7 +213,7 @@
               "application/json": {
                 "example": {
                   "statusCode": 400,
-                  "messages": {
+                  "message": {
                     "email": "Email is required",
                     "comment": "Comment is required"
                   }
@@ -251,7 +251,7 @@
               "application/json": {
                 "example": {
                   "statusCode": 400,
-                  "messages": {
+                  "message": {
                     "email": "Email is invalid",
                     "name": "Name must be at least 2 characters"
                   }
@@ -640,7 +640,7 @@
           "application/json": {
             "example": {
               "statusCode": 400,
-              "messages": {
+              "message": {
                 "ids": "Ids must be an array of valid ObjectIds"
               }
             }
@@ -699,7 +699,7 @@
           "application/json": {
             "example": {
               "statusCode": 400,
-              "messages": {
+              "message": {
                 "title": "Title must be at least 3 characters",
                 "icon": "Invalid enum value. Expected 'project' | 'star' | 'loading' | 'puzzle' | 'container' | 'lightning' | 'colors' | 'hexagon', received 'random-icon'"
               }
@@ -777,7 +777,7 @@
           "application/json": {
             "example": {
               "statusCode": 400,
-              "messages": {
+              "message": {
                 "title": "Title must be at least 3 characters",
                 "boardId": "Id must be a valid ObjectId"
               }
@@ -831,7 +831,7 @@
           "application/json": {
             "example": {
               "statusCode": 400,
-              "messages": {
+              "message": {
                 "description": "Title must be a string",
                 "priority": "Priority must be one of the following: Without, Low, Medium, High",
                 "columnId": "Id must be a valid ObjectId"

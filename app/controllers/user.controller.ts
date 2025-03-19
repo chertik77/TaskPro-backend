@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from 'express'
 import type { Options } from 'nodemailer/lib/mailer'
 
 import { User } from '@prisma/client'
-import { hash } from 'bcrypt'
+import { hash } from 'argon2'
 import { Conflict, InternalServerError, NotAcceptable } from 'http-errors'
 
 import cloudinary from '@/config/cloudinary.config'
@@ -40,7 +40,7 @@ class UserController {
     const updateData: Partial<User> = { ...body }
 
     if (password) {
-      updateData.password = await hash(password, 10)
+      updateData.password = await hash(password)
     }
 
     if (file) {

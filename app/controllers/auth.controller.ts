@@ -1,21 +1,28 @@
+import type { JwtPayload, TypedRequestBody } from '@/types'
 import type { NextFunction, Request, Response } from 'express'
 
-import { TypedRequestBody } from '@/types'
-import { compare, hash } from 'bcrypt'
+import { hash, verify } from 'argon2'
 import { OAuth2Client } from 'google-auth-library'
 import { Conflict, Forbidden, Unauthorized } from 'http-errors'
-import { sign, verify, VerifyErrors } from 'jsonwebtoken'
+import { errors, jwtVerify, SignJWT } from 'jose'
 
 import { prisma } from '@/config/prisma'
 
-import { GoogleAuthSchema, SigninSchema, SignupSchema } from '@/schemas'
+import {
+  GoogleAuthSchema,
+  RefreshTokenSchema,
+  SigninSchema,
+  SignupSchema
+} from '@/schemas'
 import { env, getUserInfoFromGoogleApi } from '@/utils'
 
 const {
-  ACCESS_TOKEN_EXPIRES_IN,
-  REFRESH_TOKEN_EXPIRES_IN,
+  ACCESS_JWT_EXPIRES_IN,
+  REFRESH_JWT_EXPIRES_IN,
   REFRESH_JWT_SECRET,
   ACCESS_JWT_SECRET,
+  ACCESS_JWT_ALGORITHM,
+  REFRESH_JWT_ALGORITHM,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET
 } = env
@@ -35,7 +42,7 @@ class AuthController {
     const user = await prisma.user.create({
       data: {
         ...body,
-        password: await hash(body.password, 10)
+        password: await hash(body.password)
       }
     })
 
@@ -43,7 +50,7 @@ class AuthController {
       data: { userId: user.id }
     })
 
-    const tokens = this.getNewTokens({ id: user.id, sid: newSession.id })
+    const tokens = await this.getNewTokens({ id: user.id, sid: newSession.id })
 
     res.json({ user, ...tokens })
   }
@@ -62,7 +69,9 @@ class AuthController {
 
     const { password, ...userWithoutPassword } = user
 
-    const isPasswordMatch = await compare(body.password, password)
+    if (!password) return next(Unauthorized('Email or password invalid'))
+
+    const isPasswordMatch = await verify(password, body.password)
 
     if (!isPasswordMatch) return next(Unauthorized('Email or password invalid'))
 
@@ -70,7 +79,7 @@ class AuthController {
       data: { userId: user.id }
     })
 
-    const tokens = this.getNewTokens({ id: user.id, sid: newSession.id })
+    const tokens = await this.getNewTokens({ id: user.id, sid: newSession.id })
 
     res.json({ user: userWithoutPassword, ...tokens })
   }
@@ -87,7 +96,7 @@ class AuthController {
 
     const { tokens } = await oAuth2Client.getToken(body.code)
 
-    const { name, email, sub, picture } = await getUserInfoFromGoogleApi(
+    const { name, email, picture } = await getUserInfoFromGoogleApi(
       tokens.access_token!
     )
 
@@ -95,20 +104,17 @@ class AuthController {
 
     if (!user) {
       const user = await prisma.user.create({
-        data: {
-          name,
-          email,
-          password: await hash(sub, 10),
-          avatar: picture,
-          avatarPublicId: 'google-picture'
-        }
+        data: { name, email, avatar: picture }
       })
 
       const newSession = await prisma.session.create({
         data: { userId: user.id }
       })
 
-      const tokens = this.getNewTokens({ id: user.id, sid: newSession.id })
+      const tokens = await this.getNewTokens({
+        id: user.id,
+        sid: newSession.id
+      })
 
       res.json({ user, ...tokens })
     } else {
@@ -116,18 +122,24 @@ class AuthController {
         data: { userId: user.id }
       })
 
-      const tokens = this.getNewTokens({ id: user.id, sid: newSession.id })
+      const tokens = await this.getNewTokens({
+        id: user.id,
+        sid: newSession.id
+      })
 
       res.json({ user, ...tokens })
     }
   }
 
-  tokens = async ({ body }: Request, res: Response, next: NextFunction) => {
+  tokens = async (
+    { body }: TypedRequestBody<typeof RefreshTokenSchema>,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
-      const { id, sid } = verify(body.refreshToken, REFRESH_JWT_SECRET) as {
-        id: string
-        sid: string
-      }
+      const {
+        payload: { id, sid }
+      } = await jwtVerify<JwtPayload>(body.refreshToken, REFRESH_JWT_SECRET)
 
       const user = await prisma.user.findFirst({ where: { id } })
 
@@ -145,11 +157,15 @@ class AuthController {
         data: { userId: user.id }
       })
 
-      const tokens = this.getNewTokens({ id: user.id, sid: newSid.id })
+      const tokens = await this.getNewTokens({ id: user.id, sid: newSid.id })
 
       res.json(tokens)
     } catch (error) {
-      return next(Forbidden((error as VerifyErrors).message))
+      if (error instanceof errors.JWTExpired) {
+        return next(Forbidden(error.code))
+      }
+
+      return next(Forbidden())
     }
   }
 
@@ -159,14 +175,16 @@ class AuthController {
     res.status(204).send()
   }
 
-  private getNewTokens = (payload: { id: string; sid: string }) => {
-    const accessToken = sign(payload, ACCESS_JWT_SECRET, {
-      expiresIn: ACCESS_TOKEN_EXPIRES_IN
-    })
+  private getNewTokens = async (payload: JwtPayload) => {
+    const accessToken = await new SignJWT(payload)
+      .setExpirationTime(ACCESS_JWT_EXPIRES_IN)
+      .setProtectedHeader({ alg: ACCESS_JWT_ALGORITHM })
+      .sign(ACCESS_JWT_SECRET)
 
-    const refreshToken = sign(payload, REFRESH_JWT_SECRET, {
-      expiresIn: REFRESH_TOKEN_EXPIRES_IN
-    })
+    const refreshToken = await new SignJWT(payload)
+      .setExpirationTime(REFRESH_JWT_EXPIRES_IN)
+      .setProtectedHeader({ alg: REFRESH_JWT_ALGORITHM })
+      .sign(REFRESH_JWT_SECRET)
 
     return { accessToken, refreshToken }
   }

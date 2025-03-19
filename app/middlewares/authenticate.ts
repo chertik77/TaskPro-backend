@@ -1,7 +1,8 @@
+import type { JwtPayload } from '@/types'
 import type { NextFunction, Request, Response } from 'express'
 
 import { Unauthorized } from 'http-errors'
-import { verify } from 'jsonwebtoken'
+import { jwtVerify } from 'jose'
 
 import { prisma } from '@/config/prisma'
 
@@ -18,10 +19,9 @@ export const authenticate = async (
   if (bearer !== 'Bearer') return next(Unauthorized())
 
   try {
-    const { id, sid } = verify(token, env.ACCESS_JWT_SECRET) as {
-      id: string
-      sid: string
-    }
+    const {
+      payload: { id, sid }
+    } = await jwtVerify<JwtPayload>(token, env.ACCESS_JWT_SECRET)
 
     const user = await prisma.user.findFirst({
       where: { id },

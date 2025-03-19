@@ -11,8 +11,12 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
-  ACCESS_JWT_SECRET: z.string(),
-  REFRESH_JWT_SECRET: z.string(),
+  ACCESS_JWT_SECRET: z
+    .string()
+    .transform(value => new TextEncoder().encode(value)),
+  REFRESH_JWT_SECRET: z
+    .string()
+    .transform(value => new TextEncoder().encode(value)),
   PORT: z.preprocess(v => (v ? v : undefined), z.coerce.number().int()),
   API_PREFIX: z.string(),
   EMAIL_HOST: z.string(),
@@ -24,8 +28,10 @@ const envSchema = z.object({
   EMAIL_USER: z.string().email(),
   EMAIL_RECEIVER: z.string().email(),
   EMAIL_PASSWORD: z.string(),
-  ACCESS_TOKEN_EXPIRES_IN: z.string(),
-  REFRESH_TOKEN_EXPIRES_IN: z.string()
+  ACCESS_JWT_EXPIRES_IN: z.string(),
+  REFRESH_JWT_EXPIRES_IN: z.string(),
+  ACCESS_JWT_ALGORITHM: z.string(),
+  REFRESH_JWT_ALGORITHM: z.string()
 })
 
 // eslint-disable-next-line no-restricted-syntax

@@ -2,7 +2,7 @@ model User {
     id             String  @id @default(auto()) @map("_id") @db.ObjectId
     name           String
     email          String  @unique
-    password       String
+    password       String?
     theme          Theme   @default(light)
     avatar         String?
     avatarPublicId String? @map("avatar_public_id")
