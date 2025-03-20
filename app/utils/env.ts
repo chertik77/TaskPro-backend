@@ -11,18 +11,14 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
-  ACCESS_JWT_SECRET: z
-    .string()
-    .transform(value => new TextEncoder().encode(value)),
-  REFRESH_JWT_SECRET: z
-    .string()
-    .transform(value => new TextEncoder().encode(value)),
+  ACCESS_JWT_SECRET: z.string().transform(v => new TextEncoder().encode(v)),
+  REFRESH_JWT_SECRET: z.string().transform(v => new TextEncoder().encode(v)),
   PORT: z.preprocess(v => (v ? v : undefined), z.coerce.number().int()),
   API_PREFIX: z.string(),
   EMAIL_HOST: z.string(),
   EMAIL_PORT: z
     .number({ coerce: true })
-    .refine(value => availableEmailPorts.includes(value), {
+    .refine(v => availableEmailPorts.includes(v), {
       message: `Email port must be one of the following: ${availableEmailPorts.join(', ')}`
     }),
   EMAIL_USER: z.string().email(),
