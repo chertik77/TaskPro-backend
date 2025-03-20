@@ -4,7 +4,8 @@ import type { NextFunction, Request, Response } from 'express'
 import { hash, verify } from 'argon2'
 import { OAuth2Client } from 'google-auth-library'
 import { Conflict, Forbidden, Unauthorized } from 'http-errors'
-import { errors, jwtVerify, SignJWT } from 'jose'
+import { jwtVerify, SignJWT } from 'jose'
+import { JWTExpired } from 'jose/errors'
 
 import { prisma } from '@/config/prisma'
 
@@ -151,7 +152,7 @@ class AuthController {
 
       if (!currentSession) return next(Forbidden())
 
-      await prisma.session.delete({ where: { id: sid } })
+      await prisma.session.delete({ where: { id: currentSession.id } })
 
       const newSid = await prisma.session.create({
         data: { userId: user.id }
@@ -161,7 +162,13 @@ class AuthController {
 
       res.json(tokens)
     } catch (error) {
-      if (error instanceof errors.JWTExpired) {
+      if (error instanceof JWTExpired) {
+        if (error.payload.sid) {
+          await prisma.session.delete({
+            where: { id: error.payload.sid as string }
+          })
+        }
+
         return next(Forbidden(error.code))
       }
 

@@ -37,7 +37,7 @@ class UserController {
       return next(Conflict('Email already exist'))
     }
 
-    const updateData: Partial<User> = { ...body }
+    const updateData: Partial<User> = body
 
     if (password) {
       updateData.password = await hash(password)

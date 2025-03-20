@@ -1,4 +1,4 @@
 export type JwtPayload = {
-  id: string
-  sid: string
+  id?: string
+  sid?: string
 }

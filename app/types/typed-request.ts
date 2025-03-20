@@ -1,6 +1,6 @@
 import type { Request } from 'express'
+import type { ParamsDictionary } from 'express-serve-static-core'
 
-import { ParamsDictionary } from 'express-serve-static-core'
 import * as z from 'zod'
 
 export type TypedRequestBody<
