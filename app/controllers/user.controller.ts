@@ -1,8 +1,9 @@
+import type { EditUserSchema, NeedHelpSchema, ThemeSchema } from '@/schemas'
 import type { TypedRequestBody } from '@/types'
+import type { User } from '@prisma/client'
 import type { NextFunction, Request, Response } from 'express'
 import type { Options } from 'nodemailer/lib/mailer'
 
-import { User } from '@prisma/client'
 import { hash } from 'argon2'
 import { Conflict, InternalServerError, NotAcceptable } from 'http-errors'
 
@@ -10,7 +11,6 @@ import cloudinary from '@/config/cloudinary.config'
 import { transport } from '@/config/mailer.config'
 import { prisma } from '@/config/prisma'
 
-import { EditUserSchema, NeedHelpSchema, ThemeSchema } from '@/schemas'
 import { env } from '@/utils'
 
 class UserController {

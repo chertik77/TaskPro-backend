@@ -3,6 +3,6 @@
     "prettier --write",
     "eslint --fix -f mo",
     "eslint -f mo",
-    "tsc-files --noEmit"
+    "sh -c 'tsc-files --noEmit $(find ./app -name *.d.ts ! -path \"./app/.*/*\") $0 $@'"
   ]
 }

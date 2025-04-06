@@ -1,17 +1,16 @@
-import type { TypedRequest, TypedRequestParams } from '@/types'
-import type { NextFunction, Response } from 'express'
-
-import { BadRequest, NotFound } from 'http-errors'
-
-import { prisma } from '@/config/prisma'
-
-import {
+import type {
   AddColumnSchema,
   BoardParamsSchema,
   ColumnParamsSchema,
   EditColumnSchema,
   UpdateOrderSchema
 } from '@/schemas'
+import type { TypedRequest, TypedRequestParams } from '@/types'
+import type { NextFunction, Response } from 'express'
+
+import { BadRequest, NotFound } from 'http-errors'
+
+import { prisma } from '@/config/prisma'
 
 class ColumnController {
   async add(

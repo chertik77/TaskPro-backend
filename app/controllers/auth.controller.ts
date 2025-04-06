@@ -1,3 +1,9 @@
+import type {
+  GoogleAuthSchema,
+  RefreshTokenSchema,
+  SigninSchema,
+  SignupSchema
+} from '@/schemas'
 import type { JwtPayload, TypedRequestBody } from '@/types'
 import type { NextFunction, Request, Response } from 'express'
 
@@ -9,12 +15,6 @@ import { JWTExpired } from 'jose/errors'
 
 import { prisma } from '@/config/prisma'
 
-import {
-  GoogleAuthSchema,
-  RefreshTokenSchema,
-  SigninSchema,
-  SignupSchema
-} from '@/schemas'
 import { env, getUserInfoFromGoogleApi } from '@/utils'
 
 const {
