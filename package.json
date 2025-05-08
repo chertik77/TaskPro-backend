@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.7.0",
-    "argon2": "^0.41.1",
+    "argon2": "^0.43.0",
     "cloudinary": "^2.6.0",
     "cors": "2.8.5",
     "dotenv": "^16.4.7",
