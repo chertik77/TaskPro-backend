@@ -14,7 +14,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@prisma/client": "^6.5.0",
+    "@prisma/client": "^6.7.0",
     "argon2": "^0.41.1",
     "cloudinary": "^2.6.0",
     "cors": "2.8.5",
