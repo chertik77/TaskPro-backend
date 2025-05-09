@@ -46,11 +46,13 @@ class BoardController {
     { body, user }: TypedRequestBody<typeof AddBoardSchema>,
     res: Response
   ) => {
+    const { background, ...board } = body
+
     const newBoard = await prisma.board.create({
       data: {
-        ...body,
+        ...board,
         userId: user.id,
-        background: boardImages[body.background]
+        background: boardImages[background]
       }
     })
 
@@ -66,11 +68,13 @@ class BoardController {
     res: Response,
     next: NextFunction
   ) => {
+    const { background, ...board } = body
+
     const updatedBoard = await prisma.board.updateIgnoreNotFound({
       where: { id: params.boardId, userId: user.id },
       data: {
-        ...body,
-        background: body.background && boardImages[body.background]
+        ...board,
+        background: background && boardImages[background]
       }
     })
 

@@ -1,81 +1,66 @@
 {
   "flowers": {
     "identifier": "flowers",
-    "hasWhiteTextColor": true,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/bg_images/flowers.jpg"
   },
   "mountains-night": {
     "identifier": "mountains-night",
-    "hasWhiteTextColor": true,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/bg_images/mountains_night.jpg"
   },
   "sakura": {
     "identifier": "sakura",
-    "hasWhiteTextColor": true,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/bg_images/sakura.jpg"
   },
   "night-sky": {
     "identifier": "night-sky",
-    "hasWhiteTextColor": true,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/bg_images/night_sky.jpg"
   },
   "tropics": {
     "identifier": "tropics",
-    "hasWhiteTextColor": true,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099151/TaskPro/board_bg_images/bg_images/tropics.jpg"
   },
   "light-sky": {
     "identifier": "light-sky",
-    "hasWhiteTextColor": false,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/bg_images/light_sky.jpg"
   },
   "sea-rocks": {
     "identifier": "sea-rocks",
-    "hasWhiteTextColor": true,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/bg_images/sea_rocks.jpg"
   },
   "blue-ball": {
     "identifier": "blue-ball",
-    "hasWhiteTextColor": false,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/bg_images/blue_ball.jpg"
   },
   "red-moon": {
     "identifier": "red-moon",
-    "hasWhiteTextColor": true,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/bg_images/red_moon.jpg"
   },
   "sea-boat": {
     "identifier": "sea-boat",
-    "hasWhiteTextColor": false,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/bg_images/sea_boat.jpg"
   },
   "air-balloons": {
     "identifier": "air-balloons",
-    "hasWhiteTextColor": false,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099095/TaskPro/board_bg_images/bg_images/air_balloons.jpg"
   },
   "gorge": {
     "identifier": "gorge",
-    "hasWhiteTextColor": true,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099095/TaskPro/board_bg_images/bg_images/gorge.jpg"
   },
   "sea-boat-2": {
     "identifier": "sea-boat-2",
-    "hasWhiteTextColor": true,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099095/TaskPro/board_bg_images/bg_images/sea_boat_2.jpg"
   },
   "air-balloons-2": {
     "identifier": "air-balloons-2",
-    "hasWhiteTextColor": false,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099095/TaskPro/board_bg_images/bg_images/air_balloons_2.jpg"
   },
   "northern-lights": {
     "identifier": "northern-lights",
-    "hasWhiteTextColor": true,
     "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099096/TaskPro/board_bg_images/bg_images/northern_lights.jpg"
   },
   "default": {
     "identifier": "default",
-    "url": ""
+    "url": null
   }
 }
