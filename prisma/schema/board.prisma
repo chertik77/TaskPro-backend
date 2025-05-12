@@ -22,7 +22,6 @@ enum Icon {
 }
 
 type Background {
-    url               String
-    identifier        String
-    hasWhiteTextColor Boolean @default(false) @map("has_white_text_color")
+    identifier String
+    url        String?
 }
