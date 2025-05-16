@@ -41,4 +41,4 @@ _Link to the frontend repo:_ https://github.com/chertik77/TaskPro-frontend
 
 ## Languages and Tools
 
-<a href="#"><img src="https://skillicons.dev/icons?i=nodejs,ts,express,prisma,mongodb,gcp,githubactions,postman,vscode" alt="tools"></a>
+<a href="#"><img src="https://go-skill-icons.vercel.app/api/icons?i=nodejs,ts,expressjs,prisma,mongodb,swagger,gcp,githubactions,postman,vscode" alt="tools"></a>
