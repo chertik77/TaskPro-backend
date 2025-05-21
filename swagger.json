@@ -519,6 +519,22 @@
         }
       }
     },
+    "/card/{cardId}/{newColumnId}": {
+      "put": {
+        "tags": ["Card"],
+        "summary": "Move card to another column",
+        "parameters": [
+          { "in": "path", "name": "cardId", "required": true },
+          { "in": "path", "name": "newColumnId", "required": true }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": { "$ref": "#/components/responses/CardResponse" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
     "/card/{columnId}/order": {
       "patch": {
         "tags": ["Card"],

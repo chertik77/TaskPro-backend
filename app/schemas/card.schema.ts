@@ -14,4 +14,9 @@ export const AddCardSchema = z.object({
 
 export const EditCardSchema = AddCardSchema.partial()
 
+export const MoveCardSchema = z.object({
+  cardId: objectIdSchema(),
+  newColumnId: objectIdSchema()
+})
+
 export const CardParamsSchema = z.object({ cardId: objectIdSchema() })

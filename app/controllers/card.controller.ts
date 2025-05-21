@@ -3,6 +3,7 @@ import type {
   CardParamsSchema,
   ColumnParamsSchema,
   EditCardSchema,
+  MoveCardSchema,
   UpdateOrderSchema
 } from '@/schemas'
 import type { TypedRequest, TypedRequestParams } from '@/types'
@@ -13,30 +14,24 @@ import { BadRequest, NotFound } from 'http-errors'
 import { prisma } from '@/config/prisma'
 
 class CardController {
-  async add(
+  add = async (
     {
       params,
       body
     }: TypedRequest<typeof AddCardSchema, typeof ColumnParamsSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const column = await prisma.column.findFirst({
       where: { id: params.columnId }
     })
 
     if (!column) return next(NotFound('Column not found'))
 
-    const lastCard = await prisma.card.findFirst({
-      where: { columnId: column.id },
-      orderBy: { order: 'desc' },
-      select: { order: true }
-    })
-
-    const newOrder = lastCard ? lastCard.order + 1 : 1
+    const newOrder = await this.getNewCardOrder(column.id)
 
     const newCard = await prisma.card.create({
-      data: { ...body, order: newOrder, columnId: column.id }
+      data: { ...body, columnId: column.id, order: newOrder }
     })
 
     res.json(newCard)
@@ -89,6 +84,29 @@ class CardController {
     }
   }
 
+  move = async (
+    { params }: TypedRequestParams<typeof MoveCardSchema>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const column = await prisma.column.findFirst({
+      where: { id: params.newColumnId }
+    })
+
+    if (!column) return next(NotFound('Column not found'))
+
+    const newOrder = await this.getNewCardOrder(column.id)
+
+    const updatedCard = await prisma.card.updateIgnoreNotFound({
+      where: { id: params.cardId },
+      data: { columnId: column.id, order: newOrder }
+    })
+
+    if (!updatedCard) return next(NotFound('Card not found'))
+
+    res.json(updatedCard)
+  }
+
   async deleteById(
     { params }: TypedRequestParams<typeof CardParamsSchema>,
     res: Response,
@@ -101,6 +119,18 @@ class CardController {
     if (!deletedCard) return next(NotFound('Card not found'))
 
     res.status(204).send()
+  }
+
+  private async getNewCardOrder(columnId: string) {
+    const lastCard = await prisma.card.findFirst({
+      where: { columnId },
+      orderBy: { order: 'desc' },
+      select: { order: true }
+    })
+
+    const newOrder = lastCard ? lastCard.order + 1 : 1
+
+    return newOrder
   }
 }
 
