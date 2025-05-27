@@ -22,7 +22,7 @@ columnRouter.post(
   columnController.add
 )
 
-columnRouter.put(
+columnRouter.patch(
   '/:columnId',
   validateRequest({ body: EditColumnSchema, params: ColumnParamsSchema }),
   columnController.updateById

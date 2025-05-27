@@ -1,4 +1,4 @@
-import type { EditUserSchema, NeedHelpSchema, ThemeSchema } from '@/schemas'
+import type { EditUserSchema, NeedHelpSchema } from '@/schemas'
 import type { TypedRequestBody } from '@/types'
 import type { User } from '@prisma/client'
 import type { NextFunction, Request, Response } from 'express'
@@ -100,18 +100,6 @@ class UserController {
     } catch {
       return next(InternalServerError('Sending email error'))
     }
-  }
-
-  updateTheme = async (
-    { body, user }: TypedRequestBody<typeof ThemeSchema>,
-    res: Response
-  ) => {
-    const editedUser = await prisma.user.update({
-      where: { id: user.id },
-      data: body
-    })
-
-    res.json(editedUser)
   }
 }
 

@@ -24,7 +24,7 @@ boardRouter.post(
   boardController.add
 )
 
-boardRouter.put(
+boardRouter.patch(
   '/:boardId',
   validateRequest({ body: EditBoardSchema, params: BoardParamsSchema }),
   boardController.updateById

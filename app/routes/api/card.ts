@@ -23,16 +23,16 @@ cardRouter.post(
   cardController.add
 )
 
-cardRouter.put(
-  '/:cardId',
-  validateRequest({ body: EditCardSchema, params: CardParamsSchema }),
-  cardController.updateById
-)
-
-cardRouter.put(
+cardRouter.post(
   '/:cardId/:newColumnId',
   validateRequest({ params: MoveCardSchema }),
   cardController.move
+)
+
+cardRouter.patch(
+  '/:cardId',
+  validateRequest({ body: EditCardSchema, params: CardParamsSchema }),
+  cardController.updateById
 )
 
 cardRouter.patch(

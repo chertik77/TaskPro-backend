@@ -226,7 +226,7 @@
       }
     },
     "/user": {
-      "put": {
+      "patch": {
         "tags": ["User"],
         "summary": "Edit user profile",
         "security": [{ "Bearer": [] }],
@@ -271,35 +271,6 @@
           },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "409": { "$ref": "#/components/responses/Conflict" }
-        }
-      }
-    },
-    "/user/theme": {
-      "put": {
-        "tags": ["User"],
-        "summary": "Switch user theme",
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": { "example": { "theme": "light" } }
-          }
-        },
-        "responses": {
-          "200": { "$ref": "#/components/responses/UserResponse" },
-          "400": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "statusCode": 400,
-                  "errors": {
-                    "theme": "Theme must be one of the following: light, dark, violet"
-                  }
-                }
-              }
-            }
-          },
-          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
@@ -348,7 +319,7 @@
           "404": { "$ref": "#/components/responses/NotFound" }
         }
       },
-      "put": {
+      "patch": {
         "tags": ["Board"],
         "summary": "Edit board by id",
         "parameters": [{ "in": "path", "name": "boardId", "required": true }],
@@ -398,37 +369,6 @@
         }
       }
     },
-    "/column/{columnId}": {
-      "put": {
-        "tags": ["Column"],
-        "summary": "Edit column by id",
-        "parameters": [{ "in": "path", "name": "columnId", "required": true }],
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": { "example": { "title": "In progress" } }
-          }
-        },
-        "responses": {
-          "201": { "$ref": "#/components/responses/ColumnResponse" },
-          "400": { "$ref": "#/components/responses/ColumnBadRequest" },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "404": { "$ref": "#/components/responses/NotFound" }
-        }
-      },
-      "delete": {
-        "tags": ["Column"],
-        "summary": "Delete column by id",
-        "parameters": [{ "in": "path", "name": "columnId", "required": true }],
-        "security": [{ "Bearer": [] }],
-        "responses": {
-          "204": { "description": "The resource was deleted successfully." },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "404": { "$ref": "#/components/responses/NotFound" }
-        }
-      }
-    },
     "/column/{boardId}/order": {
       "patch": {
         "tags": ["Column"],
@@ -454,6 +394,37 @@
             "$ref": "#/components/responses/UpdateColumnsOrderResponse"
           },
           "400": { "$ref": "#/components/responses/UpdateOrderBadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/column/{columnId}": {
+      "patch": {
+        "tags": ["Column"],
+        "summary": "Edit column by id",
+        "parameters": [{ "in": "path", "name": "columnId", "required": true }],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "example": { "title": "In progress" } }
+          }
+        },
+        "responses": {
+          "201": { "$ref": "#/components/responses/ColumnResponse" },
+          "400": { "$ref": "#/components/responses/ColumnBadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["Column"],
+        "summary": "Delete column by id",
+        "parameters": [{ "in": "path", "name": "columnId", "required": true }],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
@@ -486,41 +457,8 @@
         }
       }
     },
-    "/card/{cardId}": {
-      "put": {
-        "tags": ["Card"],
-        "summary": "Edit card by id",
-        "parameters": [{ "in": "path", "name": "cardId", "required": true }],
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "example": { "title": "Publication of the project" }
-            }
-          }
-        },
-        "responses": {
-          "200": { "$ref": "#/components/responses/CardResponse" },
-          "400": { "$ref": "#/components/responses/CardBadRequest" },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "404": { "$ref": "#/components/responses/NotFound" }
-        }
-      },
-      "delete": {
-        "tags": ["Card"],
-        "summary": "Delete card by id",
-        "parameters": [{ "in": "path", "name": "cardId", "required": true }],
-        "security": [{ "Bearer": [] }],
-        "responses": {
-          "204": { "description": "The resource was deleted successfully." },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "404": { "$ref": "#/components/responses/NotFound" }
-        }
-      }
-    },
     "/card/{cardId}/{newColumnId}": {
-      "put": {
+      "post": {
         "tags": ["Card"],
         "summary": "Move card to another column",
         "parameters": [
@@ -554,6 +492,39 @@
         "responses": {
           "200": { "$ref": "#/components/responses/UpdateCardOrderResponse" },
           "400": { "$ref": "#/components/responses/UpdateOrderBadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/card/{cardId}": {
+      "patch": {
+        "tags": ["Card"],
+        "summary": "Edit card by id",
+        "parameters": [{ "in": "path", "name": "cardId", "required": true }],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": { "title": "Publication of the project" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/CardResponse" },
+          "400": { "$ref": "#/components/responses/CardBadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["Card"],
+        "summary": "Delete card by id",
+        "parameters": [{ "in": "path", "name": "cardId", "required": true }],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }

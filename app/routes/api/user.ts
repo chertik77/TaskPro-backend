@@ -4,7 +4,7 @@ import { userController } from '@/controllers'
 
 import { authenticate, upload, validateRequest } from '@/middlewares'
 
-import { EditUserSchema, NeedHelpSchema, ThemeSchema } from '@/schemas'
+import { EditUserSchema, NeedHelpSchema } from '@/schemas'
 
 export const userRouter = Router()
 
@@ -12,7 +12,7 @@ userRouter.use(authenticate)
 
 userRouter.get('/me', userController.me)
 
-userRouter.put(
+userRouter.patch(
   '/',
   upload.single('avatar'),
   validateRequest({ body: EditUserSchema }),
@@ -23,10 +23,4 @@ userRouter.post(
   '/help',
   validateRequest({ body: NeedHelpSchema }),
   userController.help
-)
-
-userRouter.put(
-  '/theme',
-  validateRequest({ body: ThemeSchema }),
-  userController.updateTheme
 )

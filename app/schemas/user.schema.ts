@@ -26,8 +26,6 @@ export const SignupSchema = SigninSchema.extend({
     .min(2, 'Name must be at least 2 characters')
 })
 
-export const EditUserSchema = SignupSchema.partial()
-
 export const NeedHelpSchema = z.object({
   email: SigninSchema.shape.email,
   comment: z
@@ -38,11 +36,11 @@ export const NeedHelpSchema = z.object({
     .min(5, 'Comment must be at least 5 characters')
 })
 
-export const ThemeSchema = z.object({
+export const EditUserSchema = SignupSchema.extend({
   theme: z.nativeEnum(Theme, {
     message: 'Theme must be one of the following: light, dark, violet'
   })
-})
+}).partial()
 
 export const RefreshTokenSchema = z.object({
   refreshToken: z.string({
