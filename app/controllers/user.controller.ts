@@ -4,12 +4,12 @@ import type { User } from '@prisma/client'
 import type { NextFunction, Request, Response } from 'express'
 import type { Options } from 'nodemailer/lib/mailer'
 
+import { prisma } from '@/prisma'
 import { hash } from 'argon2'
 import { Conflict, InternalServerError, NotAcceptable } from 'http-errors'
 
 import cloudinary from '@/config/cloudinary.config'
 import { transport } from '@/config/mailer.config'
-import { prisma } from '@/config/prisma'
 
 import { env } from '@/utils'
 

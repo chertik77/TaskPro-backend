@@ -10,9 +10,9 @@ import type {
 } from '@/types'
 import type { NextFunction, Request, Response } from 'express'
 
+import { prisma } from '@/prisma'
 import { NotFound } from 'http-errors'
 
-import { prisma } from '@/config/prisma'
 import boardImages from '@/data/board-bg-images.json'
 
 class BoardController {

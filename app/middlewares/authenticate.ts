@@ -1,10 +1,9 @@
 import type { JwtPayload } from '@/types'
 import type { NextFunction, Request, Response } from 'express'
 
+import { prisma } from '@/prisma'
 import { Unauthorized } from 'http-errors'
 import { jwtVerify } from 'jose'
-
-import { prisma } from '@/config/prisma'
 
 import { env } from '@/utils'
 

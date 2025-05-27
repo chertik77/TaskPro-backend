@@ -9,9 +9,8 @@ import type {
 import type { TypedRequest, TypedRequestParams } from '@/types'
 import type { NextFunction, Response } from 'express'
 
+import { prisma } from '@/prisma'
 import { BadRequest, NotFound } from 'http-errors'
-
-import { prisma } from '@/config/prisma'
 
 class CardController {
   add = async (
@@ -37,14 +36,14 @@ class CardController {
     res.json(newCard)
   }
 
-  async updateById(
+  updateById = async (
     {
       params,
       body
     }: TypedRequest<typeof EditCardSchema, typeof CardParamsSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const updatedCard = await prisma.card.updateIgnoreNotFound({
       where: { id: params.cardId },
       data: body
@@ -55,14 +54,14 @@ class CardController {
     res.json(updatedCard)
   }
 
-  async updateOrder(
+  updateOrder = async (
     {
       params,
       body
     }: TypedRequest<typeof UpdateOrderSchema, typeof ColumnParamsSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const column = await prisma.column.findFirst({
       where: { id: params.columnId }
     })
@@ -107,11 +106,11 @@ class CardController {
     res.json(updatedCard)
   }
 
-  async deleteById(
+  deleteById = async (
     { params }: TypedRequestParams<typeof CardParamsSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const deletedCard = await prisma.card.deleteIgnoreNotFound({
       where: { id: params.cardId }
     })
@@ -121,7 +120,7 @@ class CardController {
     res.status(204).send()
   }
 
-  private async getNewCardOrder(columnId: string) {
+  private getNewCardOrder = async (columnId: string) => {
     const lastCard = await prisma.card.findFirst({
       where: { columnId },
       orderBy: { order: 'desc' },

@@ -8,12 +8,11 @@ import type {
 import type { TypedRequest, TypedRequestParams } from '@/types'
 import type { NextFunction, Response } from 'express'
 
+import { prisma } from '@/prisma'
 import { BadRequest, NotFound } from 'http-errors'
 
-import { prisma } from '@/config/prisma'
-
 class ColumnController {
-  async add(
+  add = async (
     {
       params,
       user,
@@ -21,7 +20,7 @@ class ColumnController {
     }: TypedRequest<typeof AddColumnSchema, typeof BoardParamsSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const board = await prisma.board.findFirst({
       where: { id: params.boardId, userId: user.id }
     })
@@ -43,14 +42,14 @@ class ColumnController {
     res.json(column)
   }
 
-  async updateById(
+  updateById = async (
     {
       params,
       body
     }: TypedRequest<typeof EditColumnSchema, typeof ColumnParamsSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const updatedColumn = await prisma.column.updateIgnoreNotFound({
       where: { id: params.columnId },
       data: body
@@ -61,14 +60,14 @@ class ColumnController {
     res.json(updatedColumn)
   }
 
-  async updateOrder(
+  updateOrder = async (
     {
       params,
       body
     }: TypedRequest<typeof UpdateOrderSchema, typeof BoardParamsSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const board = await prisma.board.findFirst({
       where: { id: params.boardId }
     })
@@ -90,11 +89,11 @@ class ColumnController {
     }
   }
 
-  async deleteById(
+  deleteById = async (
     { params }: TypedRequestParams<typeof ColumnParamsSchema>,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const deletedColumn = await prisma.column.deleteIgnoreNotFound({
       where: { id: params.columnId }
     })

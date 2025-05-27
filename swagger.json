@@ -10,8 +10,8 @@
     }
   },
   "servers": [
-    { "url": "http://localhost:8000/api - Development" },
-    { "url": "https://api.taskpro.online - Production" }
+    { "url": "http://localhost:8000/api" },
+    { "url": "https://api.taskpro.online" }
   ],
   "paths": {
     "/auth/signup": {
@@ -173,7 +173,7 @@
         "summary": "Logout a user",
         "security": [{ "Bearer": [] }],
         "responses": {
-          "204": { "$ref": "#/components/responses/NoContent" },
+          "204": { "description": "The user was logged out successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
@@ -372,7 +372,7 @@
         "parameters": [{ "in": "path", "name": "boardId", "required": true }],
         "security": [{ "Bearer": [] }],
         "responses": {
-          "204": { "$ref": "#/components/responses/NoContent" },
+          "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
@@ -423,7 +423,7 @@
         "parameters": [{ "in": "path", "name": "columnId", "required": true }],
         "security": [{ "Bearer": [] }],
         "responses": {
-          "204": { "$ref": "#/components/responses/NoContent" },
+          "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
@@ -513,7 +513,7 @@
         "parameters": [{ "in": "path", "name": "cardId", "required": true }],
         "security": [{ "Bearer": [] }],
         "responses": {
-          "204": { "$ref": "#/components/responses/NoContent" },
+          "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
@@ -577,11 +577,6 @@
               "message": "Provided email already exists"
             }
           }
-        }
-      },
-      "NoContent": {
-        "content": {
-          "application/json": { "example": { "message": "No content" } }
         }
       },
       "Unauthorized": {

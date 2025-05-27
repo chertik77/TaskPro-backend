@@ -4,18 +4,17 @@ import type {
   SigninSchema,
   SignupSchema
 } from '@/schemas'
-import type { JwtPayload, TypedRequestBody } from '@/types'
+import type { GoogleUserResponse, JwtPayload, TypedRequestBody } from '@/types'
 import type { NextFunction, Request, Response } from 'express'
 
+import { prisma } from '@/prisma'
 import { hash, verify } from 'argon2'
 import { OAuth2Client } from 'google-auth-library'
 import { Conflict, Forbidden, Unauthorized } from 'http-errors'
 import { jwtVerify, SignJWT } from 'jose'
 import { JWTExpired } from 'jose/errors'
 
-import { prisma } from '@/config/prisma'
-
-import { env, getUserInfoFromGoogleApi } from '@/utils'
+import { env } from '@/utils'
 
 const {
   ACCESS_JWT_EXPIRES_IN,
@@ -97,7 +96,7 @@ class AuthController {
 
     const { tokens } = await oAuth2Client.getToken(body.code)
 
-    const { name, email, picture } = await getUserInfoFromGoogleApi(
+    const { name, email, picture } = await this.getUserInfoFromGoogleApi(
       tokens.access_token!
     )
 
@@ -194,6 +193,18 @@ class AuthController {
       .sign(REFRESH_JWT_SECRET)
 
     return { accessToken, refreshToken }
+  }
+
+  private getUserInfoFromGoogleApi = async (accessToken: string) => {
+    const URL = 'https://www.googleapis.com/oauth2/v3/userinfo'
+
+    const r = await fetch(URL, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+
+    const userInfo = (await r.json()) as GoogleUserResponse
+
+    return userInfo
   }
 }
 
