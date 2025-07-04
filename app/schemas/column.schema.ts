@@ -1,8 +1,10 @@
 import * as z from 'zod'
 
-import { objectIdSchema, TitleSchema } from './shared.schema'
+import { objectIdSchema } from './object-id.schema'
 
-export const AddColumnSchema = z.object({ title: TitleSchema })
+export const AddColumnSchema = z.object({
+  title: z.string().min(3, 'Title must be at least 3 characters')
+})
 
 export const EditColumnSchema = AddColumnSchema.partial()
 

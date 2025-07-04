@@ -15,7 +15,7 @@ export const validateRequest =
   }: ValidateRequest<B, P>) =>
   (
     req: Request<z.infer<P>, unknown, z.infer<B>, unknown>,
-    res: Response,
+    _: Response,
     next: NextFunction
   ) => {
     const errors: Record<string, string> = {}
