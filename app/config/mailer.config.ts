@@ -1,6 +1,6 @@
 import { createTransport } from 'nodemailer'
 
-import { env } from '@/utils'
+import { env } from './env.config'
 
 const { EMAIL_USER, EMAIL_PASSWORD, EMAIL_PORT, EMAIL_HOST } = env
 

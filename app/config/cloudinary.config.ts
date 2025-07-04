@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary'
 
-import { env } from '@/utils'
+import { env } from './env.config'
 
 const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = env
 

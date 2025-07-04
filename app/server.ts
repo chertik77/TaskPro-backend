@@ -1,5 +1,5 @@
 import { app } from './app'
-import { env } from './utils'
+import { env } from './config'
 
 const port = env.PORT ?? 5432
 

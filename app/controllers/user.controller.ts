@@ -8,10 +8,9 @@ import { prisma } from '@/prisma'
 import { hash } from 'argon2'
 import { Conflict, InternalServerError, NotAcceptable } from 'http-errors'
 
+import { env } from '@/config'
 import cloudinary from '@/config/cloudinary.config'
 import { transport } from '@/config/mailer.config'
-
-import { env } from '@/utils'
 
 class UserController {
   me = async (req: Request, res: Response) => {

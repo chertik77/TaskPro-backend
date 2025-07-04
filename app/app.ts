@@ -7,6 +7,7 @@ import logger from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 
 import swaggerDocument from '../swagger.json'
+import { env } from './config'
 import {
   authRouter,
   boardRouter,
@@ -14,7 +15,6 @@ import {
   columnRouter,
   userRouter
 } from './routes/api'
-import { env } from './utils'
 
 export const app = express()
 

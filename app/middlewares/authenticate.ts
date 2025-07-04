@@ -5,7 +5,7 @@ import { prisma } from '@/prisma'
 import { Unauthorized } from 'http-errors'
 import { jwtVerify } from 'jose'
 
-import { env } from '@/utils'
+import { env } from '@/config'
 
 export const authenticate = async (
   req: Request,

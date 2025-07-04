@@ -14,7 +14,7 @@ import { Conflict, Forbidden, Unauthorized } from 'http-errors'
 import { jwtVerify, SignJWT } from 'jose'
 import { JWTExpired } from 'jose/errors'
 
-import { env } from '@/utils'
+import { env } from '@/config'
 
 const {
   ACCESS_JWT_EXPIRES_IN,
@@ -161,15 +161,7 @@ class AuthController {
 
       res.json(tokens)
     } catch (error) {
-      if (error instanceof JWTExpired) {
-        if (error.payload.sid) {
-          await prisma.session.delete({
-            where: { id: error.payload.sid as string }
-          })
-        }
-
-        return next(Forbidden(error.code))
-      }
+      if (error instanceof JWTExpired) return next(Forbidden(error.code))
 
       return next(Forbidden())
     }
