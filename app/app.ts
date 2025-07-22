@@ -20,8 +20,8 @@ export const app = express()
 
 const appRouter = express.Router()
 
-app.use(logger('dev'))
-app.use(cors())
+app.use(logger(env.NODE_ENV === 'development' ? 'dev' : 'combined'))
+app.use(cors({ origin: env.ALLOWED_ORIGINS }))
 app.use(express.json())
 app.disable('x-powered-by')
 

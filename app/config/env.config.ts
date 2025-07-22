@@ -15,6 +15,11 @@ const envSchema = z.object({
   REFRESH_JWT_SECRET: z.string().transform(v => new TextEncoder().encode(v)),
   PORT: z.preprocess(v => (v ? v : undefined), z.coerce.number().int()),
   API_PREFIX: z.string(),
+  NODE_ENV: z.enum(['development', 'production']),
+  ALLOWED_ORIGINS: z
+    .string()
+    .transform(v => v.split(','))
+    .pipe(z.array(z.string().url())),
   EMAIL_HOST: z.string(),
   EMAIL_PORT: z
     .number({ coerce: true })
