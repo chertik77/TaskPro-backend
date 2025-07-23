@@ -1,7 +1,8 @@
 import type { Application } from 'express'
 
-import { SignupPassportStrategy } from '@/strategies'
 import passport from 'passport'
+
+import { SignupPassportStrategy } from '@/strategies'
 
 import { SigninPassportStrategy } from '../strategies/signin.strategy'
 

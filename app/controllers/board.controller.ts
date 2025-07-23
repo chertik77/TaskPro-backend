@@ -11,8 +11,9 @@ import type {
   TypedRequestParams
 } from 'zod-express-middleware'
 
-import { boardService } from '@/services'
 import { NotFound } from 'http-errors'
+
+import { boardService } from '@/services'
 
 import { redis } from '@/config'
 

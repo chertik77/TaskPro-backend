@@ -3,8 +3,9 @@ import type { User } from '@prisma/client'
 import type { Options } from 'nodemailer/lib/mailer'
 import type z from 'zod'
 
-import { prisma } from '@/prisma'
 import { hash } from 'argon2'
+
+import { prisma } from '@/prisma'
 
 import cloudinary, { env, transport } from '@/config'
 

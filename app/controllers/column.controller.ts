@@ -9,8 +9,9 @@ import type { NextFunction, Response } from 'express'
 import type { ZodType } from 'zod'
 import type { TypedRequest, TypedRequestParams } from 'zod-express-middleware'
 
-import { columnService } from '@/services'
 import { NotFound } from 'http-errors'
+
+import { columnService } from '@/services'
 
 import { assertHasUser } from '@/utils'
 

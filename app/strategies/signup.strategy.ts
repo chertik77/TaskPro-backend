@@ -1,10 +1,11 @@
 import type { SignupSchema } from '@/schemas'
 import type { TypedRequestBody } from 'zod-express-middleware'
 
-import { prisma } from '@/prisma'
 import { hash } from 'argon2'
 import passport from 'passport'
 import { Strategy } from 'passport-local'
+
+import { prisma } from '@/prisma'
 
 passport.serializeUser((user, done) => {
   done(null, user.id)
