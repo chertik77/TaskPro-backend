@@ -9,6 +9,13 @@ const envSchema = z.object({
   CLOUDINARY_API_SECRET: z.string(),
   CLOUDINARY_CLOUD_NAME: z.string(),
   DATABASE_URL: z.string(),
+  REDIS_USERNAME: z.string(),
+  REDIS_PASSWORD: z.string(),
+  REDIS_HOST: z.string(),
+  REDIS_PORT: z.preprocess(
+    v => (v ? v : undefined),
+    z.coerce.number().int().positive()
+  ),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   COOKIE_SECRET: z.string(),
@@ -23,7 +30,10 @@ const envSchema = z.object({
     a => parseInt(z.string().parse(a), 10),
     z.number().int().positive()
   ),
-  PORT: z.preprocess(v => (v ? v : undefined), z.coerce.number().int()),
+  PORT: z.preprocess(
+    v => (v ? v : undefined),
+    z.coerce.number().int().positive()
+  ),
   API_PREFIX: z.string(),
   NODE_ENV: z.enum(['development', 'production']),
   ALLOWED_ORIGINS: z

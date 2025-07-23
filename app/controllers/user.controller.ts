@@ -4,15 +4,27 @@ import type { TypedRequestBody } from 'zod-express-middleware'
 
 import { userService } from '@/services'
 
+import { redis } from '@/config'
+
 import { assertHasUser } from '@/utils'
 
 export const userController = {
   me: async (req: Request, res: Response) => {
     assertHasUser(req)
 
-    const user = await userService.findById(req.user.id)
+    const cacheKey = `users: ${req.user.id}`
 
-    res.json(user)
+    const cachedData = await redis.get(cacheKey)
+
+    if (cachedData) {
+      res.json(JSON.parse(cachedData))
+    } else {
+      const user = await userService.findById(req.user.id)
+
+      await redis.set(cacheKey, JSON.stringify(user))
+
+      res.json(user)
+    }
   },
 
   update: async (

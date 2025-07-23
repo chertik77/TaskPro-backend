@@ -14,15 +14,27 @@ import type {
 import { boardService } from '@/services'
 import { NotFound } from 'http-errors'
 
+import { redis } from '@/config'
+
 import { assertHasUser } from '@/utils'
 
 export const boardController = {
   getAll: async (req: Request, res: Response) => {
     assertHasUser(req)
 
-    const boards = await boardService.getAll(req.user.id)
+    const cacheKey = `boards: ${req.user.id}`
 
-    res.json(boards)
+    const cachedData = await redis.get(cacheKey)
+
+    if (cachedData) {
+      res.json(JSON.parse(cachedData))
+    } else {
+      const boards = await boardService.getAll(req.user.id)
+
+      await redis.set(cacheKey, JSON.stringify(boards))
+
+      res.json(boards)
+    }
   },
 
   getById: async (
@@ -32,11 +44,21 @@ export const boardController = {
   ) => {
     assertHasUser(req)
 
-    const board = await boardService.getById(req.params.boardId, req.user.id)
+    const cacheKey = `board: ${req.params.boardId}`
 
-    if (!board) return next(NotFound('Board not found'))
+    const cachedData = await redis.get(cacheKey)
 
-    res.json(board)
+    if (cachedData) {
+      res.json(JSON.parse(cachedData))
+    } else {
+      const board = await boardService.getById(req.params.boardId, req.user.id)
+
+      if (!board) return next(NotFound('Board not found'))
+
+      await redis.set(cacheKey, JSON.stringify(board))
+
+      res.json(board)
+    }
   },
 
   add: async (req: TypedRequestBody<typeof AddBoardSchema>, res: Response) => {
