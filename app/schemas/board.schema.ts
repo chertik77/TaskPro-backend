@@ -22,7 +22,3 @@ export const AddBoardSchema = z.object({
 export const EditBoardSchema = AddBoardSchema.partial()
 
 export const BoardParamsSchema = z.object({ boardId: objectIdSchema() })
-
-export const UpdateOrderSchema = z.object({
-  ids: z.array(objectIdSchema())
-})

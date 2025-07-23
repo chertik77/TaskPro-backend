@@ -1,11 +1,7 @@
-import type { User } from '@prisma/client'
+import type { User as PrismaUser } from '@prisma/client'
 
 declare global {
   namespace Express {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-    interface Request {
-      session: string
-      user: User
-    }
+    interface User extends PrismaUser {}
   }
 }

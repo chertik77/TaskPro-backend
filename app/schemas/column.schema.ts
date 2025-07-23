@@ -9,3 +9,7 @@ export const AddColumnSchema = z.object({
 export const EditColumnSchema = AddColumnSchema.partial()
 
 export const ColumnParamsSchema = z.object({ columnId: objectIdSchema() })
+
+export const UpdateColumnOrderSchema = z.object({
+  ids: z.array(objectIdSchema())
+})

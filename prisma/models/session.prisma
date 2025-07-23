@@ -1,6 +1,8 @@
 model Session {
-    id     String @id @default(auto()) @map("_id") @db.ObjectId
-    userId String @map("user_id")
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
 
-    @@map("sessions")
+  @@map("sessions")
 }

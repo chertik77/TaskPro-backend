@@ -1,15 +1,16 @@
 import { Router } from 'express'
+import { validateRequest } from 'zod-express-middleware'
 
 import { columnController } from '@/controllers'
 
-import { authenticate, validateRequest } from '@/middlewares'
+import { authenticate } from '@/middlewares'
 
 import {
   AddColumnSchema,
   BoardParamsSchema,
   ColumnParamsSchema,
   EditColumnSchema,
-  UpdateOrderSchema
+  UpdateColumnOrderSchema
 } from '@/schemas'
 
 export const columnRouter = Router()
@@ -30,7 +31,7 @@ columnRouter.patch(
 
 columnRouter.patch(
   '/:boardId/order',
-  validateRequest({ body: UpdateOrderSchema, params: BoardParamsSchema }),
+  validateRequest({ body: UpdateColumnOrderSchema, params: BoardParamsSchema }),
   columnController.updateOrder
 )
 

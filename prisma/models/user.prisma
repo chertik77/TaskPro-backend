@@ -1,18 +1,18 @@
 model User {
-    id             String  @id @default(auto()) @map("_id") @db.ObjectId
-    name           String
-    email          String  @unique
-    password       String?
-    theme          Theme   @default(light)
-    avatar         String?
-    avatarPublicId String? @map("avatar_public_id")
-    boards         Board[]
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  email          String  @unique
+  password       String
+  theme          Theme   @default(light)
+  avatar         String?
+  avatarPublicId String? @map("avatar_public_id")
+  boards         Board[]
 
-    @@map("users")
+  @@map("users")
 }
 
 enum Theme {
-    light
-    dark
-    violet
+  light
+  dark
+  violet
 }

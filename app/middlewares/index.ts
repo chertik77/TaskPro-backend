@@ -1,3 +1,6 @@
 export { authenticate } from './authenticate'
 export { upload } from './multer'
-export { validateRequest } from './validate-request'
+export { setupCommonMiddleware } from './common'
+export { setupSessionMiddleware } from './session'
+export { setupPassportMiddleware } from './passport'
+export { notFoundHandler, globalErrorHandler } from './errorHandler'

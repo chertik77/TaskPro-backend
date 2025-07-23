@@ -11,8 +11,18 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
-  ACCESS_JWT_SECRET: z.string().transform(v => new TextEncoder().encode(v)),
-  REFRESH_JWT_SECRET: z.string().transform(v => new TextEncoder().encode(v)),
+  COOKIE_SECRET: z.string(),
+  COOKIE_SECURE: z.union([z.boolean(), z.literal('auto')]),
+  COOKIE_DOMAIN: z.string(),
+  COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('lax'),
+  SESSION_STORE_CHECK_PERIOD_MS: z.preprocess(
+    a => parseInt(z.string().parse(a), 10),
+    z.number().int().positive().min(1000)
+  ),
+  COOKIE_MAX_AGE: z.preprocess(
+    a => parseInt(z.string().parse(a), 10),
+    z.number().int().positive()
+  ),
   PORT: z.preprocess(v => (v ? v : undefined), z.coerce.number().int()),
   API_PREFIX: z.string(),
   NODE_ENV: z.enum(['development', 'production']),
@@ -28,11 +38,7 @@ const envSchema = z.object({
     }),
   EMAIL_USER: z.string().email(),
   EMAIL_RECEIVER: z.string().email(),
-  EMAIL_PASSWORD: z.string(),
-  ACCESS_JWT_EXPIRES_IN: z.string(),
-  REFRESH_JWT_EXPIRES_IN: z.string(),
-  ACCESS_JWT_ALGORITHM: z.string(),
-  REFRESH_JWT_ALGORITHM: z.string()
+  EMAIL_PASSWORD: z.string()
 })
 
 // eslint-disable-next-line no-restricted-syntax

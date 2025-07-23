@@ -3,105 +3,92 @@ import type {
   BoardParamsSchema,
   ColumnParamsSchema,
   EditColumnSchema,
-  UpdateOrderSchema
+  UpdateColumnOrderSchema
 } from '@/schemas'
-import type { TypedRequest, TypedRequestParams } from '@/types'
 import type { NextFunction, Response } from 'express'
+import type { ZodType } from 'zod'
+import type { TypedRequest, TypedRequestParams } from 'zod-express-middleware'
 
-import { prisma } from '@/prisma'
-import { BadRequest, NotFound } from 'http-errors'
+import { columnService } from '@/services'
+import { NotFound } from 'http-errors'
 
-class ColumnController {
-  add = async (
-    {
-      params,
-      user,
-      body
-    }: TypedRequest<typeof AddColumnSchema, typeof BoardParamsSchema>,
+import { assertHasUser } from '@/utils'
+
+export const columnController = {
+  add: async (
+    req: TypedRequest<
+      typeof BoardParamsSchema,
+      ZodType,
+      typeof AddColumnSchema
+    >,
     res: Response,
     next: NextFunction
   ) => {
-    const board = await prisma.board.findFirst({
-      where: { id: params.boardId, userId: user.id }
-    })
+    assertHasUser(req)
 
-    if (!board) return next(NotFound('Board not found'))
+    try {
+      const column = await columnService.create(
+        req.params.boardId,
+        req.body,
+        req.user.id
+      )
+      res.json(column)
+    } catch (error) {
+      next(error)
+    }
+  },
 
-    const lastColumn = await prisma.column.findFirst({
-      where: { boardId: board.id },
-      orderBy: { order: 'desc' },
-      select: { order: true }
-    })
-
-    const newOrder = lastColumn ? lastColumn.order + 1 : 1
-
-    const column = await prisma.column.create({
-      data: { ...body, order: newOrder, boardId: board.id }
-    })
-
-    res.json(column)
-  }
-
-  updateById = async (
+  updateById: async (
     {
       params,
       body
-    }: TypedRequest<typeof EditColumnSchema, typeof ColumnParamsSchema>,
+    }: TypedRequest<
+      typeof ColumnParamsSchema,
+      ZodType,
+      typeof EditColumnSchema
+    >,
     res: Response,
     next: NextFunction
   ) => {
-    const updatedColumn = await prisma.column.updateIgnoreNotFound({
-      where: { id: params.columnId },
-      data: body
-    })
+    const updatedColumn = await columnService.updateById(params.columnId, body)
 
     if (!updatedColumn) return next(NotFound('Column not found'))
 
     res.json(updatedColumn)
-  }
+  },
 
-  updateOrder = async (
+  updateOrder: async (
     {
       params,
       body
-    }: TypedRequest<typeof UpdateOrderSchema, typeof BoardParamsSchema>,
+    }: TypedRequest<
+      typeof BoardParamsSchema,
+      ZodType,
+      typeof UpdateColumnOrderSchema
+    >,
     res: Response,
     next: NextFunction
   ) => {
-    const board = await prisma.board.findFirst({
-      where: { id: params.boardId }
-    })
-
-    if (!board) return next(NotFound('Board not found'))
-
-    const transaction = body.ids.map((id, order) =>
-      prisma.column.update({
-        where: { id },
-        data: { order, boardId: board.id }
-      })
-    )
-
     try {
-      const updatedColumns = await prisma.$transaction(transaction)
+      const updatedColumns = await columnService.updateOrder(
+        params.boardId,
+        body
+      )
       res.json(updatedColumns)
-    } catch {
-      return next(BadRequest('Invalid order'))
+    } catch (error) {
+      next(error)
     }
-  }
+  },
 
-  deleteById = async (
+  deleteById: async (
     { params }: TypedRequestParams<typeof ColumnParamsSchema>,
     res: Response,
     next: NextFunction
   ) => {
-    const deletedColumn = await prisma.column.deleteIgnoreNotFound({
-      where: { id: params.columnId }
-    })
+    const deletedColumn = await columnService.deleteById(params.columnId)
 
     if (!deletedColumn) return next(NotFound('Column not found'))
 
     res.status(204).send()
   }
 }
-
-export const columnController = new ColumnController()

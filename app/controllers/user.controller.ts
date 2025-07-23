@@ -1,105 +1,49 @@
 import type { EditUserSchema, NeedHelpSchema } from '@/schemas'
-import type { TypedRequestBody } from '@/types'
-import type { User } from '@prisma/client'
 import type { NextFunction, Request, Response } from 'express'
-import type { Options } from 'nodemailer/lib/mailer'
+import type { TypedRequestBody } from 'zod-express-middleware'
 
-import { prisma } from '@/prisma'
-import { hash } from 'argon2'
-import { Conflict, InternalServerError, NotAcceptable } from 'http-errors'
+import { userService } from '@/services'
 
-import { env } from '@/config'
-import cloudinary from '@/config/cloudinary.config'
-import { transport } from '@/config/mailer.config'
+import { assertHasUser } from '@/utils'
 
-class UserController {
-  me = async (req: Request, res: Response) => {
-    const user = await prisma.user.findFirst({
-      where: { id: req.user.id }
-    })
+export const userController = {
+  me: async (req: Request, res: Response) => {
+    assertHasUser(req)
+
+    const user = await userService.findById(req.user.id)
 
     res.json(user)
-  }
+  },
 
-  update = async (
-    { user, body, file }: TypedRequestBody<typeof EditUserSchema>,
+  update: async (
+    req: TypedRequestBody<typeof EditUserSchema>,
     res: Response,
     next: NextFunction
   ) => {
-    const { id, avatarPublicId, email: userEmail } = user
-    const { email, password } = body
+    assertHasUser(req)
 
-    const isEmailExists =
-      email && (await prisma.user.findUnique({ where: { email } }))
-
-    if (email && email !== userEmail && isEmailExists) {
-      return next(Conflict('Email already exist'))
+    try {
+      const updatedUser = await userService.updateById(
+        req.user,
+        req.body,
+        req.file
+      )
+      res.json(updatedUser)
+    } catch (error) {
+      next(error)
     }
+  },
 
-    const updateData: Partial<User> = body
-
-    if (password) {
-      updateData.password = await hash(password)
-    }
-
-    if (file) {
-      const extArr = ['jpeg', 'png']
-      const ext = file.mimetype.split('/').pop()
-
-      if (!extArr.includes(ext!)) {
-        return next(NotAcceptable('File must have .jpeg or .png extension'))
-      }
-
-      try {
-        const newAvatar = await cloudinary.uploader.upload(file.path, {
-          folder: 'TaskPro/user_avatars'
-        })
-
-        if (avatarPublicId) {
-          await cloudinary.uploader.destroy(avatarPublicId, {
-            type: 'upload',
-            resource_type: 'image'
-          })
-        }
-
-        updateData.avatar = newAvatar.url
-        updateData.avatarPublicId = newAvatar.public_id
-      } catch {
-        return next(InternalServerError('Uploading avatar error'))
-      }
-    }
-
-    const updatedUser = await prisma.user.update({
-      where: { id },
-      data: updateData
-    })
-
-    res.json(updatedUser)
-  }
-
-  help = async (
+  help: async (
     { body }: TypedRequestBody<typeof NeedHelpSchema>,
     res: Response,
     next: NextFunction
   ) => {
-    const emailBody: Options = {
-      from: env.EMAIL_USER,
-      to: env.EMAIL_RECEIVER,
-      subject: 'Need help',
-      html: `
-        <div>
-         <h4>email: ${body.email}</h4>
-         <p>${body.comment}</p>
-        </div>`
-    }
-
     try {
-      await transport.sendMail(emailBody)
+      await userService.sendHelpRequest(body)
       res.json({ message: 'Email sent' })
-    } catch {
-      return next(InternalServerError('Sending email error'))
+    } catch (error) {
+      next(error)
     }
   }
 }
-
-export const userController = new UserController()

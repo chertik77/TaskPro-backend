@@ -49,5 +49,12 @@ export default eslintTypescript.config(
         { selector: 'typeLike', format: ['PascalCase'] }
       ]
     }
+  },
+  {
+    files: ['**/*.d.ts'],
+    rules: {
+      '@typescript-eslint/consistent-type-definitions': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off'
+    }
   }
 )
