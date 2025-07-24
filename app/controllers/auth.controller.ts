@@ -6,10 +6,7 @@ import type {
 } from '@/schemas'
 import type { JwtPayload } from '@/types'
 import type { NextFunction, Request, Response } from 'express'
-import type {
-  TypedRequestBody,
-  TypedRequestQuery
-} from 'zod-express-middleware'
+import type { TypedRequestBody } from 'zod-express-middleware'
 
 import { prisma } from '@/prisma'
 import { hash, verify } from 'argon2'
@@ -95,21 +92,21 @@ class AuthController {
     res.json({ user: userWithoutPassword, ...tokens })
   }
 
-  googleRedirect = async (_: Request, res: Response) => {
+  getGoogleRedirectUrl = async (_: Request, res: Response) => {
     const url = this.googleClient.generateAuthUrl({
       access_type: 'offline',
       scope: ['profile', 'email']
     })
 
-    res.redirect(url)
+    res.json({ redirectUrl: url })
   }
 
   googleCallback = async (
-    req: TypedRequestQuery<typeof GoogleCodeSchema>,
+    req: TypedRequestBody<typeof GoogleCodeSchema>,
     res: Response,
     next: NextFunction
   ) => {
-    const { tokens } = await this.googleClient.getToken(req.query.code)
+    const { tokens } = await this.googleClient.getToken(req.body.code)
 
     if (!tokens.id_token) return next(Forbidden())
 

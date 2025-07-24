@@ -26,11 +26,11 @@ authRouter.post(
   authController.signin
 )
 
-authRouter.post('/google/redirect', authController.googleRedirect)
+authRouter.get('/google/initiate', authController.getGoogleRedirectUrl)
 
-authRouter.get(
+authRouter.post(
   '/google/callback',
-  validateRequest({ query: GoogleCodeSchema }),
+  validateRequest({ body: GoogleCodeSchema }),
   authController.googleCallback
 )
 

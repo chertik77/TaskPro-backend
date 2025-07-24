@@ -87,41 +87,36 @@
         }
       }
     },
-    "/auth/google/redirect": {
-      "post": {
+    "/auth/google/initiate": {
+      "get": {
         "tags": ["Auth"],
-        "summary": "Redirect to Google for OAuth authentication",
+        "summary": "Get redirect url for Google authentication",
         "responses": {
-          "302": {
-            "headers": {
-              "Location": {
-                "description": "The URL to which the client should be redirected for Google authentication.",
-                "schema": {
-                  "type": "string",
-                  "format": "uri",
-                  "example": "https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=profile%20email&response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI"
-                }
-              }
-            }
-          }
+          "200": { "$ref": "#/components/responses/GoogleInitiateResponse" }
         }
       }
     },
     "/auth/google/callback": {
-      "get": {
+      "post": {
         "tags": ["Auth"],
         "summary": "Handle Google OAuth callback and sign-in/sign-up",
-        "parameters": [
-          {
-            "name": "code",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "4/0AT5xKif_S_..."
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["code"],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "example": "4/0AT5xKif_S_..."
+                  }
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": { "$ref": "#/components/responses/GoogleResponse" },
           "400": { "$ref": "#/components/responses/BadRequestError" },
@@ -1041,6 +1036,22 @@
         "content": {
           "application/json": {
             "schema": { "$ref": "#/components/schemas/AuthResponseSchema" }
+          }
+        }
+      },
+      "GoogleInitiateResponse": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "redirectUrl": {
+                  "type": "string",
+                  "format": "url",
+                  "example": "https://accounts.google.com/o/oauth2/v2/auth?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code&scope=email%20profile&access_type=offline"
+                }
+              }
+            }
           }
         }
       },
