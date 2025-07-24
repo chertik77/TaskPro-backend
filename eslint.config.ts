@@ -20,19 +20,19 @@ export default eslintTypescript.config(
           selector:
             "ImportSpecifier[local.name='env'][parent.source.value='node:process']",
           message:
-            "Importing env from 'node:process' is not allowed. Use env config from utils instead."
+            "Importing env from 'node:process' is not allowed. Use env config instead."
         },
         {
           selector:
             "ImportSpecifier[local.name='env'][parent.source.value='process']",
           message:
-            "Importing 'env' from 'process' is not allowed. Use env config from utils instead."
+            "Importing 'env' from 'process' is not allowed. Use env config instead."
         },
         {
           selector:
             "MemberExpression[object.name='process'][property.name='env']",
           message:
-            "Accessing 'process.env' is not allowed. Use env config from utils instead."
+            "Accessing 'process.env' is not allowed. Use env config instead."
         }
       ],
       'newline-before-return': 'error',
@@ -48,6 +48,12 @@ export default eslintTypescript.config(
         'error',
         { selector: 'typeLike', format: ['PascalCase'] }
       ]
+    }
+  },
+  {
+    files: ['**/*.d.ts'],
+    rules: {
+      '@typescript-eslint/consistent-type-definitions': 'off'
     }
   }
 )

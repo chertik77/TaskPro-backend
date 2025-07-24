@@ -3,7 +3,7 @@ import type {
   BoardParamsSchema,
   ColumnParamsSchema,
   EditColumnSchema,
-  UpdateOrderSchema
+  UpdateColumnOrderSchema
 } from '@/schemas'
 import type { TypedRequest, TypedRequestParams } from '@/types'
 import type { NextFunction, Response } from 'express'
@@ -64,7 +64,7 @@ class ColumnController {
     {
       params,
       body
-    }: TypedRequest<typeof UpdateOrderSchema, typeof BoardParamsSchema>,
+    }: TypedRequest<typeof UpdateColumnOrderSchema, typeof BoardParamsSchema>,
     res: Response,
     next: NextFunction
   ) => {

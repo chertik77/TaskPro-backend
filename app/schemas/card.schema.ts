@@ -20,3 +20,7 @@ export const MoveCardSchema = z.object({
 })
 
 export const CardParamsSchema = z.object({ cardId: objectIdSchema() })
+
+export const UpdateCardOrderSchema = z.object({
+  ids: z.array(objectIdSchema())
+})

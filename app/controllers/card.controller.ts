@@ -4,7 +4,7 @@ import type {
   ColumnParamsSchema,
   EditCardSchema,
   MoveCardSchema,
-  UpdateOrderSchema
+  UpdateCardOrderSchema
 } from '@/schemas'
 import type { TypedRequest, TypedRequestParams } from '@/types'
 import type { NextFunction, Response } from 'express'
@@ -58,7 +58,7 @@ class CardController {
     {
       params,
       body
-    }: TypedRequest<typeof UpdateOrderSchema, typeof ColumnParamsSchema>,
+    }: TypedRequest<typeof UpdateCardOrderSchema, typeof ColumnParamsSchema>,
     res: Response,
     next: NextFunction
   ) => {

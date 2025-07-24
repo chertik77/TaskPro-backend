@@ -10,7 +10,7 @@ import {
   ColumnParamsSchema,
   EditCardSchema,
   MoveCardSchema,
-  UpdateOrderSchema
+  UpdateCardOrderSchema
 } from '@/schemas'
 
 export const cardRouter = Router()
@@ -37,7 +37,7 @@ cardRouter.patch(
 
 cardRouter.patch(
   '/:columnId/order',
-  validateRequest({ body: UpdateOrderSchema, params: ColumnParamsSchema }),
+  validateRequest({ body: UpdateCardOrderSchema, params: ColumnParamsSchema }),
   cardController.updateOrder
 )
 

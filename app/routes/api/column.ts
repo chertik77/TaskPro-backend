@@ -9,7 +9,7 @@ import {
   BoardParamsSchema,
   ColumnParamsSchema,
   EditColumnSchema,
-  UpdateOrderSchema
+  UpdateColumnOrderSchema
 } from '@/schemas'
 
 export const columnRouter = Router()
@@ -30,7 +30,7 @@ columnRouter.patch(
 
 columnRouter.patch(
   '/:boardId/order',
-  validateRequest({ body: UpdateOrderSchema, params: BoardParamsSchema }),
+  validateRequest({ body: UpdateColumnOrderSchema, params: BoardParamsSchema }),
   columnController.updateOrder
 )
 
