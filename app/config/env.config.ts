@@ -11,6 +11,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
+  GOOGLE_REDIRECT_URI: z.string().url(),
   REDIS_USERNAME: z.string(),
   REDIS_PASSWORD: z.string(),
   REDIS_HOST: z.string(),

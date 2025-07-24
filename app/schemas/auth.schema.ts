@@ -13,9 +13,9 @@ export const SignupSchema = SigninSchema.extend({
 })
 
 export const RefreshTokenSchema = z.object({
-  refreshToken: z.string()
+  refreshToken: z.string().min(1, 'Refresh token is required')
 })
 
-export const GoogleAuthSchema = z.object({
-  code: z.string()
+export const GoogleCodeSchema = z.object({
+  code: z.string().min(1, 'Code is required')
 })

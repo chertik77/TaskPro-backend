@@ -22,30 +22,34 @@
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "name": "John Doe",
-                "email": "user@example.com",
-                "password": "qwerty123"
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "password"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 2,
+                    "example": "John Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 64,
+                    "example": "qwerty123"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "201": { "$ref": "#/components/responses/AuthResponse" },
-          "400": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "statusCode": 400,
-                  "message": {
-                    "email": "Email is invalid",
-                    "password": "Password must be at least 8 characters",
-                    "name": "Name must be at least 2 characters"
-                  }
-                }
-              }
-            }
-          },
+          "400": { "$ref": "#/components/responses/BadRequestError" },
           "409": { "$ref": "#/components/responses/Conflict" }
         }
       }
@@ -58,65 +62,44 @@
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "email": "user@example.com",
-                "password": "qwerty123"
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "qwerty123"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "201": { "$ref": "#/components/responses/AuthResponse" },
-          "400": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "statusCode": 400,
-                  "message": {
-                    "email": "Email is invalid",
-                    "password": "Password must be at least 8 characters"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "statusCode": 401,
-                  "message": "Email or password invalid"
-                }
-              }
-            }
-          }
+          "400": { "$ref": "#/components/responses/BadRequestError" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     },
-    "/auth/google": {
+    "/auth/google/redirect": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Signin a user with google",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "example": {
-                "code": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
-              }
-            }
-          }
-        },
+        "summary": "Redirect to Google for OAuth authentication",
         "responses": {
-          "201": { "$ref": "#/components/responses/GoogleResponse" },
-          "400": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "statusCode": 400,
-                  "message": {
-                    "code": "Code must be a string"
-                  }
+          "302": {
+            "headers": {
+              "Location": {
+                "description": "The URL to which the client should be redirected for Google authentication.",
+                "schema": {
+                  "type": "string",
+                  "format": "uri",
+                  "example": "https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=profile%20email&response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI"
                 }
               }
             }
@@ -124,7 +107,29 @@
         }
       }
     },
-    "/auth/tokens": {
+    "/auth/google/callback": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Handle Google OAuth callback and sign-in/sign-up",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "4/0AT5xKif_S_..."
+            }
+          }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/GoogleResponse" },
+          "400": { "$ref": "#/components/responses/BadRequestError" },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/auth/refresh": {
       "post": {
         "tags": ["Auth"],
         "summary": "Get new access and refresh tokens",
@@ -133,37 +138,24 @@
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
+              "schema": {
+                "type": "object",
+                "required": ["refreshToken"],
+                "properties": {
+                  "refreshToken": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
-          "200": { "$ref": "#/components/responses/TokensResponse" },
-          "400": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "statusCode": 400,
-                  "message": {
-                    "refreshToken": "refreshToken must be a string"
-                  }
-                }
-              }
-            }
-          },
+          "200": { "$ref": "#/components/responses/RefreshResponse" },
+          "400": { "$ref": "#/components/responses/BadRequestError" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "statusCode": 403,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          }
+          "403": { "$ref": "#/components/responses/Forbidden" }
         }
       }
     },
@@ -198,29 +190,41 @@
           "required": true,
           "content": {
             "application/json": {
-              "example": { "email": "user@example.com", "comment": "Need help" }
+              "schema": {
+                "type": "object",
+                "required": ["email", "comment"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "user@example.com"
+                  },
+                  "comment": {
+                    "type": "string",
+                    "example": "Need help with the Kanban board feature."
+                  }
+                }
+              }
             }
           }
         },
         "responses": {
           "200": {
             "content": {
-              "application/json": { "example": { "message": "Email sent" } }
-            }
-          },
-          "400": {
-            "content": {
               "application/json": {
-                "example": {
-                  "statusCode": 400,
-                  "message": {
-                    "email": "Email is required",
-                    "comment": "Comment is required"
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Email sent"
+                    }
                   }
                 }
               }
             }
           },
+          "400": { "$ref": "#/components/responses/BadRequestError" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
@@ -233,7 +237,33 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "example": { "password": "123456789" } },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 2,
+                    "example": "Jane Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "jane.doe@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "newsecurepassword123"
+                  },
+                  "theme": {
+                    "type": "string",
+                    "enum": ["light", "dark", "violet"],
+                    "example": "dark"
+                  }
+                }
+              }
+            },
             "multipart/form-data": {
               "schema": {
                 "type": "object",
@@ -246,29 +276,8 @@
         },
         "responses": {
           "200": { "$ref": "#/components/responses/UserResponse" },
-          "400": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "statusCode": 400,
-                  "message": {
-                    "email": "Email is invalid",
-                    "name": "Name must be at least 2 characters"
-                  }
-                }
-              }
-            }
-          },
-          "406": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "statusCode": 406,
-                  "message": "File must have .jpeg or .png extension"
-                }
-              }
-            }
-          },
+          "400": { "$ref": "#/components/responses/BadRequestError" },
+          "406": { "$ref": "#/components/responses/NotAcceptable" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "409": { "$ref": "#/components/responses/Conflict" }
         }
@@ -292,10 +301,34 @@
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "title": "My office",
-                "icon": "lightning",
-                "background": "blue-ball"
+              "schema": {
+                "type": "object",
+                "required": ["title", "icon"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 3,
+                    "example": "My New Project"
+                  },
+                  "icon": {
+                    "type": "string",
+                    "enum": [
+                      "project",
+                      "star",
+                      "loading",
+                      "puzzle",
+                      "container",
+                      "lightning",
+                      "colors",
+                      "hexagon"
+                    ],
+                    "example": "project"
+                  },
+                  "background": {
+                    "type": "string",
+                    "example": "blue-ball"
+                  }
+                }
               }
             }
           }
@@ -311,7 +344,17 @@
       "get": {
         "tags": ["Board"],
         "summary": "Get board by id",
-        "parameters": [{ "in": "path", "name": "boardId", "required": true }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": { "$ref": "#/components/responses/BoardByIdResponse" },
@@ -322,12 +365,51 @@
       "patch": {
         "tags": ["Board"],
         "summary": "Edit board by id",
-        "parameters": [{ "in": "path", "name": "boardId", "required": true }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "example": { "title": "My office" } }
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 3,
+                    "example": "Updated Project Office"
+                  },
+                  "icon": {
+                    "type": "string",
+                    "enum": [
+                      "project",
+                      "star",
+                      "loading",
+                      "puzzle",
+                      "container",
+                      "lightning",
+                      "colors",
+                      "hexagon"
+                    ],
+                    "example": "star"
+                  },
+                  "background": {
+                    "type": "string",
+                    "example": "flowers"
+                  }
+                }
+              }
+            }
           }
         },
         "responses": {
@@ -340,7 +422,17 @@
       "delete": {
         "tags": ["Board"],
         "summary": "Delete board by id",
-        "parameters": [{ "in": "path", "name": "boardId", "required": true }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
@@ -353,12 +445,34 @@
       "post": {
         "tags": ["Column"],
         "summary": "Add new column",
-        "parameters": [{ "in": "path", "name": "boardId", "required": true }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "example": { "title": "In progress" } }
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 3,
+                    "example": "To Do"
+                  }
+                }
+              }
+            }
           }
         },
         "responses": {
@@ -373,18 +487,39 @@
       "patch": {
         "tags": ["Column"],
         "summary": "Update columns order",
-        "parameters": [{ "in": "path", "name": "boardId", "required": true }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "boardId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "ids": [
-                  "67470731ed1b2ff3a2e5bd56",
-                  "67470773c750b6298e1892ad",
-                  "67470737ed1b2ff3a2e5bd57"
-                ]
+              "schema": {
+                "type": "object",
+                "required": ["ids"],
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[0-9a-fA-F]{24}$"
+                    },
+                    "example": [
+                      "67470731ed1b2ff3a2e5bd56",
+                      "67470773c750b6298e1892ad",
+                      "67470737ed1b2ff3a2e5bd57"
+                    ]
+                  }
+                }
               }
             }
           }
@@ -403,16 +538,37 @@
       "patch": {
         "tags": ["Column"],
         "summary": "Edit column by id",
-        "parameters": [{ "in": "path", "name": "columnId", "required": true }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "example": { "title": "In progress" } }
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 3,
+                    "example": "Doing"
+                  }
+                }
+              }
+            }
           }
         },
         "responses": {
-          "201": { "$ref": "#/components/responses/ColumnResponse" },
+          "200": { "$ref": "#/components/responses/ColumnResponse" },
           "400": { "$ref": "#/components/responses/ColumnBadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
@@ -421,7 +577,17 @@
       "delete": {
         "tags": ["Column"],
         "summary": "Delete column by id",
-        "parameters": [{ "in": "path", "name": "columnId", "required": true }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
@@ -434,17 +600,46 @@
       "post": {
         "tags": ["Card"],
         "summary": "Add new card",
-        "parameters": [{ "in": "path", "name": "columnId", "required": true }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "title": "Publication of the project",
-                "description": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials.",
-                "deadline": "2025-10-15",
-                "priority": "High"
+              "schema": {
+                "type": "object",
+                "required": ["title", "description", "priority", "deadline"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 3,
+                    "example": "Publication of the project"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials."
+                  },
+                  "deadline": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2025-10-15"
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": ["Without", "Low", "Medium", "High"],
+                    "example": "High"
+                  }
+                }
               }
             }
           }
@@ -462,8 +657,24 @@
         "tags": ["Card"],
         "summary": "Move card to another column",
         "parameters": [
-          { "in": "path", "name": "cardId", "required": true },
-          { "in": "path", "name": "newColumnId", "required": true }
+          {
+            "in": "path",
+            "name": "cardId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          },
+          {
+            "in": "path",
+            "name": "newColumnId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
         ],
         "security": [{ "Bearer": [] }],
         "responses": {
@@ -477,14 +688,38 @@
       "patch": {
         "tags": ["Card"],
         "summary": "Update cards order",
-        "parameters": [{ "in": "path", "name": "columnId", "required": true }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "columnId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "ids": ["6672fdccc07147fc7ae1bb93", "6743474be4006eca6c8122e7"]
+              "schema": {
+                "type": "object",
+                "required": ["ids"],
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[0-9a-fA-F]{24}$"
+                    },
+                    "example": [
+                      "6672fdccc07147fc7ae1bb93",
+                      "6743474be4006eca6c8122e7"
+                    ]
+                  }
+                }
               }
             }
           }
@@ -501,13 +736,46 @@
       "patch": {
         "tags": ["Card"],
         "summary": "Edit card by id",
-        "parameters": [{ "in": "path", "name": "cardId", "required": true }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cardId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "example": { "title": "Publication of the project" }
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 3,
+                    "example": "Final Project Review"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Review and finalize all project documentation."
+                  },
+                  "deadline": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2025-11-01"
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": ["Without", "Low", "Medium", "High"],
+                    "example": "Low"
+                  }
+                }
+              }
             }
           }
         },
@@ -521,7 +789,17 @@
       "delete": {
         "tags": ["Card"],
         "summary": "Delete card by id",
-        "parameters": [{ "in": "path", "name": "cardId", "required": true }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cardId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
@@ -532,20 +810,179 @@
     }
   },
   "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "674723719b47fd08e6a2d517"
+          },
+          "name": { "type": "string", "example": "John Doe" },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          },
+          "theme": {
+            "type": "string",
+            "enum": ["light", "dark", "violet"],
+            "example": "light"
+          },
+          "avatar": {
+            "type": "string",
+            "format": "url",
+            "example": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png"
+          },
+          "avatarPublicId": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          }
+        }
+      },
+      "AuthResponseSchema": {
+        "type": "object",
+        "properties": {
+          "user": { "$ref": "#/components/schemas/User" },
+          "accessToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NDcyMzcxOWI0N2ZkMDhlNmEyZDUxNyIsInNpZCI6IjY3NDcyMzcyOWI0N2ZkMDhlNmEyZDUxOCIsImlhdCI6MTczMjcxNTM3OCwiZXhwIjoxNzMyNzE4OTc4fQ.ZCaaWh4rc4AHzTSljDbc7mq5gbHvjMx54y6LoJsXX-4"
+          },
+          "refreshToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NDcyMzcxOWI0N2ZkMDhlNmEyZDUxNyIsInNpZCI6IjY3NDcyMzcyOWI0N2ZkMDhlNmEyZDUxOCIsImlhdCI6MTczMjcxNTM3OCwiZXhwIjoxNzMzMzIwMTc4fQ.y17k3eWBJ4WeqNZeuguOh_5UQDiyaCPYFmn_Ir-Ftog"
+          }
+        }
+      },
+      "BoardBackground": {
+        "type": "object",
+        "properties": {
+          "identifier": { "type": "string", "example": "flowers" },
+          "url": {
+            "type": "string",
+            "format": "url",
+            "example": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg"
+          }
+        }
+      },
+      "Card": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "6672fdccc07147fc7ae1bb93"
+          },
+          "title": {
+            "type": "string",
+            "example": "Publication of the project"
+          },
+          "description": {
+            "type": "string",
+            "example": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials."
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["Without", "Low", "Medium", "High"],
+            "example": "High"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-10-15T00:00:00.000Z"
+          },
+          "order": { "type": "integer", "example": 1 },
+          "columnId": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "6671743db85c96453e04a684"
+          }
+        }
+      },
+      "Column": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "6672f604c07147fc7ae1bb81"
+          },
+          "title": { "type": "string", "example": "In progress" },
+          "order": { "type": "integer", "example": 1 },
+          "boardId": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "67470718ed1b2ff3a2e5bd55"
+          },
+          "cards": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Card" }
+          }
+        }
+      },
+      "Board": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "6672f1d2f02c8b04130c718c"
+          },
+          "title": { "type": "string", "example": "Project office" },
+          "icon": {
+            "type": "string",
+            "enum": [
+              "project",
+              "star",
+              "loading",
+              "puzzle",
+              "container",
+              "lightning",
+              "colors",
+              "hexagon"
+            ],
+            "example": "project"
+          },
+          "background": { "$ref": "#/components/schemas/BoardBackground" },
+          "userId": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "6671743db85c96453e04a684"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": { "type": "integer", "example": 400 },
+          "message": {
+            "oneOf": [{ "type": "string" }, { "type": "object" }]
+          }
+        }
+      }
+    },
     "responses": {
       "NotFound": {
         "content": {
           "application/json": {
-            "example": { "statusCode": 404, "message": "Not found" }
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse",
+              "example": { "statusCode": 404, "message": "Not found" }
+            }
           }
         }
       },
       "Conflict": {
         "content": {
           "application/json": {
-            "example": {
-              "statusCode": 409,
-              "message": "Provided email already exists"
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse",
+              "example": {
+                "statusCode": 409,
+                "message": "Provided email already exists"
+              }
             }
           }
         }
@@ -553,52 +990,105 @@
       "Unauthorized": {
         "content": {
           "application/json": {
-            "example": { "statusCode": 401, "message": "Unauthorized" }
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse",
+              "example": { "statusCode": 401, "message": "Unauthorized" }
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse",
+              "example": { "statusCode": 403, "message": "Forbidden" }
+            }
+          }
+        }
+      },
+      "BadRequestError": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse",
+              "example": {
+                "statusCode": 400,
+                "message": {
+                  "email": "Email is invalid",
+                  "password": "Password must be at least 8 characters",
+                  "name": "Name must be at least 2 characters"
+                }
+              }
+            }
+          }
+        }
+      },
+      "NotAcceptable": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse",
+              "example": {
+                "statusCode": 406,
+                "message": "File must have .jpeg or .png extension"
+              }
+            }
           }
         }
       },
       "AuthResponse": {
         "content": {
           "application/json": {
-            "example": {
-              "user": {
-                "id": "674723719b47fd08e6a2d517",
-                "name": "John Doe",
-                "email": "user@example.com",
-                "theme": "light",
-                "avatar": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png",
-                "avatarPublicId": null
-              },
-              "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NDcyMzcxOWI0N2ZkMDhlNmEyZDUxNyIsInNpZCI6IjY3NDcyMzcyOWI0N2ZkMDhlNmEyZDUxOCIsImlhdCI6MTczMjcxNTM3OCwiZXhwIjoxNzMyNzE4OTc4fQ.ZCaaWh4rc4AHzTSljDbc7mq5gbHvjMx54y6LoJsXX-4",
-              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NDcyMzcxOWI0N2ZkMDhlNmEyZDUxNyIsInNpZCI6IjY3NDcyMzcyOWI0N2ZkMDhlNmEyZDUxOCIsImlhdCI6MTczMjcxNTM3OCwiZXhwIjoxNzMzMzIwMTc4fQ.y17k3eWBJ4WeqNZeuguOh_5UQDiyaCPYFmn_Ir-Ftog"
-            }
+            "schema": { "$ref": "#/components/schemas/AuthResponseSchema" }
           }
         }
       },
       "GoogleResponse": {
         "content": {
           "application/json": {
-            "example": {
-              "user": {
-                "id": "674723719b47fd08e6a2d517",
-                "name": "John Doe",
-                "email": "user@example.com",
-                "theme": "light",
-                "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLWRkQo4yOicLduVfTehM7hCPx1Q7WGFjgOFu1GT",
-                "avatarPublicId": "google-picture"
-              },
-              "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NDcyMzcxOWI0N2ZkMDhlNmEyZDUxNyIsInNpZCI6IjY3NDcyMzcyOWI0N2ZkMDhlNmEyZDUxOCIsImlhdCI6MTczMjcxNTM3OCwiZXhwIjoxNzMyNzE4OTc4fQ.ZCaaWh4rc4AHzTSljDbc7mq5gbHvjMx54y6LoJsXX-4",
-              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NDcyMzcxOWI0N2ZkMDhlNmEyZDUxNyIsInNpZCI6IjY3NDcyMzcyOWI0N2ZkMDhlNmEyZDUxOCIsImlhdCI6MTczMjcxNTM3OCwiZXhwIjoxNzMzMzIwMTc4fQ.y17k3eWBJ4WeqNZeuguOh_5UQDiyaCPYFmn_Ir-Ftog"
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/AuthResponseSchema" },
+                {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "avatar": {
+                          "type": "string",
+                          "format": "url",
+                          "example": "https://lh3.googleusercontent.com/a/ACg8ocLWRkQo4yOicLduVfTehM7hCPx1Q7WGFjgOFu1GT"
+                        },
+                        "avatarPublicId": {
+                          "type": "string",
+                          "example": "google-picture"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
             }
           }
         }
       },
-      "TokensResponse": {
+      "RefreshResponse": {
         "content": {
           "application/json": {
-            "example": {
-              "acesssToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE4NzE2MzQwfQ.hwdlZg0fft0PjwN63qwfjFTg1ZeyOOukFdZVbF0VOUU",
-              "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
+            "schema": {
+              "type": "object",
+              "properties": {
+                "acesssToken": {
+                  "type": "string",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE4NzE2MzQwfQ.hwdlZg0fft0PjwN63qwfjFTg1ZeyOOukFdZVbF0VOUU"
+                },
+                "refreshToken": {
+                  "type": "string",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
+                }
+              }
             }
           }
         }
@@ -606,24 +1096,20 @@
       "UserResponse": {
         "content": {
           "application/json": {
-            "example": {
-              "id": "65c0388ea89738bb0120fed0",
-              "name": "John Doe",
-              "email": "user@example.com",
-              "theme": "light",
-              "avatar": "http://res.cloudinary.com/.../nsd6alpowmw3ska.jpg",
-              "avatarPublicId": "TaskPro/user_avatars/jcczofobbijvvg066xjo"
-            }
+            "schema": { "$ref": "#/components/schemas/User" }
           }
         }
       },
       "UpdateOrderBadRequest": {
         "content": {
           "application/json": {
-            "example": {
-              "statusCode": 400,
-              "message": {
-                "ids": "Ids must be an array of valid ObjectIds"
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse",
+              "example": {
+                "statusCode": 400,
+                "message": {
+                  "ids": "Ids must be an array of valid ObjectIds"
+                }
               }
             }
           }
@@ -632,58 +1118,31 @@
       "AllBoardsResponse": {
         "content": {
           "application/json": {
-            "example": [
-              {
-                "title": "Project office",
-                "icon": "project",
-                "background": {
-                  "identifier": "flowers",
-                  "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg",
-                  "hasWhiteTextColor": true
-                },
-                "userId": "6671743db85c96453e04a684",
-                "id": "6672f1d2f02c8b04130c718c"
-              },
-              {
-                "title": "My office",
-                "icon": "lightning",
-                "background": {
-                  "identifier": "blue-ball",
-                  "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/desk/dtmqypo6r0v0nktpagku.jpg",
-                  "hasWhiteTextColor": false
-                },
-                "userId": "6671743db85c96453e04a684",
-                "id": "6672f211f02c8b04130c7193"
-              }
-            ]
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/Board" }
+            }
           }
         }
       },
       "BoardResponse": {
         "content": {
           "application/json": {
-            "example": {
-              "background": {
-                "identifier": "blue-ball",
-                "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/desk/dtmqypo6r0v0nktpagku.jpg",
-                "hasWhiteTextColor": false
-              },
-              "title": "My office",
-              "icon": "lightning",
-              "userId": "6671743db85c96453e04a684",
-              "id": "6672f211f02c8b04130c7193"
-            }
+            "schema": { "$ref": "#/components/schemas/Board" }
           }
         }
       },
       "BoardBadRequest": {
         "content": {
           "application/json": {
-            "example": {
-              "statusCode": 400,
-              "message": {
-                "title": "Title must be at least 3 characters",
-                "icon": "Invalid enum value. Expected 'project' | 'star' | 'loading' | 'puzzle' | 'container' | 'lightning' | 'colors' | 'hexagon', received 'random-icon'"
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse",
+              "example": {
+                "statusCode": 400,
+                "message": {
+                  "title": "Title must be at least 3 characters",
+                  "icon": "Invalid enum value. Expected 'project' | 'star' | 'loading' | 'puzzle' | 'container' | 'lightning' | 'colors' | 'hexagon', received 'random-icon'"
+                }
               }
             }
           }
@@ -692,50 +1151,30 @@
       "BoardByIdResponse": {
         "content": {
           "application/json": {
-            "example": {
-              "background": {
-                "identifier": "flowers",
-                "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg",
-                "hasWhiteTextColor": true
-              },
-              "id": "6672f1d2f02c8b04130c718c",
-              "title": "Project office",
-              "icon": "project",
-              "userId": "6671743db85c96453e04a684",
-              "columns": [
+            "schema": {
+              "allOf": [
+                { "$ref": "#/components/schemas/Board" },
                 {
-                  "id": "6672f5cdc07147fc7ae1bb71",
-                  "title": "To do",
-                  "order": 0,
-                  "boardId": "674345e37634766f05c4f7b1",
-                  "cards": [
-                    {
-                      "id": "6672fda1c07147fc7ae1bb8a",
-                      "title": "Research and Analysis",
-                      "description": "Conduct in-depth research and analysis on the project's topic, gather relevant data, and identify key insights to inform decision-making and project planning.",
-                      "priority": "Medium",
-                      "deadline": "2025-10-20T00:00:00.000Z",
-                      "order": 1,
-                      "columnId": "6672f5cdc07147fc7ae1bb71"
+                  "type": "object",
+                  "properties": {
+                    "columns": {
+                      "type": "array",
+                      "items": {
+                        "allOf": [
+                          { "$ref": "#/components/schemas/Column" },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "cards": {
+                                "type": "array",
+                                "items": { "$ref": "#/components/schemas/Card" }
+                              }
+                            }
+                          }
+                        ]
+                      }
                     }
-                  ]
-                },
-                {
-                  "id": "6672f5cdc07147fc7ae1bb71",
-                  "title": "In progress",
-                  "order": 1,
-                  "boardId": "674345e37634766f05c4f7b1",
-                  "cards": [
-                    {
-                      "id": "6672fdccc07147fc7ae1bb93",
-                      "title": "Publication of the project",
-                      "description": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials.",
-                      "priority": "High",
-                      "deadline": "2025-10-15T00:00:00.000Z",
-                      "order": 1,
-                      "columnId": "6672f604c07147fc7ae1bb81"
-                    }
-                  ]
+                  }
                 }
               ]
             }
@@ -745,23 +1184,21 @@
       "ColumnResponse": {
         "content": {
           "application/json": {
-            "example": {
-              "id": "6672f604c07147fc7ae1bb81",
-              "title": "In progress",
-              "order": 1,
-              "boardId": "67470718ed1b2ff3a2e5bd55"
-            }
+            "schema": { "$ref": "#/components/schemas/Column" }
           }
         }
       },
       "ColumnBadRequest": {
         "content": {
           "application/json": {
-            "example": {
-              "statusCode": 400,
-              "message": {
-                "title": "Title must be at least 3 characters",
-                "boardId": "Id must be a valid ObjectId"
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse",
+              "example": {
+                "statusCode": 400,
+                "message": {
+                  "title": "Title must be at least 3 characters",
+                  "boardId": "Id must be a valid ObjectId"
+                }
               }
             }
           }
@@ -770,53 +1207,32 @@
       "UpdateColumnsOrderResponse": {
         "content": {
           "application/json": {
-            "example": [
-              {
-                "id": "67470731ed1b2ff3a2e5bd56",
-                "title": "To do",
-                "order": 0,
-                "boardId": "67470718ed1b2ff3a2e5bd55"
-              },
-              {
-                "id": "67470773c750b6298e1892ad",
-                "title": "In progress",
-                "order": 1,
-                "boardId": "67470718ed1b2ff3a2e5bd55"
-              },
-              {
-                "id": "67470737ed1b2ff3a2e5bd57",
-                "title": "Done",
-                "order": 2,
-                "boardId": "67470718ed1b2ff3a2e5bd55"
-              }
-            ]
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/Column" }
+            }
           }
         }
       },
       "CardResponse": {
         "content": {
           "application/json": {
-            "example": {
-              "id": "6672fdccc07147fc7ae1bb93",
-              "title": "Publication of the project",
-              "description": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials.",
-              "priority": "High",
-              "deadline": "2025-10-15T00:00:00.000Z",
-              "order": 1,
-              "columnId": "6671743db85c96453e04a684"
-            }
+            "schema": { "$ref": "#/components/schemas/Card" }
           }
         }
       },
       "CardBadRequest": {
         "content": {
           "application/json": {
-            "example": {
-              "statusCode": 400,
-              "message": {
-                "description": "Title must be a string",
-                "priority": "Priority must be one of the following: Without, Low, Medium, High",
-                "columnId": "Id must be a valid ObjectId"
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse",
+              "example": {
+                "statusCode": 400,
+                "message": {
+                  "description": "Title must be a string",
+                  "priority": "Priority must be one of the following: Without, Low, Medium, High",
+                  "columnId": "Id must be a valid ObjectId"
+                }
               }
             }
           }
@@ -825,26 +1241,10 @@
       "UpdateCardOrderResponse": {
         "content": {
           "application/json": {
-            "example": [
-              {
-                "id": "6672fdccc07147fc7ae1bb93",
-                "title": "Publication of the project",
-                "description": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials.",
-                "priority": "High",
-                "deadline": "2025-10-15T00:00:00.000Z",
-                "order": 0,
-                "columnId": "6671743db85c96453e04a684"
-              },
-              {
-                "id": "6743474be4006eca6c8122e7",
-                "title": "Publication of the project 2",
-                "description": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials.",
-                "priority": "High",
-                "deadline": "2025-10-15T00:00:00.000Z",
-                "order": 1,
-                "columnId": "6671743db85c96453e04a684"
-              }
-            ]
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/Card" }
+            }
           }
         }
       }

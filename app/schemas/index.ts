@@ -20,6 +20,6 @@ export {
   SigninSchema,
   SignupSchema,
   RefreshTokenSchema,
-  GoogleAuthSchema
+  GoogleCodeSchema
 } from './auth.schema'
 export { EditUserSchema, NeedHelpSchema } from './user.schema'

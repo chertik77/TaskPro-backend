@@ -1,11 +1,15 @@
 import type {
-  GoogleAuthSchema,
+  GoogleCodeSchema,
   RefreshTokenSchema,
   SigninSchema,
   SignupSchema
 } from '@/schemas'
-import type { GoogleUserResponse, JwtPayload, TypedRequestBody } from '@/types'
+import type { JwtPayload } from '@/types'
 import type { NextFunction, Request, Response } from 'express'
+import type {
+  TypedRequestBody,
+  TypedRequestQuery
+} from 'zod-express-middleware'
 
 import { prisma } from '@/prisma'
 import { hash, verify } from 'argon2'
@@ -24,10 +28,17 @@ const {
   ACCESS_JWT_ALGORITHM,
   REFRESH_JWT_ALGORITHM,
   GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_URI
 } = env
 
 class AuthController {
+  googleClient = new OAuth2Client(
+    GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET,
+    GOOGLE_REDIRECT_URI
+  )
+
   signup = async (
     { body }: TypedRequestBody<typeof SignupSchema>,
     res: Response,
@@ -84,23 +95,40 @@ class AuthController {
     res.json({ user: userWithoutPassword, ...tokens })
   }
 
-  google = async (
-    { body }: TypedRequestBody<typeof GoogleAuthSchema>,
-    res: Response
+  googleRedirect = async (_: Request, res: Response) => {
+    const url = this.googleClient.generateAuthUrl({
+      access_type: 'offline',
+      scope: ['profile', 'email']
+    })
+
+    res.redirect(url)
+  }
+
+  googleCallback = async (
+    req: TypedRequestQuery<typeof GoogleCodeSchema>,
+    res: Response,
+    next: NextFunction
   ) => {
-    const oAuth2Client = new OAuth2Client(
-      GOOGLE_CLIENT_ID,
-      GOOGLE_CLIENT_SECRET,
-      'postmessage'
-    )
+    const { tokens } = await this.googleClient.getToken(req.query.code)
 
-    const { tokens } = await oAuth2Client.getToken(body.code)
+    if (!tokens.id_token) return next(Forbidden())
 
-    const { name, email, picture } = await this.getUserInfoFromGoogleApi(
-      tokens.access_token!
-    )
+    const ticket = await this.googleClient.verifyIdToken({
+      idToken: tokens.id_token,
+      audience: GOOGLE_CLIENT_ID
+    })
 
-    const user = await prisma.user.findUnique({ where: { email } })
+    const payload = ticket.getPayload()
+
+    if (!payload || !payload.email || !payload.name || !payload.picture) {
+      return next(Forbidden('Invalid token'))
+    }
+
+    const { name, email, picture } = payload
+
+    const user = await prisma.user.findUnique({
+      where: { email }
+    })
 
     if (!user) {
       const user = await prisma.user.create({
@@ -131,7 +159,7 @@ class AuthController {
     }
   }
 
-  tokens = async (
+  refresh = async (
     { body }: TypedRequestBody<typeof RefreshTokenSchema>,
     res: Response,
     next: NextFunction
@@ -185,18 +213,6 @@ class AuthController {
       .sign(REFRESH_JWT_SECRET)
 
     return { accessToken, refreshToken }
-  }
-
-  private getUserInfoFromGoogleApi = async (accessToken: string) => {
-    const URL = 'https://www.googleapis.com/oauth2/v3/userinfo'
-
-    const r = await fetch(URL, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    })
-
-    const userInfo = (await r.json()) as GoogleUserResponse
-
-    return userInfo
   }
 }
 

@@ -6,8 +6,9 @@ import type {
   MoveCardSchema,
   UpdateCardOrderSchema
 } from '@/schemas'
-import type { TypedRequest, TypedRequestParams } from '@/types'
 import type { NextFunction, Response } from 'express'
+import type { ZodType } from 'zod'
+import type { TypedRequest, TypedRequestParams } from 'zod-express-middleware'
 
 import { prisma } from '@/prisma'
 import { BadRequest, NotFound } from 'http-errors'
@@ -19,7 +20,7 @@ class CardController {
     {
       params,
       body
-    }: TypedRequest<typeof AddCardSchema, typeof ColumnParamsSchema>,
+    }: TypedRequest<typeof ColumnParamsSchema, ZodType, typeof AddCardSchema>,
     res: Response,
     next: NextFunction
   ) => {
@@ -45,7 +46,7 @@ class CardController {
     {
       params,
       body
-    }: TypedRequest<typeof EditCardSchema, typeof CardParamsSchema>,
+    }: TypedRequest<typeof CardParamsSchema, ZodType, typeof EditCardSchema>,
     res: Response,
     next: NextFunction
   ) => {
@@ -72,7 +73,11 @@ class CardController {
     {
       params,
       body
-    }: TypedRequest<typeof UpdateCardOrderSchema, typeof ColumnParamsSchema>,
+    }: TypedRequest<
+      typeof ColumnParamsSchema,
+      ZodType,
+      typeof UpdateCardOrderSchema
+    >,
     res: Response,
     next: NextFunction
   ) => {

@@ -1,8 +1,9 @@
 import { Router } from 'express'
+import { validateRequest } from 'zod-express-middleware'
 
 import { boardController } from '@/controllers'
 
-import { authenticate, validateRequest } from '@/middlewares'
+import { authenticate } from '@/middlewares'
 
 import { AddBoardSchema, BoardParamsSchema, EditBoardSchema } from '@/schemas'
 

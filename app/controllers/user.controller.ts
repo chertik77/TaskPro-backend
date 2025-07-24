@@ -1,8 +1,8 @@
 import type { EditUserSchema, NeedHelpSchema } from '@/schemas'
-import type { TypedRequestBody } from '@/types'
 import type { User } from '@prisma/client'
 import type { NextFunction, Request, Response } from 'express'
 import type { Options } from 'nodemailer/lib/mailer'
+import type { TypedRequestBody } from 'zod-express-middleware'
 
 import { prisma } from '@/prisma'
 import { hash } from 'argon2'

@@ -1,8 +1,9 @@
 import { Router } from 'express'
+import { validateRequest } from 'zod-express-middleware'
 
 import { columnController } from '@/controllers'
 
-import { authenticate, validateRequest } from '@/middlewares'
+import { authenticate } from '@/middlewares'
 
 import {
   AddColumnSchema,

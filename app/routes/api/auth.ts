@@ -1,11 +1,12 @@
 import { Router } from 'express'
+import { validateRequest } from 'zod-express-middleware'
 
 import { authController } from '@/controllers'
 
-import { authenticate, validateRequest } from '@/middlewares'
+import { authenticate } from '@/middlewares'
 
 import {
-  GoogleAuthSchema,
+  GoogleCodeSchema,
   RefreshTokenSchema,
   SigninSchema,
   SignupSchema
@@ -25,16 +26,18 @@ authRouter.post(
   authController.signin
 )
 
-authRouter.post(
-  '/google',
-  validateRequest({ body: GoogleAuthSchema }),
-  authController.google
+authRouter.post('/google/redirect', authController.googleRedirect)
+
+authRouter.get(
+  '/google/callback',
+  validateRequest({ query: GoogleCodeSchema }),
+  authController.googleCallback
 )
 
 authRouter.post(
-  '/tokens',
+  '/refresh',
   validateRequest({ body: RefreshTokenSchema }),
-  authController.tokens
+  authController.refresh
 )
 
 authRouter.post('/logout', authenticate, authController.logout)

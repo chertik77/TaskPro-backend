@@ -3,12 +3,13 @@ import type {
   BoardParamsSchema,
   EditBoardSchema
 } from '@/schemas'
+import type { NextFunction, Request, Response } from 'express'
+import type { ZodType } from 'zod'
 import type {
   TypedRequest,
   TypedRequestBody,
   TypedRequestParams
-} from '@/types'
-import type { NextFunction, Request, Response } from 'express'
+} from 'zod-express-middleware'
 
 import { prisma } from '@/prisma'
 import { NotFound } from 'http-errors'
@@ -85,7 +86,7 @@ class BoardController {
       body,
       params,
       user
-    }: TypedRequest<typeof EditBoardSchema, typeof BoardParamsSchema>,
+    }: TypedRequest<typeof BoardParamsSchema, ZodType, typeof EditBoardSchema>,
     res: Response,
     next: NextFunction
   ) => {

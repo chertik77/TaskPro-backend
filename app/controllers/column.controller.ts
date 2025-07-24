@@ -1,12 +1,13 @@
 import type {
-  AddColumnSchema,
+  AddBoardSchema,
   BoardParamsSchema,
   ColumnParamsSchema,
   EditColumnSchema,
   UpdateColumnOrderSchema
 } from '@/schemas'
-import type { TypedRequest, TypedRequestParams } from '@/types'
 import type { NextFunction, Response } from 'express'
+import type { ZodType } from 'zod'
+import type { TypedRequest, TypedRequestParams } from 'zod-express-middleware'
 
 import { prisma } from '@/prisma'
 import { BadRequest, NotFound } from 'http-errors'
@@ -19,7 +20,7 @@ class ColumnController {
       params,
       user,
       body
-    }: TypedRequest<typeof AddColumnSchema, typeof BoardParamsSchema>,
+    }: TypedRequest<typeof BoardParamsSchema, ZodType, typeof AddBoardSchema>,
     res: Response,
     next: NextFunction
   ) => {
@@ -50,7 +51,11 @@ class ColumnController {
     {
       params,
       body
-    }: TypedRequest<typeof EditColumnSchema, typeof ColumnParamsSchema>,
+    }: TypedRequest<
+      typeof ColumnParamsSchema,
+      ZodType,
+      typeof EditColumnSchema
+    >,
     res: Response,
     next: NextFunction
   ) => {
@@ -73,7 +78,11 @@ class ColumnController {
     {
       params,
       body
-    }: TypedRequest<typeof UpdateColumnOrderSchema, typeof BoardParamsSchema>,
+    }: TypedRequest<
+      typeof BoardParamsSchema,
+      ZodType,
+      typeof UpdateColumnOrderSchema
+    >,
     res: Response,
     next: NextFunction
   ) => {
