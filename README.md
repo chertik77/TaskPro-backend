@@ -2,7 +2,7 @@
 
 Welcome to the Task Pro App Backend, the powerhouse behind the ultimate tool for managing your tasks efficiently. This backend repository handles all the server-side logic, data management, and API integrations needed to support Task Pro's seamless performance.
 
-![Screenshot 2024-11-28 at 22 33 21](https://github.com/user-attachments/assets/91ab39d9-3a59-4dd4-b990-ca11c38dbfcc)
+![Swagger Docs Preview](https://github.com/user-attachments/assets/f83e909a-0ad4-4e29-92c8-200ecb1b4630)
 
 _Link to the swagger docs:_ https://api.taskpro.online/docs
 
