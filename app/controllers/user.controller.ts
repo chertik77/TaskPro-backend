@@ -8,17 +8,27 @@ import { prisma } from '@/prisma'
 import { hash } from 'argon2'
 import { Conflict, InternalServerError, NotAcceptable } from 'http-errors'
 
-import { env } from '@/config'
+import { env, redis } from '@/config'
 import cloudinary from '@/config/cloudinary.config'
 import { transport } from '@/config/mailer.config'
 
 class UserController {
   me = async (req: Request, res: Response) => {
-    const user = await prisma.user.findFirst({
-      where: { id: req.user.id }
-    })
+    const cacheKey = `user:${req.user.id}`
 
-    res.json(user)
+    const cachedUser = await redis.get(cacheKey)
+
+    if (cachedUser) {
+      res.json(JSON.parse(cachedUser))
+    } else {
+      const user = await prisma.user.findFirst({
+        where: { id: req.user.id }
+      })
+
+      await redis.set(cacheKey, JSON.stringify(user))
+
+      res.json(user)
+    }
   }
 
   update = async (
@@ -73,6 +83,8 @@ class UserController {
       where: { id },
       data: updateData
     })
+
+    await redis.del(`user:${updatedUser.id}`)
 
     res.json(updatedUser)
   }

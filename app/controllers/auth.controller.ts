@@ -170,7 +170,7 @@ class AuthController {
   logout = async ({ session }: Request, res: Response) => {
     await prisma.session.delete({ where: { id: session } })
 
-    res.status(204).send()
+    res.sendStatus(204)
   }
 
   private getNewTokens = async (payload: JwtPayload) => {

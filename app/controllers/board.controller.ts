@@ -13,13 +13,24 @@ import type { NextFunction, Request, Response } from 'express'
 import { prisma } from '@/prisma'
 import { NotFound } from 'http-errors'
 
+import { redis } from '@/config'
 import boardImages from '@/data/board-bg-images.json'
 
 class BoardController {
   getAll = async ({ user }: Request, res: Response) => {
-    const boards = await prisma.board.findMany({ where: { userId: user.id } })
+    const cacheKey = `boards:user:${user.id}:all`
 
-    res.json(boards)
+    const cachedBoards = await redis.get(cacheKey)
+
+    if (cachedBoards) {
+      res.json(JSON.parse(cachedBoards))
+    } else {
+      const boards = await prisma.board.findMany({ where: { userId: user.id } })
+
+      await redis.set(cacheKey, JSON.stringify(boards))
+
+      res.json(boards)
+    }
   }
 
   getById = async (
@@ -27,19 +38,29 @@ class BoardController {
     res: Response,
     next: NextFunction
   ) => {
-    const board = await prisma.board.findFirst({
-      where: { id: params.boardId, userId: user.id },
-      include: {
-        columns: {
-          orderBy: { order: 'asc' },
-          include: { cards: { orderBy: { order: 'asc' } } }
+    const cacheKey = `board:${params.boardId}:user:${user.id}`
+
+    const cachedBoard = await redis.get(cacheKey)
+
+    if (cachedBoard) {
+      res.json(JSON.parse(cachedBoard))
+    } else {
+      const board = await prisma.board.findFirst({
+        where: { id: params.boardId, userId: user.id },
+        include: {
+          columns: {
+            orderBy: { order: 'asc' },
+            include: { cards: { orderBy: { order: 'asc' } } }
+          }
         }
-      }
-    })
+      })
 
-    if (!board) return next(NotFound('Board not found'))
+      if (!board) return next(NotFound('Board not found'))
 
-    res.json(board)
+      await redis.set(cacheKey, JSON.stringify(board))
+
+      res.json(board)
+    }
   }
 
   add = async (
@@ -53,6 +74,8 @@ class BoardController {
         background: boardImages[body.background]
       }
     })
+
+    await redis.del(`boards:user:${user.id}:all`)
 
     res.json(newBoard)
   }
@@ -76,6 +99,9 @@ class BoardController {
 
     if (!updatedBoard) return next(NotFound('Board not found'))
 
+    await redis.del(`board:${updatedBoard.id}:user:${user.id}`)
+    await redis.del(`boards:user:${user.id}:all`)
+
     res.json(updatedBoard)
   }
 
@@ -90,7 +116,10 @@ class BoardController {
 
     if (!deletedBoard) return next(NotFound('Board not found'))
 
-    res.status(204).send()
+    await redis.del(`board:${deletedBoard.id}:user:${user.id}`)
+    await redis.del(`boards:user:${user.id}:all`)
+
+    res.sendStatus(204)
   }
 }
 

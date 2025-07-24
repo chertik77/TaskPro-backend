@@ -12,6 +12,8 @@ import type { NextFunction, Response } from 'express'
 import { prisma } from '@/prisma'
 import { BadRequest, NotFound } from 'http-errors'
 
+import { redis } from '@/config'
+
 class CardController {
   add = async (
     {
@@ -22,7 +24,8 @@ class CardController {
     next: NextFunction
   ) => {
     const column = await prisma.column.findFirst({
-      where: { id: params.columnId }
+      where: { id: params.columnId },
+      select: { id: true, boardId: true, board: { select: { userId: true } } }
     })
 
     if (!column) return next(NotFound('Column not found'))
@@ -32,6 +35,8 @@ class CardController {
     const newCard = await prisma.card.create({
       data: { ...body, columnId: column.id, order: newOrder }
     })
+
+    await redis.del(`board:${column.boardId}:user:${column.board.userId}`)
 
     res.json(newCard)
   }
@@ -46,10 +51,19 @@ class CardController {
   ) => {
     const updatedCard = await prisma.card.updateIgnoreNotFound({
       where: { id: params.cardId },
-      data: body
+      data: body,
+      select: {
+        column: {
+          select: { boardId: true, board: { select: { userId: true } } }
+        }
+      }
     })
 
     if (!updatedCard) return next(NotFound('Card not found'))
+
+    await redis.del(
+      `board:${updatedCard.column.boardId}:user:${updatedCard.column.board.userId}`
+    )
 
     res.json(updatedCard)
   }
@@ -63,7 +77,8 @@ class CardController {
     next: NextFunction
   ) => {
     const column = await prisma.column.findFirst({
-      where: { id: params.columnId }
+      where: { id: params.columnId },
+      select: { id: true, boardId: true, board: { select: { userId: true } } }
     })
 
     if (!column) return next(NotFound('Column not found'))
@@ -77,6 +92,9 @@ class CardController {
 
     try {
       const updatedCards = await prisma.$transaction(transaction)
+
+      await redis.del(`board:${column.boardId}:user:${column.board.userId}`)
+
       res.json(updatedCards)
     } catch {
       return next(BadRequest('Invalid order'))
@@ -89,7 +107,8 @@ class CardController {
     next: NextFunction
   ) => {
     const column = await prisma.column.findFirst({
-      where: { id: params.newColumnId }
+      where: { id: params.newColumnId },
+      select: { id: true, boardId: true, board: { select: { userId: true } } }
     })
 
     if (!column) return next(NotFound('Column not found'))
@@ -103,6 +122,8 @@ class CardController {
 
     if (!updatedCard) return next(NotFound('Card not found'))
 
+    await redis.del(`board:${column.boardId}:user:${column.board.userId}`)
+
     res.json(updatedCard)
   }
 
@@ -112,12 +133,21 @@ class CardController {
     next: NextFunction
   ) => {
     const deletedCard = await prisma.card.deleteIgnoreNotFound({
-      where: { id: params.cardId }
+      where: { id: params.cardId },
+      select: {
+        column: {
+          select: { boardId: true, board: { select: { userId: true } } }
+        }
+      }
     })
 
     if (!deletedCard) return next(NotFound('Card not found'))
 
-    res.status(204).send()
+    await redis.del(
+      `board:${deletedCard.column.boardId}:user:${deletedCard.column.board.userId}`
+    )
+
+    res.sendStatus(204)
   }
 
   private getNewCardOrder = async (columnId: string) => {

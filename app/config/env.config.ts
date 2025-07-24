@@ -11,9 +11,19 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
+  REDIS_USERNAME: z.string(),
+  REDIS_PASSWORD: z.string(),
+  REDIS_HOST: z.string(),
+  REDIS_PORT: z.preprocess(
+    v => (v ? v : undefined),
+    z.coerce.number().int().positive()
+  ),
   ACCESS_JWT_SECRET: z.string().transform(v => new TextEncoder().encode(v)),
   REFRESH_JWT_SECRET: z.string().transform(v => new TextEncoder().encode(v)),
-  PORT: z.preprocess(v => (v ? v : undefined), z.coerce.number().int()),
+  PORT: z.preprocess(
+    v => (v ? v : undefined),
+    z.coerce.number().int().positive()
+  ),
   API_PREFIX: z.string(),
   NODE_ENV: z.enum(['development', 'production']),
   ALLOWED_ORIGINS: z
