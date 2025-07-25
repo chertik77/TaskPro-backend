@@ -106,11 +106,15 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["code"],
+                "required": ["code", "state"],
                 "properties": {
                   "code": {
                     "type": "string",
                     "example": "4/0AT5xKif_S_..."
+                  },
+                  "state": {
+                    "type": "string",
+                    "example": "1d73efc8d4f8d426a3e51f6337ee7cb7"
                   }
                 }
               }
