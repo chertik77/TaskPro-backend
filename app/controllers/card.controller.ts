@@ -51,8 +51,7 @@ class CardController {
   ) => {
     if (body.columnId) {
       const column = await prisma.column.findFirst({
-        where: { id: body.columnId },
-        include: { board: { select: { userId: true } } }
+        where: { id: body.columnId }
       })
 
       if (!column) return next(NotFound('Column not found'))
