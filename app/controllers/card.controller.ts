@@ -3,7 +3,6 @@ import type {
   CardParamsSchema,
   ColumnParamsSchema,
   EditCardSchema,
-  MoveCardSchema,
   UpdateCardOrderSchema
 } from '@/schemas'
 import type { NextFunction, Response } from 'express'
@@ -13,7 +12,7 @@ import type { TypedRequest, TypedRequestParams } from 'zod-express-middleware'
 import { prisma } from '@/prisma'
 import { BadRequest, NotFound } from 'http-errors'
 
-import { redis } from '@/config'
+import { redisClient } from '@/config'
 
 class CardController {
   add = async (
@@ -26,7 +25,7 @@ class CardController {
   ) => {
     const column = await prisma.column.findFirst({
       where: { id: params.columnId },
-      select: { id: true, boardId: true, board: { select: { userId: true } } }
+      include: { board: { select: { userId: true } } }
     })
 
     if (!column) return next(NotFound('Column not found'))
@@ -37,7 +36,7 @@ class CardController {
       data: { ...body, columnId: column.id, order: newOrder }
     })
 
-    await redis.del(`board:${column.boardId}:user:${column.board.userId}`)
+    await redisClient.del(`board:${column.boardId}:user:${column.board.userId}`)
 
     res.json(newCard)
   }
@@ -50,23 +49,28 @@ class CardController {
     res: Response,
     next: NextFunction
   ) => {
+    if (body.columnId) {
+      const column = await prisma.column.findFirst({
+        where: { id: body.columnId },
+        include: { board: { select: { userId: true } } }
+      })
+
+      if (!column) return next(NotFound('Column not found'))
+    }
+
     const updatedCard = await prisma.card.updateIgnoreNotFound({
       where: { id: params.cardId },
       data: body,
-      select: {
-        column: {
-          select: { boardId: true, board: { select: { userId: true } } }
-        }
-      }
+      include: { column: { include: { board: { select: { userId: true } } } } }
     })
 
     if (!updatedCard) return next(NotFound('Card not found'))
 
-    await redis.del(
-      `board:${updatedCard.column.boardId}:user:${updatedCard.column.board.userId}`
-    )
+    const { column, ...card } = updatedCard
 
-    res.json(updatedCard)
+    await redisClient.del(`board:${column.boardId}:user:${column.board.userId}`)
+
+    res.json(card)
   }
 
   updateOrder = async (
@@ -83,7 +87,7 @@ class CardController {
   ) => {
     const column = await prisma.column.findFirst({
       where: { id: params.columnId },
-      select: { id: true, boardId: true, board: { select: { userId: true } } }
+      include: { board: { select: { userId: true } } }
     })
 
     if (!column) return next(NotFound('Column not found'))
@@ -98,38 +102,14 @@ class CardController {
     try {
       const updatedCards = await prisma.$transaction(transaction)
 
-      await redis.del(`board:${column.boardId}:user:${column.board.userId}`)
+      await redisClient.del(
+        `board:${column.boardId}:user:${column.board.userId}`
+      )
 
       res.json(updatedCards)
     } catch {
       return next(BadRequest('Invalid order'))
     }
-  }
-
-  move = async (
-    { params }: TypedRequestParams<typeof MoveCardSchema>,
-    res: Response,
-    next: NextFunction
-  ) => {
-    const column = await prisma.column.findFirst({
-      where: { id: params.newColumnId },
-      select: { id: true, boardId: true, board: { select: { userId: true } } }
-    })
-
-    if (!column) return next(NotFound('Column not found'))
-
-    const newOrder = await this.getNewCardOrder(column.id)
-
-    const updatedCard = await prisma.card.updateIgnoreNotFound({
-      where: { id: params.cardId },
-      data: { columnId: column.id, order: newOrder }
-    })
-
-    if (!updatedCard) return next(NotFound('Card not found'))
-
-    await redis.del(`board:${column.boardId}:user:${column.board.userId}`)
-
-    res.json(updatedCard)
   }
 
   deleteById = async (
@@ -139,16 +119,12 @@ class CardController {
   ) => {
     const deletedCard = await prisma.card.deleteIgnoreNotFound({
       where: { id: params.cardId },
-      select: {
-        column: {
-          select: { boardId: true, board: { select: { userId: true } } }
-        }
-      }
+      include: { column: { include: { board: { select: { userId: true } } } } }
     })
 
     if (!deletedCard) return next(NotFound('Card not found'))
 
-    await redis.del(
+    await redisClient.del(
       `board:${deletedCard.column.boardId}:user:${deletedCard.column.board.userId}`
     )
 

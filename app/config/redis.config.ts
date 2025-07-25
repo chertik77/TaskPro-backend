@@ -2,7 +2,7 @@ import Redis from 'ioredis'
 
 import { env } from './env.config'
 
-export const redis = new Redis({
+export const redisClient = new Redis({
   username: env.REDIS_USERNAME,
   password: env.REDIS_PASSWORD,
   host: env.REDIS_HOST,

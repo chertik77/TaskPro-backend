@@ -7,7 +7,6 @@ export {
   AddCardSchema,
   EditCardSchema,
   CardParamsSchema,
-  MoveCardSchema,
   UpdateCardOrderSchema
 } from './card.schema'
 export {

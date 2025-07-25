@@ -14,21 +14,21 @@ import type {
 import { prisma } from '@/prisma'
 import { NotFound } from 'http-errors'
 
-import { redis } from '@/config'
+import { redisClient } from '@/config'
 import boardImages from '@/data/board-bg-images.json'
 
 class BoardController {
   getAll = async ({ user }: Request, res: Response) => {
     const cacheKey = `boards:user:${user.id}:all`
 
-    const cachedBoards = await redis.get(cacheKey)
+    const cachedBoards = await redisClient.get(cacheKey)
 
     if (cachedBoards) {
       res.json(JSON.parse(cachedBoards))
     } else {
       const boards = await prisma.board.findMany({ where: { userId: user.id } })
 
-      await redis.set(cacheKey, JSON.stringify(boards))
+      await redisClient.set(cacheKey, JSON.stringify(boards))
 
       res.json(boards)
     }
@@ -41,7 +41,7 @@ class BoardController {
   ) => {
     const cacheKey = `board:${params.boardId}:user:${user.id}`
 
-    const cachedBoard = await redis.get(cacheKey)
+    const cachedBoard = await redisClient.get(cacheKey)
 
     if (cachedBoard) {
       res.json(JSON.parse(cachedBoard))
@@ -58,7 +58,7 @@ class BoardController {
 
       if (!board) return next(NotFound('Board not found'))
 
-      await redis.set(cacheKey, JSON.stringify(board))
+      await redisClient.set(cacheKey, JSON.stringify(board))
 
       res.json(board)
     }
@@ -76,7 +76,7 @@ class BoardController {
       }
     })
 
-    await redis.del(`boards:user:${user.id}:all`)
+    await redisClient.del(`boards:user:${user.id}:all`)
 
     res.json(newBoard)
   }
@@ -100,8 +100,8 @@ class BoardController {
 
     if (!updatedBoard) return next(NotFound('Board not found'))
 
-    await redis.del(`board:${updatedBoard.id}:user:${user.id}`)
-    await redis.del(`boards:user:${user.id}:all`)
+    await redisClient.del(`board:${updatedBoard.id}:user:${user.id}`)
+    await redisClient.del(`boards:user:${user.id}:all`)
 
     res.json(updatedBoard)
   }
@@ -117,8 +117,8 @@ class BoardController {
 
     if (!deletedBoard) return next(NotFound('Board not found'))
 
-    await redis.del(`board:${deletedBoard.id}:user:${user.id}`)
-    await redis.del(`boards:user:${user.id}:all`)
+    await redisClient.del(`board:${deletedBoard.id}:user:${user.id}`)
+    await redisClient.del(`boards:user:${user.id}:all`)
 
     res.sendStatus(204)
   }

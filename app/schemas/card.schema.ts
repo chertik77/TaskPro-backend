@@ -9,15 +9,12 @@ export const AddCardSchema = z.object({
   priority: z.nativeEnum(Priority, {
     message: 'Priority must be one of the following: Without, Low, Medium, High'
   }),
-  deadline: z.coerce.date({ message: 'Invalid date format.' })
+  deadline: z.coerce.date({ message: 'Deadline must be a valid date' })
 })
 
-export const EditCardSchema = AddCardSchema.partial()
-
-export const MoveCardSchema = z.object({
-  cardId: objectIdSchema(),
-  newColumnId: objectIdSchema()
-})
+export const EditCardSchema = AddCardSchema.extend({
+  columnId: objectIdSchema()
+}).partial()
 
 export const CardParamsSchema = z.object({ cardId: objectIdSchema() })
 

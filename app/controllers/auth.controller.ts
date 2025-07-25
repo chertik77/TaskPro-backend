@@ -16,7 +16,7 @@ import { Conflict, Forbidden, Unauthorized } from 'http-errors'
 import { jwtVerify, SignJWT } from 'jose'
 import { JWTExpired } from 'jose/errors'
 
-import { env, redis } from '@/config'
+import { env, redisClient } from '@/config'
 
 const {
   ACCESS_JWT_EXPIRES_IN,
@@ -96,7 +96,7 @@ class AuthController {
   getGoogleRedirectUrl = async (_: Request, res: Response) => {
     const state = crypto.randomBytes(32).toString('hex')
 
-    await redis.set(`oauth_state:${state}`, 'true', 'EX', 5 * 60)
+    await redisClient.set(`oauth_state:${state}`, 'true', 'EX', 5 * 60)
 
     const url = this.googleClient.generateAuthUrl({
       state,
@@ -116,10 +116,10 @@ class AuthController {
 
     const redisStateKey = `oauth_state:${receivedState}`
 
-    const storedState = await redis.get(redisStateKey)
+    const storedState = await redisClient.get(redisStateKey)
 
     if (storedState) {
-      await redis.del(redisStateKey)
+      await redisClient.del(redisStateKey)
     }
 
     const { tokens } = await this.googleClient.getToken(code)

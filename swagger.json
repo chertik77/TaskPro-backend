@@ -651,38 +651,6 @@
         }
       }
     },
-    "/card/{cardId}/{newColumnId}": {
-      "post": {
-        "tags": ["Card"],
-        "summary": "Move card to another column",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "cardId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
-            }
-          },
-          {
-            "in": "path",
-            "name": "newColumnId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
-            }
-          }
-        ],
-        "security": [{ "Bearer": [] }],
-        "responses": {
-          "200": { "$ref": "#/components/responses/CardResponse" },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "404": { "$ref": "#/components/responses/NotFound" }
-        }
-      }
-    },
     "/card/{columnId}/order": {
       "patch": {
         "tags": ["Card"],

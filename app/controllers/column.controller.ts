@@ -12,7 +12,7 @@ import type { TypedRequest, TypedRequestParams } from 'zod-express-middleware'
 import { prisma } from '@/prisma'
 import { BadRequest, NotFound } from 'http-errors'
 
-import { redis } from '@/config'
+import { redisClient } from '@/config'
 
 class ColumnController {
   add = async (
@@ -42,7 +42,7 @@ class ColumnController {
       data: { ...body, order: newOrder, boardId: board.id }
     })
 
-    await redis.del(`board:${params.boardId}:user:${user.id}`)
+    await redisClient.del(`board:${params.boardId}:user:${user.id}`)
 
     res.json(column)
   }
@@ -61,17 +61,17 @@ class ColumnController {
   ) => {
     const updatedColumn = await prisma.column.updateIgnoreNotFound({
       where: { id: params.columnId },
-      select: { boardId: true, board: { select: { userId: true } } },
+      include: { cards: true, board: { select: { userId: true } } },
       data: body
     })
 
     if (!updatedColumn) return next(NotFound('Column not found'))
 
-    await redis.del(
-      `board:${updatedColumn.boardId}:user:${updatedColumn.board.userId}`
-    )
+    const { board, ...column } = updatedColumn
 
-    res.json(updatedColumn)
+    await redisClient.del(`board:${updatedColumn.boardId}:user:${board.userId}`)
+
+    res.json(column)
   }
 
   updateOrder = async (
@@ -102,7 +102,7 @@ class ColumnController {
     try {
       const updatedColumns = await prisma.$transaction(transaction)
 
-      await redis.del(`board:${board.id}:user:${board.userId}`)
+      await redisClient.del(`board:${board.id}:user:${board.userId}`)
 
       res.json(updatedColumns)
     } catch {
@@ -122,7 +122,7 @@ class ColumnController {
 
     if (!deletedColumn) return next(NotFound('Column not found'))
 
-    await redis.del(
+    await redisClient.del(
       `board:${deletedColumn.boardId}:user:${deletedColumn.board.userId}`
     )
 

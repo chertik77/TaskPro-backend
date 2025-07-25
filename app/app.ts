@@ -11,7 +11,7 @@ export const app = express()
 
 app.use(helmet())
 app.use(cors({ origin: env.ALLOWED_ORIGINS }))
-app.use(logger(env.NODE_ENV === 'development' ? 'dev' : 'combined'))
+app.use(logger(app.get('env') === 'development' ? 'dev' : 'combined'))
 app.use(express.json())
 
 app.use(env.API_PREFIX, apiRouter)

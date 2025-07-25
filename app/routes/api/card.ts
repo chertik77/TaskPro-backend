@@ -10,7 +10,6 @@ import {
   CardParamsSchema,
   ColumnParamsSchema,
   EditCardSchema,
-  MoveCardSchema,
   UpdateCardOrderSchema
 } from '@/schemas'
 
@@ -22,12 +21,6 @@ cardRouter.post(
   '/:columnId',
   validateRequest({ body: AddCardSchema, params: ColumnParamsSchema }),
   cardController.add
-)
-
-cardRouter.post(
-  '/:cardId/:newColumnId',
-  validateRequest({ params: MoveCardSchema }),
-  cardController.move
 )
 
 cardRouter.patch(

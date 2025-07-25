@@ -26,7 +26,6 @@ const envSchema = z.object({
     z.coerce.number().int().positive()
   ),
   API_PREFIX: z.string(),
-  NODE_ENV: z.enum(['development', 'production']),
   ALLOWED_ORIGINS: z
     .string()
     .transform(v => v.split(','))
