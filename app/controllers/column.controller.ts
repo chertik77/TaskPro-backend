@@ -61,7 +61,7 @@ class ColumnController {
   ) => {
     const updatedColumn = await prisma.column.updateIgnoreNotFound({
       where: { id: params.columnId },
-      include: { cards: true, board: { select: { userId: true } } },
+      include: { board: { select: { userId: true } } },
       data: body
     })
 
@@ -117,7 +117,7 @@ class ColumnController {
   ) => {
     const deletedColumn = await prisma.column.deleteIgnoreNotFound({
       where: { id: params.columnId },
-      select: { boardId: true, board: { select: { userId: true } } }
+      include: { board: { select: { userId: true } } }
     })
 
     if (!deletedColumn) return next(NotFound('Column not found'))
