@@ -17,5 +17,6 @@ export const RefreshTokenSchema = z.object({
 })
 
 export const GoogleCodeSchema = z.object({
-  code: z.string().min(1, 'Code is required')
+  code: z.string().min(1, 'Code is required'),
+  state: z.string().min(1, 'State is required')
 })

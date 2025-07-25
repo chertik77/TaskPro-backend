@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import type {
   GoogleCodeSchema,
   RefreshTokenSchema,
@@ -15,7 +16,7 @@ import { Conflict, Forbidden, Unauthorized } from 'http-errors'
 import { jwtVerify, SignJWT } from 'jose'
 import { JWTExpired } from 'jose/errors'
 
-import { env } from '@/config'
+import { env, redis } from '@/config'
 
 const {
   ACCESS_JWT_EXPIRES_IN,
@@ -93,7 +94,12 @@ class AuthController {
   }
 
   getGoogleRedirectUrl = async (_: Request, res: Response) => {
+    const state = crypto.randomBytes(32).toString('hex')
+
+    await redis.set(`oauth_state:${state}`, 'true', 'EX', 5 * 60)
+
     const url = this.googleClient.generateAuthUrl({
+      state,
       access_type: 'offline',
       scope: ['profile', 'email']
     })
@@ -106,7 +112,17 @@ class AuthController {
     res: Response,
     next: NextFunction
   ) => {
-    const { tokens } = await this.googleClient.getToken(req.body.code)
+    const { code, state: receivedState } = req.body
+
+    const redisStateKey = `oauth_state:${receivedState}`
+
+    const storedState = await redis.get(redisStateKey)
+
+    if (storedState) {
+      await redis.del(redisStateKey)
+    }
+
+    const { tokens } = await this.googleClient.getToken(code)
 
     if (!tokens.id_token) return next(Forbidden())
 
