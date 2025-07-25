@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import helmet from 'helmet'
 import logger from 'morgan'
 
 import { env } from './config'
@@ -8,10 +9,10 @@ import { apiRouter } from './routes'
 
 export const app = express()
 
-app.use(logger(env.NODE_ENV === 'development' ? 'dev' : 'combined'))
+app.use(helmet())
 app.use(cors({ origin: env.ALLOWED_ORIGINS }))
+app.use(logger(env.NODE_ENV === 'development' ? 'dev' : 'combined'))
 app.use(express.json())
-app.disable('x-powered-by')
 
 app.use(env.API_PREFIX, apiRouter)
 
