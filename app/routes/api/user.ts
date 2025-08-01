@@ -1,9 +1,8 @@
 import { Router } from 'express'
-import { validateRequest } from 'zod-express-middleware'
 
 import { userController } from '@/controllers'
 
-import { authenticate, upload } from '@/middlewares'
+import { authenticate, upload, validateRequest } from '@/middlewares'
 
 import { EditUserSchema, NeedHelpSchema } from '@/schemas'
 
