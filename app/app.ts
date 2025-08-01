@@ -12,7 +12,6 @@ export const app = express()
 
 app.use(helmet())
 app.use(cors({ origin: env.ALLOWED_ORIGINS, credentials: true }))
-// app.use(globalLimiter)
 app.use(logger(env.NODE_ENV === 'development' ? 'dev' : 'combined'))
 app.use(cookieParser())
 app.use(express.json())
