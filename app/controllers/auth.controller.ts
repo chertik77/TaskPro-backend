@@ -10,7 +10,7 @@ import { Conflict, Forbidden, Unauthorized } from 'http-errors'
 import { jwtVerify, SignJWT } from 'jose'
 import { JWTExpired } from 'jose/errors'
 
-import { env, redisClient } from '@/config'
+import { defaultUserAvatars, env, redisClient } from '@/config'
 
 const {
   ACCESS_JWT_EXPIRES_IN,
@@ -120,12 +120,14 @@ class AuthController {
   ) => {
     const { code, state: receivedState } = req.query
 
-    const redisStateKey = `oauth_state:${receivedState}`
+    if (receivedState) {
+      const redisStateKey = `oauth_state:${receivedState}`
 
-    const storedState = await redisClient.get(redisStateKey)
+      const storedState = await redisClient.get(redisStateKey)
 
-    if (storedState) {
-      await redisClient.del(redisStateKey)
+      if (storedState) {
+        await redisClient.del(redisStateKey)
+      }
     }
 
     const { tokens } = await this.googleClient.getToken(code)
@@ -133,25 +135,24 @@ class AuthController {
     if (!tokens.id_token) return next(Forbidden())
 
     const ticket = await this.googleClient.verifyIdToken({
-      idToken: tokens.id_token,
-      audience: GOOGLE_CLIENT_ID
+      idToken: tokens.id_token
     })
 
     const payload = ticket.getPayload()
 
-    if (!payload || !payload.email || !payload.name || !payload.picture) {
-      return next(Forbidden('Invalid token'))
-    }
+    if (!payload || !payload.email) return next(Forbidden('Invalid token'))
 
-    const { name, email, picture } = payload
+    const {
+      email,
+      name = 'Guest',
+      picture = defaultUserAvatars.light
+    } = payload
 
-    const user = await prisma.user.findUnique({
-      where: { email }
-    })
+    const user = await prisma.user.findUnique({ where: { email } })
 
     if (!user) {
       const user = await prisma.user.create({
-        data: { name, email, avatar: picture }
+        data: { email, name, avatar: picture }
       })
 
       const newSession = await prisma.session.create({

@@ -15,5 +15,5 @@ export const SignupSchema = z.object({
 
 export const GoogleCodeSchema = z.object({
   code: z.string().min(1, 'Code is required'),
-  state: z.string().min(1, 'State is required')
+  state: z.optional(z.string())
 })
