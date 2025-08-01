@@ -4,6 +4,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { prisma } from '@/prisma'
 import { Unauthorized } from 'http-errors'
 import { jwtVerify } from 'jose'
+import { JWTExpired } from 'jose/errors'
 
 import { env } from '@/config'
 
@@ -12,10 +13,9 @@ export const authenticate = async (
   _: Response,
   next: NextFunction
 ) => {
-  const { authorization = '' } = req.headers
-  const [bearer, token] = authorization.split(' ')
+  const token: string = req.cookies.accessToken
 
-  if (bearer !== 'Bearer') return next(Unauthorized())
+  if (!token) return next(Unauthorized())
 
   try {
     const {
@@ -35,7 +35,9 @@ export const authenticate = async (
     req.session = session.id
 
     next()
-  } catch {
+  } catch (e) {
+    if (e instanceof JWTExpired) return next(Unauthorized(e.code))
+
     return next(Unauthorized())
   }
 }

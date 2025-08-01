@@ -1,13 +1,11 @@
 import crypto from 'crypto'
-import type {
-  GoogleCodeSchema,
-  RefreshTokenSchema,
-  SigninSchema,
-  SignupSchema
-} from '@/schemas'
+import type { GoogleCodeSchema, SigninSchema, SignupSchema } from '@/schemas'
 import type { JwtPayload } from '@/types'
 import type { NextFunction, Request, Response } from 'express'
-import type { TypedRequestBody } from 'zod-express-middleware'
+import type {
+  TypedRequestBody,
+  TypedRequestQuery
+} from 'zod-express-middleware'
 
 import { prisma } from '@/prisma'
 import { hash, verify } from 'argon2'
@@ -27,15 +25,23 @@ const {
   REFRESH_JWT_ALGORITHM,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-  GOOGLE_REDIRECT_URI
+  GOOGLE_REDIRECT_URI,
+  FRONTEND_URL,
+  COOKIE_HTTP_ONLY,
+  COOKIE_DOMAIN,
+  COOKIE_SECURE,
+  COOKIE_SAME_SITE
 } = env
 
 class AuthController {
-  googleClient = new OAuth2Client(
+  private googleClient = new OAuth2Client(
     GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET,
     GOOGLE_REDIRECT_URI
   )
+
+  private readonly ACCESS_TOKEN_NAME = 'accessToken'
+  private readonly REFRESH_TOKEN_NAME = 'refreshToken'
 
   signup = async (
     { body }: TypedRequestBody<typeof SignupSchema>,
@@ -61,7 +67,9 @@ class AuthController {
 
     const tokens = await this.getNewTokens({ id: user.id, sid: newSession.id })
 
-    res.json({ user, ...tokens })
+    this.setTokensCookie(res, tokens)
+
+    res.json({ user })
   }
 
   signin = async (
@@ -90,10 +98,12 @@ class AuthController {
 
     const tokens = await this.getNewTokens({ id: user.id, sid: newSession.id })
 
-    res.json({ user: userWithoutPassword, ...tokens })
+    this.setTokensCookie(res, tokens)
+
+    res.json({ user: userWithoutPassword })
   }
 
-  getGoogleRedirectUrl = async (_: Request, res: Response) => {
+  googleRedirect = async (_: Request, res: Response) => {
     const state = crypto.randomBytes(32).toString('hex')
 
     await redisClient.set(`oauth_state:${state}`, 'true', 'EX', 5 * 60)
@@ -104,15 +114,15 @@ class AuthController {
       scope: ['profile', 'email']
     })
 
-    res.json({ redirectUrl: url })
+    res.redirect(url)
   }
 
   googleCallback = async (
-    req: TypedRequestBody<typeof GoogleCodeSchema>,
+    req: TypedRequestQuery<typeof GoogleCodeSchema>,
     res: Response,
     next: NextFunction
   ) => {
-    const { code, state: receivedState } = req.body
+    const { code, state: receivedState } = req.query
 
     const redisStateKey = `oauth_state:${receivedState}`
 
@@ -157,7 +167,9 @@ class AuthController {
         sid: newSession.id
       })
 
-      res.json({ user, ...tokens })
+      this.setTokensCookie(res, tokens)
+
+      res.redirect(FRONTEND_URL)
     } else {
       const newSession = await prisma.session.create({
         data: { userId: user.id }
@@ -168,19 +180,21 @@ class AuthController {
         sid: newSession.id
       })
 
-      res.json({ user, ...tokens })
+      this.setTokensCookie(res, tokens)
+
+      res.redirect(FRONTEND_URL)
     }
   }
 
-  refresh = async (
-    { body }: TypedRequestBody<typeof RefreshTokenSchema>,
-    res: Response,
-    next: NextFunction
-  ) => {
+  refresh = async (req: Request, res: Response, next: NextFunction) => {
+    const refreshToken = req.cookies.refreshToken
+
+    if (!refreshToken) return next(Forbidden())
+
     try {
       const {
         payload: { id, sid }
-      } = await jwtVerify<JwtPayload>(body.refreshToken, REFRESH_JWT_SECRET)
+      } = await jwtVerify<JwtPayload>(refreshToken, REFRESH_JWT_SECRET)
 
       const user = await prisma.user.findFirst({ where: { id } })
 
@@ -208,8 +222,9 @@ class AuthController {
     }
   }
 
-  logout = async ({ session }: Request, res: Response) => {
-    await prisma.session.delete({ where: { id: session } })
+  logout = async (_: Request, res: Response) => {
+    res.clearCookie(this.ACCESS_TOKEN_NAME)
+    res.clearCookie(this.REFRESH_TOKEN_NAME)
 
     res.sendStatus(204)
   }
@@ -226,6 +241,25 @@ class AuthController {
       .sign(REFRESH_JWT_SECRET)
 
     return { accessToken, refreshToken }
+  }
+
+  private setTokensCookie = (
+    res: Response,
+    tokens: { accessToken: string; refreshToken: string }
+  ) => {
+    res.cookie(this.ACCESS_TOKEN_NAME, tokens.accessToken, {
+      httpOnly: COOKIE_HTTP_ONLY,
+      secure: COOKIE_SECURE,
+      sameSite: COOKIE_SAME_SITE,
+      domain: COOKIE_DOMAIN
+    })
+
+    res.cookie(this.REFRESH_TOKEN_NAME, tokens.refreshToken, {
+      httpOnly: COOKIE_HTTP_ONLY,
+      secure: COOKIE_SECURE,
+      sameSite: COOKIE_SAME_SITE,
+      domain: COOKIE_DOMAIN
+    })
   }
 }
 

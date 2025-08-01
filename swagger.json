@@ -132,24 +132,7 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Get new access and refresh tokens",
-        "security": [{ "Bearer": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["refreshToken"],
-                "properties": {
-                  "refreshToken": {
-                    "type": "string",
-                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
-                  }
-                }
-              }
-            }
-          }
-        },
+        "security": [{ "CookieAuth": [] }],
         "responses": {
           "200": { "$ref": "#/components/responses/RefreshResponse" },
           "400": { "$ref": "#/components/responses/BadRequestError" },
@@ -162,7 +145,7 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Logout a user",
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "responses": {
           "204": { "description": "The user was logged out successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" }
@@ -173,7 +156,7 @@
       "get": {
         "tags": ["User"],
         "summary": "Get current user",
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "responses": {
           "200": { "$ref": "#/components/responses/UserResponse" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
@@ -184,7 +167,7 @@
       "post": {
         "tags": ["User"],
         "summary": "Send email need help",
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -232,7 +215,7 @@
       "patch": {
         "tags": ["User"],
         "summary": "Edit user profile",
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -286,7 +269,7 @@
       "get": {
         "tags": ["Board"],
         "summary": "Get all boards",
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "responses": {
           "200": { "$ref": "#/components/responses/AllBoardsResponse" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
@@ -295,7 +278,7 @@
       "post": {
         "tags": ["Board"],
         "summary": "Add new board",
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -354,7 +337,7 @@
             }
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "responses": {
           "200": { "$ref": "#/components/responses/BoardByIdResponse" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -375,7 +358,7 @@
             }
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -432,7 +415,7 @@
             }
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -455,7 +438,7 @@
             }
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -497,7 +480,7 @@
             }
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -548,7 +531,7 @@
             }
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -587,7 +570,7 @@
             }
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -610,7 +593,7 @@
             }
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -666,7 +649,7 @@
             }
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -714,7 +697,7 @@
             }
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -767,7 +750,7 @@
             }
           }
         ],
-        "security": [{ "Bearer": [] }],
+        "security": [{ "CookieAuth": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -812,16 +795,9 @@
       "AuthResponseSchema": {
         "type": "object",
         "properties": {
-          "user": { "$ref": "#/components/schemas/User" },
-          "accessToken": {
-            "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NDcyMzcxOWI0N2ZkMDhlNmEyZDUxNyIsInNpZCI6IjY3NDcyMzcyOWI0N2ZkMDhlNmEyZDUxOCIsImlhdCI6MTczMjcxNTM3OCwiZXhwIjoxNzMyNzE4OTc4fQ.ZCaaWh4rc4AHzTSljDbc7mq5gbHvjMx54y6LoJsXX-4"
-          },
-          "refreshToken": {
-            "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NDcyMzcxOWI0N2ZkMDhlNmEyZDUxNyIsInNpZCI6IjY3NDcyMzcyOWI0N2ZkMDhlNmEyZDUxOCIsImlhdCI6MTczMjcxNTM3OCwiZXhwIjoxNzMzMzIwMTc4fQ.y17k3eWBJ4WeqNZeuguOh_5UQDiyaCPYFmn_Ir-Ftog"
-          }
-        }
+          "user": { "$ref": "#/components/schemas/User" }
+        },
+        "description": "User object returned upon successful authentication. Access and refresh tokens are set as HTTP-only cookies. In production, they are also secure cookies."
       },
       "BoardBackground": {
         "type": "object",
@@ -1009,6 +985,14 @@
           "application/json": {
             "schema": { "$ref": "#/components/schemas/AuthResponseSchema" }
           }
+        },
+        "headers": {
+          "Set-Cookie": {
+            "schema": {
+              "type": "string",
+              "example": "accessToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure=true (only in production), refreshToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure=true (only in production)"
+            }
+          }
         }
       },
       "GoogleInitiateResponse": {
@@ -1055,6 +1039,14 @@
               ]
             }
           }
+        },
+        "headers": {
+          "Set-Cookie": {
+            "schema": {
+              "type": "string",
+              "example": "accessToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure=true (only in production), refreshToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure=true (only in production)"
+            }
+          }
         }
       },
       "RefreshResponse": {
@@ -1063,15 +1055,19 @@
             "schema": {
               "type": "object",
               "properties": {
-                "acesssToken": {
+                "message": {
                   "type": "string",
-                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE4NzE2MzQwfQ.hwdlZg0fft0PjwN63qwfjFTg1ZeyOOukFdZVbF0VOUU"
-                },
-                "refreshToken": {
-                  "type": "string",
-                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzE3NDNkYjg1Yzk2NDUzZTA0YTY4NCIsInNpZCI6IjY2NzE3OWE0YTgxZmI1MjIzOTg0NmY2MSIsImlhdCI6MTcxODcxMjc0MCwiZXhwIjoxNzE5MzE3NTQwfQ.B8htZY5kU0kvX2UYsEN0u7ZUPVxTKfCs5ASAocTc-P4"
+                  "example": "Tokens refreshed successfully"
                 }
               }
+            }
+          }
+        },
+        "headers": {
+          "Set-Cookie": {
+            "schema": {
+              "type": "string",
+              "example": "accessToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure=true (only in production), refreshToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure=true (only in production)"
             }
           }
         }
@@ -1233,7 +1229,12 @@
       }
     },
     "securitySchemes": {
-      "Bearer": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+      "CookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "accessToken",
+        "description": "Access token is sent as an HTTP-only cookie. In production, it is also a secure cookie."
+      }
     }
   }
 }
