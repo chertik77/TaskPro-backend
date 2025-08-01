@@ -99,7 +99,7 @@ class AuthController {
     res.json({ user: userWithoutPassword })
   }
 
-  googleRedirect = async (_: Request, res: Response) => {
+  googleInitiate = async (_: Request, res: Response) => {
     const state = crypto.randomBytes(32).toString('hex')
 
     await redisClient.set(`oauth_state:${state}`, 'true', 'EX', 5 * 60)
@@ -110,7 +110,7 @@ class AuthController {
       scope: ['profile', 'email']
     })
 
-    res.redirect(url)
+    res.json({ redirectUrl: url })
   }
 
   googleCallback = async (
