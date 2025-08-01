@@ -87,40 +87,53 @@
         }
       }
     },
-    "/auth/google/initiate": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Get redirect url for Google authentication",
-        "responses": {
-          "200": { "$ref": "#/components/responses/GoogleInitiateResponse" }
-        }
-      }
-    },
-    "/auth/google/callback": {
+    "/auth/google/redirect": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Handle Google OAuth callback and sign-in/sign-up",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["code", "state"],
-                "properties": {
-                  "code": {
-                    "type": "string",
-                    "example": "4/0AT5xKif_S_..."
-                  },
-                  "state": {
-                    "type": "string",
-                    "example": "1d73efc8d4f8d426a3e51f6337ee7cb7"
-                  }
+        "summary": "Redirects the user to the Google consent screen",
+        "responses": {
+          "302": {
+            "description": "Redirects to Google's authentication URL.",
+            "headers": {
+              "Location": {
+                "description": "The URL to which the client should be redirected for Google authentication.",
+                "schema": {
+                  "type": "string",
+                  "format": "uri",
+                  "example": "https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=profile%20email&response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI"
                 }
               }
             }
           }
-        },
+        }
+      }
+    },
+    "/auth/google/callback": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Receives the authorization code from Google's redirect",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "description": "The authorization code provided by Google.",
+            "schema": {
+              "type": "string",
+              "example": "4/0AT5xKif_S_..."
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "description": "An opaque value used to maintain state between the request and callback.",
+            "schema": {
+              "type": "string",
+              "example": "4552c8890bb4d9d44e971653..."
+            }
+          }
+        ],
         "responses": {
           "200": { "$ref": "#/components/responses/GoogleResponse" },
           "400": { "$ref": "#/components/responses/BadRequestError" },
@@ -991,22 +1004,6 @@
             "schema": {
               "type": "string",
               "example": "accessToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure=true (only in production), refreshToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure=true (only in production)"
-            }
-          }
-        }
-      },
-      "GoogleInitiateResponse": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "redirectUrl": {
-                  "type": "string",
-                  "format": "url",
-                  "example": "https://accounts.google.com/o/oauth2/v2/auth?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code&scope=email%20profile&access_type=offline"
-                }
-              }
             }
           }
         }
