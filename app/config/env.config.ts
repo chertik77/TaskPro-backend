@@ -8,44 +8,37 @@ const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
   CLOUDINARY_CLOUD_NAME: z.string(),
-  DATABASE_URL: z.string().url(),
-  FRONTEND_URL: z.string().url(),
+  DATABASE_URL: z.url(),
+  FRONTEND_URL: z.url(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
-  GOOGLE_REDIRECT_URI: z.string().url(),
+  GOOGLE_REDIRECT_URI: z.url(),
   REDIS_USERNAME: z.string(),
   REDIS_PASSWORD: z.string(),
   REDIS_HOST: z.string(),
-  REDIS_PORT: z.preprocess(
-    v => (v ? v : undefined),
-    z.coerce.number().int().positive()
-  ),
+  REDIS_PORT: z.coerce.number().int().positive().min(1000).max(65535),
   NODE_ENV: z.enum(['development', 'production']),
-  COOKIE_HTTP_ONLY: z
-    .enum(['true', 'false'])
-    .transform(value => value === 'true'),
-  COOKIE_SECURE: z.enum(['true', 'false']).transform(value => value === 'true'),
+  COOKIE_HTTP_ONLY: z.stringbool(),
+  COOKIE_SECURE: z.stringbool(),
   COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']),
   COOKIE_DOMAIN: z.string(),
   ACCESS_JWT_SECRET: z.string().transform(v => new TextEncoder().encode(v)),
   REFRESH_JWT_SECRET: z.string().transform(v => new TextEncoder().encode(v)),
-  PORT: z.preprocess(
-    v => (v ? v : undefined),
-    z.coerce.number().int().positive()
-  ),
+  PORT: z.coerce.number().int().positive().min(1000).max(65535),
   API_PREFIX: z.string(),
   ALLOWED_ORIGINS: z
     .string()
     .transform(v => v.split(','))
-    .pipe(z.array(z.string().url())),
+    .pipe(z.array(z.url())),
   EMAIL_HOST: z.string(),
-  EMAIL_PORT: z
-    .number({ coerce: true })
-    .refine(v => availableEmailPorts.includes(v), {
-      message: `Email port must be one of the following: ${availableEmailPorts.join(', ')}`
-    }),
-  EMAIL_USER: z.string().email(),
-  EMAIL_RECEIVER: z.string().email(),
+  EMAIL_PORT: z.coerce
+    .number()
+    .refine(
+      v => availableEmailPorts.includes(v),
+      `Email port must be one of the following: ${availableEmailPorts.join(', ')}`
+    ),
+  EMAIL_USER: z.email(),
+  EMAIL_RECEIVER: z.email(),
   EMAIL_PASSWORD: z.string(),
   ACCESS_JWT_EXPIRES_IN: z.string(),
   REFRESH_JWT_EXPIRES_IN: z.string(),

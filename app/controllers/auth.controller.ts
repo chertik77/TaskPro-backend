@@ -1,11 +1,7 @@
 import crypto from 'crypto'
 import type { GoogleCodeSchema, SigninSchema, SignupSchema } from '@/schemas'
-import type { JwtPayload } from '@/types'
+import type { JwtPayload, TypedRequestBody, TypedRequestQuery } from '@/types'
 import type { NextFunction, Request, Response } from 'express'
-import type {
-  TypedRequestBody,
-  TypedRequestQuery
-} from 'zod-express-middleware'
 
 import { prisma } from '@/prisma'
 import { hash, verify } from 'argon2'

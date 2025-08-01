@@ -1,4 +1,5 @@
 export { authenticate } from './authenticate'
 export { upload } from './multer'
 export { globalLimiter } from './limiter'
+export { validateRequest } from './validate-request'
 export { notFoundHandler, globalErrorHandler } from './errorHandler'

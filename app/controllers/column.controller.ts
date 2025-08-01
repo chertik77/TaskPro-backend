@@ -5,9 +5,9 @@ import type {
   EditColumnSchema,
   UpdateColumnOrderSchema
 } from '@/schemas'
+import type { TypedRequest, TypedRequestParams } from '@/types'
 import type { NextFunction, Response } from 'express'
 import type { ZodType } from 'zod'
-import type { TypedRequest, TypedRequestParams } from 'zod-express-middleware'
 
 import { prisma } from '@/prisma'
 import { BadRequest, NotFound } from 'http-errors'

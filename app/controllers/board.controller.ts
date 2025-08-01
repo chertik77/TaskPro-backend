@@ -3,13 +3,13 @@ import type {
   BoardParamsSchema,
   EditBoardSchema
 } from '@/schemas'
-import type { NextFunction, Request, Response } from 'express'
-import type { ZodType } from 'zod'
 import type {
   TypedRequest,
   TypedRequestBody,
   TypedRequestParams
-} from 'zod-express-middleware'
+} from '@/types'
+import type { NextFunction, Request, Response } from 'express'
+import type { ZodType } from 'zod'
 
 import { prisma } from '@/prisma'
 import { NotFound } from 'http-errors'
