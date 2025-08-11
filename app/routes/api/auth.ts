@@ -1,9 +1,8 @@
 import { Router } from 'express'
-import { validateRequest } from 'zod-express-middleware'
 
 import { authController } from '@/controllers'
 
-import { authenticate } from '@/middlewares'
+import { authenticate, validateRequest } from '@/middlewares'
 
 import {
   GoogleCodeSchema,

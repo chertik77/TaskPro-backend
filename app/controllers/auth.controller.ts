@@ -5,9 +5,8 @@ import type {
   SigninSchema,
   SignupSchema
 } from '@/schemas'
-import type { JwtPayload } from '@/types'
+import type { JwtPayload, TypedRequestBody } from '@/types'
 import type { NextFunction, Request, Response } from 'express'
-import type { TypedRequestBody } from 'zod-express-middleware'
 
 import { prisma } from '@/prisma'
 import { hash, verify } from 'argon2'
@@ -16,7 +15,7 @@ import { Conflict, Forbidden, Unauthorized } from 'http-errors'
 import { jwtVerify, SignJWT } from 'jose'
 import { JWTExpired } from 'jose/errors'
 
-import { env, redisClient } from '@/config'
+import { defaultUserAvatars, env, redisClient } from '@/config'
 
 const {
   ACCESS_JWT_EXPIRES_IN,
@@ -31,7 +30,7 @@ const {
 } = env
 
 class AuthController {
-  googleClient = new OAuth2Client(
+  private googleClient = new OAuth2Client(
     GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET,
     GOOGLE_REDIRECT_URI
@@ -133,11 +132,15 @@ class AuthController {
 
     const payload = ticket.getPayload()
 
-    if (!payload || !payload.email || !payload.name || !payload.picture) {
+    if (!payload || !payload.email) {
       return next(Forbidden('Invalid token'))
     }
 
-    const { name, email, picture } = payload
+    const {
+      email,
+      name = 'Guest',
+      picture = defaultUserAvatars.light
+    } = payload
 
     const user = await prisma.user.findUnique({
       where: { email }

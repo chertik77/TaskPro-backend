@@ -5,18 +5,18 @@ import boardImages from '@/data/board-bg-images.json'
 
 import { objectIdSchema } from './object-id.schema'
 
-function zodEnumFromObjKeys<K extends string>(
-  obj: Record<K, unknown>
-): z.ZodEnum<[K, ...K[]]> {
-  const [firstKey, ...otherKeys] = Object.keys(obj) as K[]
+const zObjectKeys = <T extends Record<string, unknown>>(obj: T) => {
+  const keys = Object.keys(obj) as Extract<keyof T, string>[]
 
-  return z.enum([firstKey, ...otherKeys])
+  return z.enum(
+    keys as [Extract<keyof T, string>, ...Extract<keyof T, string>[]]
+  )
 }
 
 export const AddBoardSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
-  icon: z.nativeEnum(Icon),
-  background: zodEnumFromObjKeys(boardImages)
+  icon: z.enum(Icon),
+  background: zObjectKeys(boardImages)
 })
 
 export const EditBoardSchema = AddBoardSchema.partial()
