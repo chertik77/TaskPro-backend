@@ -2,12 +2,15 @@ import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import logger from 'morgan'
+import * as z from 'zod'
 
-import { env } from './config'
+import { env, zodConfig } from './config'
 import { globalErrorHandler, notFoundHandler } from './middlewares'
 import { apiRouter } from './routes'
 
 export const app = express()
+
+z.config(zodConfig)
 
 app.use(helmet())
 app.use(cors({ origin: env.ALLOWED_ORIGINS }))

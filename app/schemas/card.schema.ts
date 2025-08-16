@@ -4,13 +4,10 @@ import * as z from 'zod'
 import { objectIdSchema } from './object-id.schema'
 
 export const AddCardSchema = z.object({
-  title: z.string().min(3, 'Title must be at least 3 characters'),
-  description: z.string().min(3, 'Description must be at least 3 characters'),
-  priority: z.enum(
-    Priority,
-    `Priority must be one of the following: ${Object.values(Priority).join(',')}`
-  ),
-  deadline: z.iso.datetime('Deadline must be a valid datetime')
+  title: z.string().min(3),
+  description: z.string().min(3),
+  priority: z.enum(Priority),
+  deadline: z.iso.datetime()
 })
 
 export const EditCardSchema = z

@@ -982,9 +982,9 @@
               "example": {
                 "statusCode": 400,
                 "message": {
-                  "email": "Email is invalid",
-                  "password": "Password must be at least 8 characters",
-                  "name": "Name must be at least 2 characters"
+                  "email": "The field must have a valid email format",
+                  "password": "The field must be at least 8 characters",
+                  "name": "The field must be at least 2 characters"
                 }
               }
             }
@@ -1091,7 +1091,7 @@
               "example": {
                 "statusCode": 400,
                 "message": {
-                  "ids": "Ids must be an array of valid ObjectIds"
+                  "ids": "The field must be of type array"
                 }
               }
             }
@@ -1123,8 +1123,8 @@
               "example": {
                 "statusCode": 400,
                 "message": {
-                  "title": "Title must be at least 3 characters",
-                  "icon": "Invalid enum value. Expected 'project' | 'star' | 'loading' | 'puzzle' | 'container' | 'lightning' | 'colors' | 'hexagon', received 'random-icon'"
+                  "title": "The field must be at least 3 characters",
+                  "icon": "The field must be one of the following values: project, star, loading, puzzle, container, lightning, colors, hexagon"
                 }
               }
             }
@@ -1179,8 +1179,8 @@
               "example": {
                 "statusCode": 400,
                 "message": {
-                  "title": "Title must be at least 3 characters",
-                  "boardId": "Id must be a valid ObjectId"
+                  "title": "The field must be at least 3 characters",
+                  "boardId": "The field must have a valid ObjectId format"
                 }
               }
             }
@@ -1212,9 +1212,9 @@
               "example": {
                 "statusCode": 400,
                 "message": {
-                  "description": "Title must be a string",
-                  "priority": "Priority must be one of the following: Without, Low, Medium, High",
-                  "columnId": "Id must be a valid ObjectId"
+                  "description": "The field must be of type string",
+                  "priority": "The field must be one of the following values: Without, Low, Medium, High",
+                  "columnId": "The field must have a valid ObjectId format"
                 }
               }
             }
