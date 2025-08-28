@@ -10,10 +10,6 @@ export const SignupSchema = z.object({
   name: z.string().min(2)
 })
 
-export const RefreshTokenSchema = z.object({
-  refreshToken: z.string().min(1)
-})
-
 export const GoogleCodeSchema = z.object({
   code: z.string().min(1),
   state: z.optional(z.string())

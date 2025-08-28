@@ -1,4 +1,5 @@
 import express from 'express'
+import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import helmet from 'helmet'
 import logger from 'morgan'
@@ -13,8 +14,9 @@ export const app = express()
 z.config(zodConfig)
 
 app.use(helmet())
-app.use(cors({ origin: env.ALLOWED_ORIGINS }))
+app.use(cors({ origin: env.ALLOWED_ORIGINS, credentials: true }))
 app.use(logger(app.get('env') === 'development' ? 'dev' : 'combined'))
+app.use(cookieParser())
 app.use(express.json())
 
 app.use(env.API_PREFIX, apiRouter)

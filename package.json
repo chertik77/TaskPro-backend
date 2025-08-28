@@ -18,8 +18,10 @@
   },
   "dependencies": {
     "@prisma/client": "^6.13.0",
+    "@types/cookie-parser": "^1.4.9",
     "argon2": "^0.44.0",
     "cloudinary": "^2.7.0",
+    "cookie-parser": "^1.4.7",
     "cors": "2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
