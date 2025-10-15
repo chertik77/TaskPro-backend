@@ -1,8 +1,9 @@
 import eslintPluginJs from '@eslint/js'
+import { defineConfig } from 'eslint/config'
 import globals from 'globals'
 import eslintTypescript from 'typescript-eslint'
 
-export default eslintTypescript.config(
+export default defineConfig(
   eslintPluginJs.configs.recommended,
   eslintTypescript.configs.recommended,
   {
