@@ -1,7 +1,7 @@
 import { app } from './app'
-import { env } from './config'
 
-const port = env.PORT || 9999
+// eslint-disable-next-line no-restricted-syntax
+const port = process.env.PORT || 10000
 
 console.log('Starting server...')
 
