@@ -6,7 +6,8 @@
     "node": ">=20.18"
   },
   "scripts": {
-    "start": "ts-node -r tsconfig-paths/register --files app/server.ts",
+    "start": "export NODE_OPTIONS=–max-old-space-size=420 && node dist/app/app.js",
+    "build": "tsc && tsc-alias",
     "dev": "ts-node-dev -r tsconfig-paths/register --files --quiet app/server.ts",
     "lint": "eslint --fix app/**/*.ts",
     "format": "prettier --write ./app",
@@ -56,6 +57,7 @@
     "prisma": "^6.13.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.8.16",
     "tsc-files": "^1.1.4",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^6.0.2",
