@@ -6,7 +6,7 @@
     "node": ">=20.18"
   },
   "scripts": {
-    "start": "export NODE_OPTIONS=–max-old-space-size=420 && node dist/app/app.js",
+    "start": "export NODE_OPTIONS=–max-old-space-size=420 && node dist/app/server.js",
     "build": "tsc && tsc-alias",
     "dev": "ts-node-dev -r tsconfig-paths/register --files --quiet app/server.ts",
     "lint": "eslint --fix app/**/*.ts",
