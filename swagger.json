@@ -6,12 +6,12 @@
     "description": "The Task Pro API provides endpoints to manage projects and user assignments, ensuring secure and efficient request handling.",
     "contact": {
       "name": "TaskPro",
-      "url": "https://www.taskpro.online"
+      "url": "https://www.taskpro.qzz.io"
     }
   },
   "servers": [
     { "url": "http://localhost:8000/api" },
-    { "url": "https://api.taskpro.online" }
+    { "url": "https://api.taskpro.qzz.io" }
   ],
   "paths": {
     "/auth/signup": {
