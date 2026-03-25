@@ -1,12 +1,7 @@
-import crypto from 'crypto'
-import type {
-  GoogleCodeSchema,
-  RefreshTokenSchema,
-  SigninSchema,
-  SignupSchema
-} from '@/schemas'
-import type { JwtPayload, TypedRequestBody } from '@/types'
-import type { NextFunction, Request, Response } from 'express'
+import { randomBytes } from 'crypto'
+import type { GoogleCodeSchema, SigninSchema, SignupSchema } from '@/schemas'
+import type { JwtPayload, TypedRequestBody, TypedRequestQuery } from '@/types'
+import type { CookieOptions, NextFunction, Request, Response } from 'express'
 
 import { prisma } from '@/prisma'
 import { hash, verify } from 'argon2'
@@ -26,7 +21,9 @@ const {
   REFRESH_JWT_ALGORITHM,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-  GOOGLE_REDIRECT_URI
+  GOOGLE_REDIRECT_URI,
+  FRONTEND_URL,
+  NODE_ENV
 } = env
 
 class AuthController {
@@ -35,6 +32,15 @@ class AuthController {
     GOOGLE_CLIENT_SECRET,
     GOOGLE_REDIRECT_URI
   )
+
+  private readonly COOKIE_OPTIONS: CookieOptions = {
+    httpOnly: true,
+    secure: NODE_ENV === 'production',
+    sameSite: 'lax'
+  }
+
+  private readonly ACCESS_TOKEN_NAME = 'accessToken'
+  private readonly REFRESH_TOKEN_NAME = 'refreshToken'
 
   signup = async (
     { body }: TypedRequestBody<typeof SignupSchema>,
@@ -54,13 +60,11 @@ class AuthController {
       }
     })
 
-    const newSession = await prisma.session.create({
-      data: { userId: user.id }
-    })
+    const tokens = await this.getNewTokens({ id: user.id })
 
-    const tokens = await this.getNewTokens({ id: user.id, sid: newSession.id })
+    this.setTokensCookie(res, tokens)
 
-    res.json({ user, ...tokens })
+    res.json({ user })
   }
 
   signin = async (
@@ -83,17 +87,15 @@ class AuthController {
 
     if (!isPasswordMatch) return next(Unauthorized('Email or password invalid'))
 
-    const newSession = await prisma.session.create({
-      data: { userId: user.id }
-    })
+    const tokens = await this.getNewTokens({ id: user.id })
 
-    const tokens = await this.getNewTokens({ id: user.id, sid: newSession.id })
+    this.setTokensCookie(res, tokens)
 
-    res.json({ user: userWithoutPassword, ...tokens })
+    res.json({ user: userWithoutPassword })
   }
 
-  getGoogleRedirectUrl = async (_: Request, res: Response) => {
-    const state = crypto.randomBytes(32).toString('hex')
+  googleInitiate = async (_: Request, res: Response) => {
+    const state = randomBytes(32).toString('hex')
 
     await redisClient.set(`oauth_state:${state}`, 'true', 'EX', 5 * 60)
 
@@ -107,11 +109,11 @@ class AuthController {
   }
 
   googleCallback = async (
-    req: TypedRequestBody<typeof GoogleCodeSchema>,
+    req: TypedRequestQuery<typeof GoogleCodeSchema>,
     res: Response,
     next: NextFunction
   ) => {
-    const { code, state: receivedState } = req.body
+    const { code, state: receivedState } = req.query
 
     const redisStateKey = `oauth_state:${receivedState}`
 
@@ -126,15 +128,12 @@ class AuthController {
     if (!tokens.id_token) return next(Forbidden())
 
     const ticket = await this.googleClient.verifyIdToken({
-      idToken: tokens.id_token,
-      audience: GOOGLE_CLIENT_ID
+      idToken: tokens.id_token
     })
 
     const payload = ticket.getPayload()
 
-    if (!payload || !payload.email) {
-      return next(Forbidden('Invalid token'))
-    }
+    if (!payload || !payload.email) return next(Forbidden('Invalid token'))
 
     const {
       email,
@@ -142,68 +141,46 @@ class AuthController {
       picture = defaultUserAvatars.light
     } = payload
 
-    const user = await prisma.user.findUnique({
-      where: { email }
-    })
+    const user = await prisma.user.findUnique({ where: { email } })
 
     if (!user) {
       const user = await prisma.user.create({
         data: { name, email, avatar: picture }
       })
 
-      const newSession = await prisma.session.create({
-        data: { userId: user.id }
-      })
+      const tokens = await this.getNewTokens({ id: user.id })
 
-      const tokens = await this.getNewTokens({
-        id: user.id,
-        sid: newSession.id
-      })
+      this.setTokensCookie(res, tokens)
 
-      res.json({ user, ...tokens })
+      res.redirect(FRONTEND_URL)
     } else {
-      const newSession = await prisma.session.create({
-        data: { userId: user.id }
-      })
+      const tokens = await this.getNewTokens({ id: user.id })
 
-      const tokens = await this.getNewTokens({
-        id: user.id,
-        sid: newSession.id
-      })
+      this.setTokensCookie(res, tokens)
 
-      res.json({ user, ...tokens })
+      res.redirect(FRONTEND_URL)
     }
   }
 
-  refresh = async (
-    { body }: TypedRequestBody<typeof RefreshTokenSchema>,
-    res: Response,
-    next: NextFunction
-  ) => {
+  refresh = async (req: Request, res: Response, next: NextFunction) => {
+    const refreshToken = req.cookies[this.REFRESH_TOKEN_NAME]
+
+    if (!refreshToken) return next(Forbidden())
+
     try {
       const {
-        payload: { id, sid }
-      } = await jwtVerify<JwtPayload>(body.refreshToken, REFRESH_JWT_SECRET)
+        payload: { id }
+      } = await jwtVerify<JwtPayload>(refreshToken, REFRESH_JWT_SECRET)
 
       const user = await prisma.user.findFirst({ where: { id } })
 
       if (!user) return next(Forbidden())
 
-      const currentSession = await prisma.session.findFirst({
-        where: { id: sid }
-      })
+      const tokens = await this.getNewTokens({ id: user.id })
 
-      if (!currentSession) return next(Forbidden())
+      this.setTokensCookie(res, tokens)
 
-      await prisma.session.delete({ where: { id: currentSession.id } })
-
-      const newSid = await prisma.session.create({
-        data: { userId: user.id }
-      })
-
-      const tokens = await this.getNewTokens({ id: user.id, sid: newSid.id })
-
-      res.json(tokens)
+      res.json({ message: 'Tokens refreshed successfully' })
     } catch (error) {
       if (error instanceof JWTExpired) return next(Forbidden(error.code))
 
@@ -211,8 +188,9 @@ class AuthController {
     }
   }
 
-  logout = async ({ session }: Request, res: Response) => {
-    await prisma.session.delete({ where: { id: session } })
+  logout = async (_: Request, res: Response) => {
+    res.clearCookie(this.ACCESS_TOKEN_NAME)
+    res.clearCookie(this.REFRESH_TOKEN_NAME)
 
     res.sendStatus(204)
   }
@@ -229,6 +207,21 @@ class AuthController {
       .sign(REFRESH_JWT_SECRET)
 
     return { accessToken, refreshToken }
+  }
+
+  private setTokensCookie = (
+    res: Response,
+    tokens: { accessToken: string; refreshToken: string }
+  ) => {
+    res.cookie(this.ACCESS_TOKEN_NAME, tokens.accessToken, {
+      ...this.COOKIE_OPTIONS,
+      maxAge: 1000 * 60 * 60 // 1 hour
+    })
+
+    res.cookie(this.REFRESH_TOKEN_NAME, tokens.refreshToken, {
+      ...this.COOKIE_OPTIONS,
+      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+    })
   }
 }
 

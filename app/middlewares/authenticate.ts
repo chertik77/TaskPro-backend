@@ -4,6 +4,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { prisma } from '@/prisma'
 import { Unauthorized } from 'http-errors'
 import { jwtVerify } from 'jose'
+import { JWTExpired } from 'jose/errors'
 
 import { env } from '@/config'
 
@@ -12,14 +13,13 @@ export const authenticate = async (
   _: Response,
   next: NextFunction
 ) => {
-  const { authorization = '' } = req.headers
-  const [bearer, token] = authorization.split(' ')
+  const token: string = req.cookies.accessToken
 
-  if (bearer !== 'Bearer') return next(Unauthorized())
+  if (!token) return next(Unauthorized())
 
   try {
     const {
-      payload: { id, sid }
+      payload: { id }
     } = await jwtVerify<JwtPayload>(token, env.ACCESS_JWT_SECRET)
 
     const user = await prisma.user.findFirst({
@@ -27,15 +27,14 @@ export const authenticate = async (
       omit: { password: false }
     })
 
-    const session = await prisma.session.findFirst({ where: { id: sid } })
-
-    if (!user || !session) return next(Unauthorized())
+    if (!user) return next(Unauthorized())
 
     req.user = user
-    req.session = session.id
 
     next()
-  } catch {
+  } catch (e) {
+    if (e instanceof JWTExpired) return next(Unauthorized(e.code))
+
     return next(Unauthorized())
   }
 }

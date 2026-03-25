@@ -9,6 +9,7 @@ const envSchema = z.object({
   CLOUDINARY_API_SECRET: z.string(),
   CLOUDINARY_CLOUD_NAME: z.string(),
   DATABASE_URL: z.string(),
+  FRONTEND_URL: z.url(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   GOOGLE_REDIRECT_URI: z.url(),
@@ -20,6 +21,7 @@ const envSchema = z.object({
   REFRESH_JWT_SECRET: z.string().transform(v => new TextEncoder().encode(v)),
   PORT: z.coerce.number().int().positive().min(1000).max(65535),
   API_PREFIX: z.string(),
+  NODE_ENV: z.enum(['development', 'production']).default('development'),
   ALLOWED_ORIGINS: z
     .string()
     .transform(v => v.split(','))
