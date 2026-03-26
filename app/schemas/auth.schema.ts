@@ -9,8 +9,3 @@ export const SignupSchema = z.object({
   ...SigninSchema.shape,
   name: z.string().min(2)
 })
-
-export const CallbackSchema = z.looseObject({
-  code: z.string().min(1),
-  state: z.optional(z.string())
-})

@@ -10,7 +10,7 @@
     }
   },
   "servers": [
-    { "url": "http://localhost:8000/api" },
+    { "url": "http://localhost:9537/api" },
     { "url": "https://api.taskpro.qzz.io" }
   ],
   "paths": {
@@ -93,7 +93,6 @@
         "summary": "Redirect user to Google OAuth",
         "responses": {
           "302": {
-            "description": "Redirect to Google authentication page",
             "headers": {
               "Location": {
                 "description": "Google OAuth URL",
@@ -107,57 +106,56 @@
     "/auth/google/callback": {
       "get": {
         "tags": ["Auth"],
-        "summary": "Receives the authorization code from Google's redirect",
-        "parameters": [
-          {
-            "name": "code",
-            "in": "query",
-            "required": true,
-            "description": "The authorization code provided by Google.",
-            "schema": {
-              "type": "string",
-              "example": "4/0AT5xKif_S_..."
-            }
-          },
-          {
-            "name": "state",
-            "in": "query",
-            "required": false,
-            "description": "An opaque value used to maintain state between the request and callback.",
-            "schema": {
-              "type": "string",
-              "example": "4552c8890bb4d9d44e971653..."
+        "summary": "Handles Google's OAuth redirect",
+        "responses": {
+          "302": {
+            "description": "Redirects to frontend with success or error",
+            "headers": {
+              "Location": {
+                "description": "Frontend redirect URL",
+                "schema": {
+                  "type": "string",
+                  "example": "https://taskpro.qzz.io/auth/callback?error=oauth_error"
+                }
+              }
             }
           }
-        ],
+        }
+      }
+    },
+    "/auth/facebook/initiate": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Redirect user to Facebook OAuth",
         "responses": {
           "302": {
             "headers": {
               "Location": {
-                "description": "The URL to redirect to",
+                "description": "Facebook OAuth URL",
+                "schema": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/facebook/callback": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Handles Facebook's OAuth redirect",
+        "responses": {
+          "302": {
+            "description": "Redirects to frontend with success or error",
+            "headers": {
+              "Location": {
+                "description": "Frontend redirect URL",
                 "schema": {
                   "type": "string",
-                  "example": "http://localhost:3000"
+                  "example": "https://taskpro.qzz.io/auth/callback?error=oauth_error"
                 }
               }
             }
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "state": {
-                      "type": "string",
-                      "example": "Invalid state parameter"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": { "$ref": "#/components/responses/Forbidden" }
+          }
         }
       }
     },

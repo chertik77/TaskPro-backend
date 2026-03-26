@@ -1,6 +1,6 @@
 import { randomBytes } from 'crypto'
-import type { CallbackSchema, SigninSchema, SignupSchema } from '@/schemas'
-import type { JwtPayload, TypedRequestBody, TypedRequestQuery } from '@/types'
+import type { SigninSchema, SignupSchema } from '@/schemas'
+import type { FacebookProfile, JwtPayload, TypedRequestBody } from '@/types'
 import type { CookieOptions, NextFunction, Request, Response } from 'express'
 
 import { prisma } from '@/prisma'
@@ -76,7 +76,7 @@ class AuthController {
     res: Response,
     next: NextFunction
   ) => {
-    const isUserExists = await prisma.user.findUnique({
+    const isUserExists = await prisma.user.findFirst({
       where: { email: body.email }
     })
 
@@ -99,7 +99,7 @@ class AuthController {
     res: Response,
     next: NextFunction
   ) => {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: { email: body.email },
       omit: { password: false }
     })
@@ -133,53 +133,63 @@ class AuthController {
     res.redirect(url)
   }
 
-  googleCallback = async (
-    req: TypedRequestQuery<typeof CallbackSchema>,
-    res: Response,
-    next: NextFunction
-  ) => {
-    const { code, state: receivedState } = req.query
+  googleCallback = async (req: Request, res: Response) => {
+    try {
+      const { code, state: receivedState, error } = req.query
 
-    const redisStateKey = `google_oauth_state:${receivedState}`
+      if (error && error === 'access_denied') {
+        return res.redirect(`${FRONTEND_URL}/auth/callback?error=access_denied`)
+      }
 
-    const storedState = await redisClient.get(redisStateKey)
+      const redisStateKey = `google_oauth_state:${receivedState}`
 
-    if (!storedState) return next(Forbidden('Invalid state'))
+      const storedState = await redisClient.get(redisStateKey)
 
-    await redisClient.del(redisStateKey)
+      if (!storedState) {
+        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+      }
 
-    const {
-      tokens: { id_token }
-    } = await this.googleClient.getToken(code)
+      await redisClient.del(redisStateKey)
 
-    if (!id_token) return next(Forbidden())
+      const {
+        tokens: { id_token }
+      } = await this.googleClient.getToken(code as string)
 
-    const ticket = await this.googleClient.verifyIdToken({
-      idToken: id_token,
-      audience: GOOGLE_CLIENT_ID
-    })
+      if (!id_token) {
+        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+      }
 
-    const payload = ticket.getPayload()
-
-    if (!payload || !payload.email) return next(Forbidden('Invalid token'))
-
-    const {
-      email,
-      name = 'Guest',
-      picture = defaultUserAvatars.light
-    } = payload
-
-    let user = await prisma.user.findUnique({ where: { email } })
-
-    if (!user) {
-      user = await prisma.user.create({
-        data: { name, email, avatar: picture }
+      const ticket = await this.googleClient.verifyIdToken({
+        idToken: id_token,
+        audience: GOOGLE_CLIENT_ID
       })
+
+      const payload = ticket.getPayload()
+
+      if (!payload || !payload.email) {
+        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+      }
+
+      const {
+        email,
+        name = 'Guest',
+        picture = defaultUserAvatars.light
+      } = payload
+
+      let user = await prisma.user.findFirst({ where: { email } })
+
+      if (!user) {
+        user = await prisma.user.create({
+          data: { name, email, avatar: picture }
+        })
+      }
+
+      await this.createSessionAndSetCookies(res, user.id)
+
+      return res.redirect(`${FRONTEND_URL}/auth/callback`)
+    } catch {
+      return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
     }
-
-    await this.createSessionAndSetCookies(res, user.id)
-
-    res.redirect(FRONTEND_URL)
   }
 
   facebookInitiate = async (_: Request, res: Response) => {
@@ -189,58 +199,89 @@ class AuthController {
     const url = new URL('https://www.facebook.com/v19.0/dialog/oauth')
 
     url.searchParams.set('client_id', FACEBOOK_CLIENT_ID)
-    url.searchParams.set(
-      'redirect_uri',
-      encodeURIComponent(FACEBOOK_REDIRECT_URI)
-    )
+    url.searchParams.set('redirect_uri', FACEBOOK_REDIRECT_URI)
     url.searchParams.set('state', state)
     url.searchParams.set('scope', 'email,public_profile')
 
     res.redirect(url.toString())
   }
 
-  facebookCallback = async (
-    req: TypedRequestQuery<typeof CallbackSchema>,
-    res: Response,
-    next: NextFunction
-  ) => {
-    const { code, state: receivedState } = req.query
+  facebookCallback = async (req: Request, res: Response) => {
+    try {
+      const { code, state: receivedState, error } = req.query
 
-    const redisStateKey = `facebook_oauth_state::${receivedState}`
+      if (error && error === 'access_denied') {
+        return res.redirect(`${FRONTEND_URL}/auth/callback?error=access_denied`)
+      }
 
-    const storedState = await redisClient.get(redisStateKey)
+      const redisStateKey = `facebook_oauth_state:${receivedState}`
 
-    if (!storedState) return next(Forbidden('Invalid state'))
+      const storedState = await redisClient.get(redisStateKey)
 
-    await redisClient.del(redisStateKey)
+      if (!storedState || !code) {
+        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+      }
 
-    const url = new URL('https://graph.facebook.com/v19.0/oauth/access_token')
+      await redisClient.del(redisStateKey)
 
-    url.searchParams.set('client_id', FACEBOOK_CLIENT_ID)
-    url.searchParams.set(
-      'redirect_uri',
-      encodeURIComponent(FACEBOOK_REDIRECT_URI)
-    )
-    url.searchParams.set('client_secret', FACEBOOK_CLIENT_SECRET)
-    url.searchParams.set('code', code)
+      const url = new URL('https://graph.facebook.com/v19.0/oauth/access_token')
 
-    const response = await fetch(url)
-    const data = await response.json()
+      url.searchParams.set('client_id', FACEBOOK_CLIENT_ID)
+      url.searchParams.set('redirect_uri', FACEBOOK_REDIRECT_URI)
+      url.searchParams.set('client_secret', FACEBOOK_CLIENT_SECRET)
+      url.searchParams.set('code', code as string)
 
-    const profileURL = new URL('https://graph.facebook.com/me')
+      const response = await fetch(url)
 
-    profileURL.searchParams.set('fields', 'id,name,email,picture')
-    profileURL.searchParams.set('access_token', data.access_token)
+      if (!response.ok) {
+        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+      }
 
-    const profileResponse = await fetch(profileURL)
-    const profile = await profileResponse.json()
+      const data = await response.json()
 
-    if (!profile.id) return next(Forbidden())
+      if (!data.access_token) {
+        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+      }
 
-    console.log(profile)
-    // await this.createSessionAndSetCookies(res, user.id)
+      const profileURL = new URL('https://graph.facebook.com/me')
 
-    res.send('ok')
+      profileURL.searchParams.set('fields', 'id,name,email,picture')
+      profileURL.searchParams.set('access_token', data.access_token)
+
+      const profileResponse = await fetch(profileURL)
+
+      if (!profileResponse.ok) {
+        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+      }
+
+      const profile = (await profileResponse.json()) as FacebookProfile
+
+      if (!profile || !profile.id) {
+        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+      }
+
+      const {
+        email,
+        name = 'Guest',
+        picture: {
+          data: { url: picture }
+        }
+      } = profile
+
+      let user = await prisma.user.findFirst({ where: { email } })
+
+      if (!user) {
+        user = await prisma.user.create({
+          data: { name, email, avatar: picture || defaultUserAvatars.light }
+        })
+      }
+
+      await this.createSessionAndSetCookies(res, user.id)
+
+      return res.redirect(`${FRONTEND_URL}/auth/callback`)
+    } catch {
+      return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+    }
   }
 
   refresh = async (req: Request, res: Response, next: NextFunction) => {
