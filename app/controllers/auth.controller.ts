@@ -113,7 +113,7 @@ class AuthController {
       scope: ['profile', 'email']
     })
 
-    res.redirect(url)
+    res.json({ redirectUrl: url })
   }
 
   googleCallback = async (
