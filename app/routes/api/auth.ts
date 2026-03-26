@@ -4,7 +4,7 @@ import { authController } from '@/controllers'
 
 import { authenticate, validateRequest } from '@/middlewares'
 
-import { GoogleCodeSchema, SigninSchema, SignupSchema } from '@/schemas'
+import { CallbackSchema, SigninSchema, SignupSchema } from '@/schemas'
 
 export const authRouter = Router()
 
@@ -24,8 +24,16 @@ authRouter.get('/google/initiate', authController.googleInitiate)
 
 authRouter.get(
   '/google/callback',
-  validateRequest({ query: GoogleCodeSchema }),
+  validateRequest({ query: CallbackSchema }),
   authController.googleCallback
+)
+
+authRouter.get('/facebook/initiate', authController.facebookInitiate)
+
+authRouter.get(
+  '/facebook/callback',
+  validateRequest({ query: CallbackSchema }),
+  authController.facebookCallback
 )
 
 authRouter.post('/refresh', authController.refresh)

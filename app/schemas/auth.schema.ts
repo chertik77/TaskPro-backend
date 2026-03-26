@@ -10,7 +10,7 @@ export const SignupSchema = z.object({
   name: z.string().min(2)
 })
 
-export const GoogleCodeSchema = z.object({
+export const CallbackSchema = z.looseObject({
   code: z.string().min(1),
   state: z.optional(z.string())
 })

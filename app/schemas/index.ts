@@ -15,5 +15,5 @@ export {
   ColumnParamsSchema,
   UpdateColumnOrderSchema
 } from './column.schema'
-export { SigninSchema, SignupSchema, GoogleCodeSchema } from './auth.schema'
+export { SigninSchema, SignupSchema, CallbackSchema } from './auth.schema'
 export { EditUserSchema, NeedHelpSchema } from './user.schema'

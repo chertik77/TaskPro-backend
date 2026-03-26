@@ -1,5 +1,5 @@
 import { randomBytes } from 'crypto'
-import type { GoogleCodeSchema, SigninSchema, SignupSchema } from '@/schemas'
+import type { CallbackSchema, SigninSchema, SignupSchema } from '@/schemas'
 import type { JwtPayload, TypedRequestBody, TypedRequestQuery } from '@/types'
 import type { CookieOptions, NextFunction, Request, Response } from 'express'
 
@@ -22,6 +22,9 @@ const {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   GOOGLE_REDIRECT_URI,
+  FACEBOOK_CLIENT_ID,
+  FACEBOOK_CLIENT_SECRET,
+  FACEBOOK_REDIRECT_URI,
   FRONTEND_URL,
   NODE_ENV
 } = env
@@ -119,7 +122,7 @@ class AuthController {
   googleInitiate = async (_: Request, res: Response) => {
     const state = randomBytes(32).toString('hex')
 
-    await redisClient.set(`oauth_state:${state}`, 'true', 'EX', 5 * 60)
+    await redisClient.set(`google_oauth_state:${state}`, 'true', 'EX', 5 * 60)
 
     const url = this.googleClient.generateAuthUrl({
       state,
@@ -131,13 +134,13 @@ class AuthController {
   }
 
   googleCallback = async (
-    req: TypedRequestQuery<typeof GoogleCodeSchema>,
+    req: TypedRequestQuery<typeof CallbackSchema>,
     res: Response,
     next: NextFunction
   ) => {
     const { code, state: receivedState } = req.query
 
-    const redisStateKey = `oauth_state:${receivedState}`
+    const redisStateKey = `google_oauth_state:${receivedState}`
 
     const storedState = await redisClient.get(redisStateKey)
 
@@ -177,6 +180,67 @@ class AuthController {
     await this.createSessionAndSetCookies(res, user.id)
 
     res.redirect(FRONTEND_URL)
+  }
+
+  facebookInitiate = async (_: Request, res: Response) => {
+    const state = randomBytes(32).toString('hex')
+    await redisClient.set(`facebook_oauth_state:${state}`, '1', 'EX', 300)
+
+    const url = new URL('https://www.facebook.com/v19.0/dialog/oauth')
+
+    url.searchParams.set('client_id', FACEBOOK_CLIENT_ID)
+    url.searchParams.set(
+      'redirect_uri',
+      encodeURIComponent(FACEBOOK_REDIRECT_URI)
+    )
+    url.searchParams.set('state', state)
+    url.searchParams.set('scope', 'email,public_profile')
+
+    res.redirect(url.toString())
+  }
+
+  facebookCallback = async (
+    req: TypedRequestQuery<typeof CallbackSchema>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { code, state: receivedState } = req.query
+
+    const redisStateKey = `facebook_oauth_state::${receivedState}`
+
+    const storedState = await redisClient.get(redisStateKey)
+
+    if (!storedState) return next(Forbidden('Invalid state'))
+
+    await redisClient.del(redisStateKey)
+
+    const url = new URL('https://graph.facebook.com/v19.0/oauth/access_token')
+
+    url.searchParams.set('client_id', FACEBOOK_CLIENT_ID)
+    url.searchParams.set(
+      'redirect_uri',
+      encodeURIComponent(FACEBOOK_REDIRECT_URI)
+    )
+    url.searchParams.set('client_secret', FACEBOOK_CLIENT_SECRET)
+    url.searchParams.set('code', code)
+
+    const response = await fetch(url)
+    const data = await response.json()
+
+    const profileURL = new URL('https://graph.facebook.com/me')
+
+    profileURL.searchParams.set('fields', 'id,name,email,picture')
+    profileURL.searchParams.set('access_token', data.access_token)
+
+    const profileResponse = await fetch(profileURL)
+    const profile = await profileResponse.json()
+
+    if (!profile.id) return next(Forbidden())
+
+    console.log(profile)
+    // await this.createSessionAndSetCookies(res, user.id)
+
+    res.send('ok')
   }
 
   refresh = async (req: Request, res: Response, next: NextFunction) => {
