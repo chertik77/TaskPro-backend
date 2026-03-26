@@ -20,7 +20,7 @@ authRouter.post(
   authController.signin
 )
 
-authRouter.post('/google/initiate', authController.googleInitiate)
+authRouter.get('/google/initiate', authController.googleInitiate)
 
 authRouter.get(
   '/google/callback',

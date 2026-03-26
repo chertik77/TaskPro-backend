@@ -42,6 +42,32 @@ class AuthController {
   private readonly ACCESS_TOKEN_NAME = 'accessToken'
   private readonly REFRESH_TOKEN_NAME = 'refreshToken'
 
+  private createSessionAndSetCookies = async (
+    res: Response,
+    userId: string
+  ) => {
+    const session = await prisma.session.create({ data: { userId } })
+
+    const accessToken = await new SignJWT({ id: userId, sid: session.id })
+      .setExpirationTime(ACCESS_JWT_EXPIRES_IN)
+      .setProtectedHeader({ alg: ACCESS_JWT_ALGORITHM })
+      .sign(ACCESS_JWT_SECRET)
+
+    const refreshToken = await new SignJWT({ id: userId, sid: session.id })
+      .setExpirationTime(REFRESH_JWT_EXPIRES_IN)
+      .setProtectedHeader({ alg: REFRESH_JWT_ALGORITHM })
+      .sign(REFRESH_JWT_SECRET)
+
+    res.cookie(this.ACCESS_TOKEN_NAME, accessToken, {
+      ...this.COOKIE_OPTIONS,
+      maxAge: 1000 * 60 * 60 // 1 hour
+    })
+    res.cookie(this.REFRESH_TOKEN_NAME, refreshToken, {
+      ...this.COOKIE_OPTIONS,
+      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+    })
+  }
+
   signup = async (
     { body }: TypedRequestBody<typeof SignupSchema>,
     res: Response,
@@ -60,13 +86,7 @@ class AuthController {
       }
     })
 
-    const newSession = await prisma.session.create({
-      data: { userId: user.id }
-    })
-
-    const tokens = await this.getNewTokens({ id: user.id, sid: newSession.id })
-
-    this.setTokensCookie(res, tokens)
+    this.createSessionAndSetCookies(res, user.id)
 
     res.json({ user })
   }
@@ -91,13 +111,7 @@ class AuthController {
 
     if (!isPasswordMatch) return next(Unauthorized('Email or password invalid'))
 
-    const newSession = await prisma.session.create({
-      data: { userId: user.id }
-    })
-
-    const tokens = await this.getNewTokens({ id: user.id, sid: newSession.id })
-
-    this.setTokensCookie(res, tokens)
+    this.createSessionAndSetCookies(res, user.id)
 
     res.json({ user: userWithoutPassword })
   }
@@ -113,7 +127,7 @@ class AuthController {
       scope: ['profile', 'email']
     })
 
-    res.json({ redirectUrl: url })
+    res.redirect(url)
   }
 
   googleCallback = async (
@@ -160,16 +174,7 @@ class AuthController {
       })
     }
 
-    const newSession = await prisma.session.create({
-      data: { userId: user.id }
-    })
-
-    const tokens = await this.getNewTokens({
-      id: user.id,
-      sid: newSession.id
-    })
-
-    this.setTokensCookie(res, tokens)
+    this.createSessionAndSetCookies(res, user.id)
 
     res.redirect(FRONTEND_URL)
   }
@@ -196,16 +201,7 @@ class AuthController {
 
       await prisma.session.delete({ where: { id: currentSession.id } })
 
-      const newSession = await prisma.session.create({
-        data: { userId: user.id }
-      })
-
-      const tokens = await this.getNewTokens({
-        id: user.id,
-        sid: newSession.id
-      })
-
-      this.setTokensCookie(res, tokens)
+      this.createSessionAndSetCookies(res, user.id)
 
       res.json({ message: 'Tokens refreshed successfully' })
     } catch (error) {
@@ -222,35 +218,6 @@ class AuthController {
     res.clearCookie(this.REFRESH_TOKEN_NAME, this.COOKIE_OPTIONS)
 
     res.sendStatus(204)
-  }
-
-  private getNewTokens = async (payload: JwtPayload) => {
-    const accessToken = await new SignJWT(payload)
-      .setExpirationTime(ACCESS_JWT_EXPIRES_IN)
-      .setProtectedHeader({ alg: ACCESS_JWT_ALGORITHM })
-      .sign(ACCESS_JWT_SECRET)
-
-    const refreshToken = await new SignJWT(payload)
-      .setExpirationTime(REFRESH_JWT_EXPIRES_IN)
-      .setProtectedHeader({ alg: REFRESH_JWT_ALGORITHM })
-      .sign(REFRESH_JWT_SECRET)
-
-    return { accessToken, refreshToken }
-  }
-
-  private setTokensCookie = (
-    res: Response,
-    tokens: { accessToken: string; refreshToken: string }
-  ) => {
-    res.cookie(this.ACCESS_TOKEN_NAME, tokens.accessToken, {
-      ...this.COOKIE_OPTIONS,
-      maxAge: 1000 * 60 * 60 // 1 hour
-    })
-
-    res.cookie(this.REFRESH_TOKEN_NAME, tokens.refreshToken, {
-      ...this.COOKIE_OPTIONS,
-      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
-    })
   }
 }
 

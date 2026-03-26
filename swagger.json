@@ -88,11 +88,19 @@
       }
     },
     "/auth/google/initiate": {
-      "post": {
+      "get": {
         "tags": ["Auth"],
-        "summary": "Create a redirect url for Google authentication",
+        "summary": "Redirect user to Google OAuth",
         "responses": {
-          "200": { "$ref": "#/components/responses/GoogleInitiateResponse" }
+          "302": {
+            "description": "Redirect to Google authentication page",
+            "headers": {
+              "Location": {
+                "description": "Google OAuth URL",
+                "schema": { "type": "string" }
+              }
+            }
+          }
         }
       }
     },
@@ -1015,22 +1023,6 @@
             "schema": {
               "type": "string",
               "example": "accessToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure; refreshToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure;"
-            }
-          }
-        }
-      },
-      "GoogleInitiateResponse": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "redirectUrl": {
-                  "type": "string",
-                  "format": "url",
-                  "example": "https://accounts.google.com/o/oauth2/v2/auth?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code&scope=email%20profile&access_type=offline"
-                }
-              }
             }
           }
         }
