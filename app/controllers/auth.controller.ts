@@ -60,7 +60,11 @@ class AuthController {
       }
     })
 
-    const tokens = await this.getNewTokens({ id: user.id })
+    const newSession = await prisma.session.create({
+      data: { userId: user.id }
+    })
+
+    const tokens = await this.getNewTokens({ id: user.id, sid: newSession.id })
 
     this.setTokensCookie(res, tokens)
 
@@ -87,7 +91,11 @@ class AuthController {
 
     if (!isPasswordMatch) return next(Unauthorized('Email or password invalid'))
 
-    const tokens = await this.getNewTokens({ id: user.id })
+    const newSession = await prisma.session.create({
+      data: { userId: user.id }
+    })
+
+    const tokens = await this.getNewTokens({ id: user.id, sid: newSession.id })
 
     this.setTokensCookie(res, tokens)
 
@@ -105,7 +113,7 @@ class AuthController {
       scope: ['profile', 'email']
     })
 
-    res.json({ redirectUrl: url })
+    res.redirect(url)
   }
 
   googleCallback = async (
@@ -119,16 +127,19 @@ class AuthController {
 
     const storedState = await redisClient.get(redisStateKey)
 
-    if (storedState) {
-      await redisClient.del(redisStateKey)
-    }
+    if (!storedState) return next(Forbidden('Invalid state'))
 
-    const { tokens } = await this.googleClient.getToken(code)
+    await redisClient.del(redisStateKey)
 
-    if (!tokens.id_token) return next(Forbidden())
+    const {
+      tokens: { id_token }
+    } = await this.googleClient.getToken(code)
+
+    if (!id_token) return next(Forbidden())
 
     const ticket = await this.googleClient.verifyIdToken({
-      idToken: tokens.id_token
+      idToken: id_token,
+      audience: GOOGLE_CLIENT_ID
     })
 
     const payload = ticket.getPayload()
@@ -141,25 +152,26 @@ class AuthController {
       picture = defaultUserAvatars.light
     } = payload
 
-    const user = await prisma.user.findUnique({ where: { email } })
+    let user = await prisma.user.findUnique({ where: { email } })
 
     if (!user) {
-      const user = await prisma.user.create({
+      user = await prisma.user.create({
         data: { name, email, avatar: picture }
       })
-
-      const tokens = await this.getNewTokens({ id: user.id })
-
-      this.setTokensCookie(res, tokens)
-
-      res.redirect(FRONTEND_URL)
-    } else {
-      const tokens = await this.getNewTokens({ id: user.id })
-
-      this.setTokensCookie(res, tokens)
-
-      res.redirect(FRONTEND_URL)
     }
+
+    const newSession = await prisma.session.create({
+      data: { userId: user.id }
+    })
+
+    const tokens = await this.getNewTokens({
+      id: user.id,
+      sid: newSession.id
+    })
+
+    this.setTokensCookie(res, tokens)
+
+    res.redirect(FRONTEND_URL)
   }
 
   refresh = async (req: Request, res: Response, next: NextFunction) => {
@@ -169,14 +181,29 @@ class AuthController {
 
     try {
       const {
-        payload: { id }
+        payload: { id, sid }
       } = await jwtVerify<JwtPayload>(refreshToken, REFRESH_JWT_SECRET)
 
-      const user = await prisma.user.findFirst({ where: { id } })
+      const user = await prisma.user.findUnique({ where: { id } })
 
       if (!user) return next(Forbidden())
 
-      const tokens = await this.getNewTokens({ id: user.id })
+      const currentSession = await prisma.session.findUnique({
+        where: { id: sid }
+      })
+
+      if (!currentSession) return next(Forbidden())
+
+      await prisma.session.delete({ where: { id: currentSession.id } })
+
+      const newSession = await prisma.session.create({
+        data: { userId: user.id }
+      })
+
+      const tokens = await this.getNewTokens({
+        id: user.id,
+        sid: newSession.id
+      })
 
       this.setTokensCookie(res, tokens)
 
@@ -188,9 +215,11 @@ class AuthController {
     }
   }
 
-  logout = async (_: Request, res: Response) => {
-    res.clearCookie(this.ACCESS_TOKEN_NAME)
-    res.clearCookie(this.REFRESH_TOKEN_NAME)
+  logout = async ({ session }: Request, res: Response) => {
+    await prisma.session.delete({ where: { id: session } })
+
+    res.clearCookie(this.ACCESS_TOKEN_NAME, this.COOKIE_OPTIONS)
+    res.clearCookie(this.REFRESH_TOKEN_NAME, this.COOKIE_OPTIONS)
 
     res.sendStatus(204)
   }
