@@ -134,7 +134,21 @@
               }
             }
           },
-          "400": { "$ref": "#/components/responses/BadRequestError" },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "state": {
+                      "type": "string",
+                      "example": "Invalid state parameter"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "403": { "$ref": "#/components/responses/Forbidden" }
         }
       }
