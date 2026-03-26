@@ -86,7 +86,7 @@ class AuthController {
       }
     })
 
-    this.createSessionAndSetCookies(res, user.id)
+    await this.createSessionAndSetCookies(res, user.id)
 
     res.json({ user })
   }
@@ -111,7 +111,7 @@ class AuthController {
 
     if (!isPasswordMatch) return next(Unauthorized('Email or password invalid'))
 
-    this.createSessionAndSetCookies(res, user.id)
+    await this.createSessionAndSetCookies(res, user.id)
 
     res.json({ user: userWithoutPassword })
   }
@@ -174,7 +174,7 @@ class AuthController {
       })
     }
 
-    this.createSessionAndSetCookies(res, user.id)
+    await this.createSessionAndSetCookies(res, user.id)
 
     res.redirect(FRONTEND_URL)
   }
@@ -201,7 +201,7 @@ class AuthController {
 
       await prisma.session.delete({ where: { id: currentSession.id } })
 
-      this.createSessionAndSetCookies(res, user.id)
+      await this.createSessionAndSetCookies(res, user.id)
 
       res.json({ message: 'Tokens refreshed successfully' })
     } catch (error) {
