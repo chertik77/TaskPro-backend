@@ -22,12 +22,12 @@ export const authenticate = async (
       payload: { id, sid }
     } = await jwtVerify<JwtPayload>(token, env.ACCESS_JWT_SECRET)
 
-    const user = await prisma.user.findFirst({
+    const user = await prisma.user.findUnique({
       where: { id },
       omit: { password: false }
     })
 
-    const session = await prisma.session.findFirst({ where: { id: sid } })
+    const session = await prisma.session.findUnique({ where: { id: sid } })
 
     if (!user || !session) return next(Unauthorized())
 

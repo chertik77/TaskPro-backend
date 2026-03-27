@@ -24,7 +24,7 @@ class ColumnController {
     res: Response,
     next: NextFunction
   ) => {
-    const board = await prisma.board.findFirst({
+    const board = await prisma.board.findUnique({
       where: { id: params.boardId, userId: user.id }
     })
 
@@ -86,7 +86,7 @@ class ColumnController {
     res: Response,
     next: NextFunction
   ) => {
-    const board = await prisma.board.findFirst({
+    const board = await prisma.board.findUnique({
       where: { id: params.boardId }
     })
 

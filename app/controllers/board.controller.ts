@@ -46,7 +46,7 @@ class BoardController {
     if (cachedBoard) {
       res.json(JSON.parse(cachedBoard))
     } else {
-      const board = await prisma.board.findFirst({
+      const board = await prisma.board.findUnique({
         where: { id: params.boardId, userId: user.id },
         include: {
           columns: {

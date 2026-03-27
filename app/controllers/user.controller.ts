@@ -19,7 +19,7 @@ class UserController {
     if (cachedUser) {
       res.json(JSON.parse(cachedUser))
     } else {
-      const user = await prisma.user.findFirst({
+      const user = await prisma.user.findUnique({
         where: { id: req.user.id }
       })
 
@@ -38,7 +38,7 @@ class UserController {
     const { email, password } = body
 
     const isEmailExists =
-      email && (await prisma.user.findUnique({ where: { email } }))
+      email && (await prisma.user.findFirst({ where: { email } }))
 
     if (email && email !== userEmail && isEmailExists) {
       return next(Conflict('Email already exist'))

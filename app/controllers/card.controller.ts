@@ -23,7 +23,7 @@ class CardController {
     res: Response,
     next: NextFunction
   ) => {
-    const column = await prisma.column.findFirst({
+    const column = await prisma.column.findUnique({
       where: { id: params.columnId },
       include: { board: { select: { userId: true } } }
     })
@@ -50,7 +50,7 @@ class CardController {
     next: NextFunction
   ) => {
     if (body.columnId) {
-      const column = await prisma.column.findFirst({
+      const column = await prisma.column.findUnique({
         where: { id: body.columnId }
       })
 
@@ -84,7 +84,7 @@ class CardController {
     res: Response,
     next: NextFunction
   ) => {
-    const column = await prisma.column.findFirst({
+    const column = await prisma.column.findUnique({
       where: { id: params.columnId },
       include: { board: { select: { userId: true } } }
     })
