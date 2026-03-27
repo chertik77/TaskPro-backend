@@ -6,9 +6,9 @@
     "node": ">=20.18"
   },
   "scripts": {
-    "start": "export NODE_OPTIONS=–max-old-space-size=420 && node dist/app/server.js",
-    "build": "tsc && tsc-alias",
-    "dev": "ts-node-dev -r tsconfig-paths/register --files --quiet app/server.ts",
+    "start": "node dist/app/server.js",
+    "build": "swc app -d dist --copy-files",
+    "dev": "tsx watch app/server.ts",
     "lint": "eslint --fix app/**/*.ts",
     "format": "prettier --write ./app",
     "format:check": "prettier --check ./app",
@@ -41,6 +41,8 @@
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^10.0.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
+    "@swc/cli": "^0.8.0",
+    "@swc/core": "^1.15.21",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "5.0.6",
@@ -57,11 +59,8 @@
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
     "prisma": "^6.13.0",
-    "ts-node": "^10.9.2",
-    "ts-node-dev": "^2.0.0",
-    "tsc-alias": "^1.8.16",
     "tsc-files": "^1.1.4",
-    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.57.2"
   }

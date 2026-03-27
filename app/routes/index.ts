@@ -1,7 +1,9 @@
+import fs from 'fs'
+import path from 'path'
+
 import { Router } from 'express'
 import swaggerUi from 'swagger-ui-express'
 
-import swaggerDocument from '../../swagger.json'
 import { authRouter } from './api/auth'
 import { boardRouter } from './api/board'
 import { cardRouter } from './api/card'
@@ -10,10 +12,13 @@ import { userRouter } from './api/user'
 
 export const apiRouter = Router()
 
+const swaggerPath = path.join(process.cwd(), 'swagger.json')
+const swagger = JSON.parse(fs.readFileSync(swaggerPath, 'utf-8'))
+
 apiRouter.use(
   '/docs',
   swaggerUi.serve,
-  swaggerUi.setup(swaggerDocument, { customSiteTitle: 'TaskPro API Docs' })
+  swaggerUi.setup(swagger, { customSiteTitle: 'TaskPro API Docs' })
 )
 
 apiRouter.use('/auth', authRouter)
