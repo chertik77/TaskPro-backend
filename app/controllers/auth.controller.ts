@@ -138,7 +138,7 @@ class AuthController {
       const { code, state: receivedState, error } = req.query
 
       if (error && error === 'access_denied') {
-        return res.redirect(`${FRONTEND_URL}/auth/callback?error=access_denied`)
+        return res.redirect(`${FRONTEND_URL}?error=access_denied`)
       }
 
       const redisStateKey = `google_oauth_state:${receivedState}`
@@ -146,7 +146,7 @@ class AuthController {
       const storedState = await redisClient.get(redisStateKey)
 
       if (!storedState) {
-        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+        return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
       }
 
       await redisClient.del(redisStateKey)
@@ -156,7 +156,7 @@ class AuthController {
       } = await this.googleClient.getToken(code as string)
 
       if (!id_token) {
-        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+        return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
       }
 
       const ticket = await this.googleClient.verifyIdToken({
@@ -167,7 +167,7 @@ class AuthController {
       const payload = ticket.getPayload()
 
       if (!payload || !payload.email) {
-        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+        return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
       }
 
       const {
@@ -186,9 +186,9 @@ class AuthController {
 
       await this.createSessionAndSetCookies(res, user.id)
 
-      return res.redirect(`${FRONTEND_URL}/auth/callback`)
+      res.redirect(FRONTEND_URL)
     } catch {
-      return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+      res.redirect(`${FRONTEND_URL}?error=oauth_error`)
     }
   }
 
@@ -211,7 +211,7 @@ class AuthController {
       const { code, state: receivedState, error } = req.query
 
       if (error && error === 'access_denied') {
-        return res.redirect(`${FRONTEND_URL}/auth/callback?error=access_denied`)
+        return res.redirect(`${FRONTEND_URL}?error=access_denied`)
       }
 
       const redisStateKey = `facebook_oauth_state:${receivedState}`
@@ -219,7 +219,7 @@ class AuthController {
       const storedState = await redisClient.get(redisStateKey)
 
       if (!storedState || !code) {
-        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+        return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
       }
 
       await redisClient.del(redisStateKey)
@@ -234,13 +234,13 @@ class AuthController {
       const response = await fetch(url)
 
       if (!response.ok) {
-        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+        return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
       }
 
       const data = await response.json()
 
       if (!data.access_token) {
-        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+        return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
       }
 
       const profileURL = new URL('https://graph.facebook.com/me')
@@ -251,13 +251,13 @@ class AuthController {
       const profileResponse = await fetch(profileURL)
 
       if (!profileResponse.ok) {
-        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+        return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
       }
 
       const profile = (await profileResponse.json()) as FacebookProfile
 
       if (!profile || !profile.id) {
-        return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+        return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
       }
 
       const {
@@ -278,9 +278,9 @@ class AuthController {
 
       await this.createSessionAndSetCookies(res, user.id)
 
-      return res.redirect(`${FRONTEND_URL}/auth/callback`)
+      res.redirect(FRONTEND_URL)
     } catch {
-      return res.redirect(`${FRONTEND_URL}/auth/callback?error=oauth_error`)
+      res.redirect(`${FRONTEND_URL}?error=oauth_error`)
     }
   }
 
