@@ -24,9 +24,9 @@ authRouter.get('/google/initiate', authController.googleInitiate)
 
 authRouter.get('/google/callback', authController.googleCallback)
 
-authRouter.get('/facebook/initiate', authController.facebookInitiate)
+authRouter.get('/microsoft/initiate', authController.microsoftInitiate)
 
-authRouter.get('/facebook/callback', authController.facebookCallback)
+authRouter.get('/microsoft/callback', authController.microsoftCallback)
 
 authRouter.post('/refresh', authController.refresh)
 

@@ -1,16 +1,17 @@
 import { randomBytes } from 'crypto'
 import type { SigninSchema, SignupSchema } from '@/schemas'
-import type { FacebookProfile, JwtPayload, TypedRequestBody } from '@/types'
+import type { JwtPayload, MicrosoftProfile, TypedRequestBody } from '@/types'
 import type { CookieOptions, NextFunction, Request, Response } from 'express'
 
 import { prisma } from '@/prisma'
+import { ConfidentialClientApplication } from '@azure/msal-node'
 import { hash, verify } from 'argon2'
 import { OAuth2Client } from 'google-auth-library'
 import { Conflict, Forbidden, Unauthorized } from 'http-errors'
 import { jwtVerify, SignJWT } from 'jose'
 import { JWTExpired } from 'jose/errors'
 
-import { defaultUserAvatars, env, redisClient } from '@/config'
+import cloudinary, { defaultUserAvatars, env, redisClient } from '@/config'
 
 const {
   ACCESS_JWT_EXPIRES_IN,
@@ -22,9 +23,9 @@ const {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   GOOGLE_REDIRECT_URI,
-  FACEBOOK_CLIENT_ID,
-  FACEBOOK_CLIENT_SECRET,
-  FACEBOOK_REDIRECT_URI,
+  MICROSOFT_CLIENT_ID,
+  MICROSOFT_CLIENT_SECRET,
+  MICROSOFT_REDIRECT_URI,
   FRONTEND_URL,
   NODE_ENV
 } = env
@@ -35,6 +36,14 @@ class AuthController {
     GOOGLE_CLIENT_SECRET,
     GOOGLE_REDIRECT_URI
   )
+
+  private microsoftClient = new ConfidentialClientApplication({
+    auth: {
+      clientId: MICROSOFT_CLIENT_ID,
+      clientSecret: MICROSOFT_CLIENT_SECRET,
+      authority: 'https://login.microsoftonline.com/consumers'
+    }
+  })
 
   private readonly COOKIE_OPTIONS: CookieOptions = {
     httpOnly: true,
@@ -137,7 +146,7 @@ class AuthController {
     try {
       const { code, state: receivedState, error } = req.query
 
-      if (error && error === 'access_denied') {
+      if (!code || (error && error === 'access_denied')) {
         return res.redirect(`${FRONTEND_URL}?error=access_denied`)
       }
 
@@ -192,87 +201,81 @@ class AuthController {
     }
   }
 
-  facebookInitiate = async (_: Request, res: Response) => {
+  microsoftInitiate = async (_: Request, res: Response) => {
     const state = randomBytes(32).toString('hex')
-    await redisClient.set(`facebook_oauth_state:${state}`, '1', 'EX', 300)
 
-    const url = new URL('https://www.facebook.com/v19.0/dialog/oauth')
+    await redisClient.set(`microsoft_oauth_state:${state}`, 'true', 'EX', 300)
 
-    url.searchParams.set('client_id', FACEBOOK_CLIENT_ID)
-    url.searchParams.set('redirect_uri', FACEBOOK_REDIRECT_URI)
-    url.searchParams.set('state', state)
-    url.searchParams.set('scope', 'email,public_profile')
+    const url = await this.microsoftClient.getAuthCodeUrl({
+      scopes: ['openid', 'profile', 'email', 'User.Read'],
+      redirectUri: MICROSOFT_REDIRECT_URI,
+      prompt: 'select_account',
+      state
+    })
 
-    res.redirect(url.toString())
+    res.redirect(url)
   }
 
-  facebookCallback = async (req: Request, res: Response) => {
+  microsoftCallback = async (req: Request, res: Response) => {
     try {
       const { code, state: receivedState, error } = req.query
 
-      if (error && error === 'access_denied') {
+      if (!code || (error && error === 'access_denied')) {
         return res.redirect(`${FRONTEND_URL}?error=access_denied`)
       }
 
-      const redisStateKey = `facebook_oauth_state:${receivedState}`
+      const redisStateKey = `microsoft_oauth_state:${receivedState}`
 
       const storedState = await redisClient.get(redisStateKey)
 
-      if (!storedState || !code) {
+      if (!storedState) {
         return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
       }
 
       await redisClient.del(redisStateKey)
 
-      const url = new URL('https://graph.facebook.com/v19.0/oauth/access_token')
+      const { idTokenClaims, accessToken } =
+        await this.microsoftClient.acquireTokenByCode({
+          code: code as string,
+          scopes: ['openid', 'profile', 'email', 'User.Read'],
+          redirectUri: MICROSOFT_REDIRECT_URI
+        })
 
-      url.searchParams.set('client_id', FACEBOOK_CLIENT_ID)
-      url.searchParams.set('redirect_uri', FACEBOOK_REDIRECT_URI)
-      url.searchParams.set('client_secret', FACEBOOK_CLIENT_SECRET)
-      url.searchParams.set('code', code as string)
-
-      const response = await fetch(url)
-
-      if (!response.ok) {
+      if (!idTokenClaims) {
         return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
       }
 
-      const data = await response.json()
+      const profile = idTokenClaims as MicrosoftProfile
 
-      if (!data.access_token) {
-        return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
-      }
-
-      const profileURL = new URL('https://graph.facebook.com/me')
-
-      profileURL.searchParams.set('fields', 'id,name,email,picture')
-      profileURL.searchParams.set('access_token', data.access_token)
-
-      const profileResponse = await fetch(profileURL)
-
-      if (!profileResponse.ok) {
-        return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
-      }
-
-      const profile = (await profileResponse.json()) as FacebookProfile
-
-      if (!profile || !profile.id) {
-        return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
-      }
-
-      const {
-        email,
-        name = 'Guest',
-        picture: {
-          data: { url: picture }
-        }
-      } = profile
+      const name = profile.name || 'Guest'
+      const email = profile.email || profile.preferred_username || profile.upn
 
       let user = await prisma.user.findFirst({ where: { email } })
 
       if (!user) {
+        let avatar
+
+        const avatarResponse = await fetch(
+          'https://graph.microsoft.com/v1.0/me/photo/$value',
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        )
+
+        if (avatarResponse.ok) {
+          const buffer = Buffer.from(await avatarResponse.arrayBuffer())
+          const base64 = buffer.toString('base64')
+
+          const uploadedAvatar = await cloudinary.uploader.upload(
+            `data:image/jpeg;base64,${base64}`,
+            { folder: 'TaskPro/user_avatars' }
+          )
+
+          avatar = uploadedAvatar.url
+        } else {
+          avatar = defaultUserAvatars.light
+        }
+
         user = await prisma.user.create({
-          data: { name, email, avatar: picture || defaultUserAvatars.light }
+          data: { name, email, avatar }
         })
       }
 

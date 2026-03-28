@@ -123,15 +123,15 @@
         }
       }
     },
-    "/auth/facebook/initiate": {
+    "/auth/microsoft/initiate": {
       "get": {
         "tags": ["Auth"],
-        "summary": "Redirect user to Facebook OAuth",
+        "summary": "Redirect user to Microsoft OAuth",
         "responses": {
           "302": {
             "headers": {
               "Location": {
-                "description": "Facebook OAuth URL",
+                "description": "Microsoft OAuth URL",
                 "schema": { "type": "string" }
               }
             }
@@ -139,10 +139,10 @@
         }
       }
     },
-    "/auth/facebook/callback": {
+    "/auth/microsoft/callback": {
       "get": {
         "tags": ["Auth"],
-        "summary": "Handles Facebook's OAuth redirect",
+        "summary": "Handles Microsoft's OAuth redirect",
         "responses": {
           "302": {
             "description": "Redirects to frontend with success or error",

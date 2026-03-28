@@ -12,6 +12,14 @@ import cloudinary, { env, redisClient, transport } from '@/config'
 
 class UserController {
   me = async (req: Request, res: Response) => {
+    // Disable caching for this route to prevent stale data
+    res.setHeader(
+      'Cache-Control',
+      'no-store, no-cache, must-revalidate, proxy-revalidate'
+    )
+    res.setHeader('Pragma', 'no-cache')
+    res.setHeader('Expires', '0')
+
     const cacheKey = `user:${req.user.id}`
 
     const cachedUser = await redisClient.get(cacheKey)
@@ -23,7 +31,7 @@ class UserController {
         where: { id: req.user.id }
       })
 
-      await redisClient.set(cacheKey, JSON.stringify(user))
+      await redisClient.set(cacheKey, JSON.stringify(user), 'EX', 300)
 
       res.json(user)
     }
