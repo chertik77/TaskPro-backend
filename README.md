@@ -29,10 +29,10 @@ Created APIs for managing user profiles, including updating avatars and personal
 - **Help Email Integration:**
 Integrated email services to allow users to send support requests directly from the application. Built APIs to handle sending and processing help messages.
 
-- **API Design**
+- **API Design:**
 Designed clean and well-structured RESTful APIs with clear routes, controllers, and middleware to ensure maintainability and scalability.
 
-- **Error Handling and Validation**
+- **Error Handling and Validation:**
 Implemented consistent error handling and input validation to improve reliability and prevent invalid data from entering the system.
 
 ## Project Contributors
