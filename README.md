@@ -8,25 +8,32 @@ _Link to the frontend repo:_ https://github.com/chertik77/TaskPro-frontend
 
 ## Features
 
-- **Authentication and authorization:** Implement secure user authentication mechanisms, allowing users to register, log in securely, and manage sessions effectively.
+- **Authentication and Authorization:**
+Implemented secure user authentication, allowing users to register, log in safely, and maintain active sessions. Applied best practices for protecting user data and access control.
 
 - **Board Management:**
-  Enable users to create, update, and delete boards programmatically. Boards can be personalized with unique metadata and user-specific configurations.
+Developed functionality for creating, updating, and deleting boards. Boards support custom settings and metadata, enabling users to organize their work in a flexible way.
 
 - **Task Management:**
-  Develop robust APIs for creating, updating, and prioritizing tasks within boards. Implement advanced features such as filtering by priority and ordering to optimize task handling.
+Built scalable APIs for managing tasks within boards. Users can create, update, prioritize, and organize tasks with features such as filtering, sorting.
 
 - **Database Integration:**
-  Utilize efficient database management (MongoDB) for storing board configurations, tasks, and user data securely.
+Integrated MongoDB for efficient and secure data storage. Designed data models to handle users, boards, and tasks with good performance and scalability in mind.
 
 - **Theme Configuration:**
-  Implement backend logic to support theme switching functionalities. Ensure seamless integration with frontend capabilities for light, dark, and violet themes.
+Added backend support for dynamic theme switching (light, dark, and violet), ensuring smooth integration with the frontend and consistent user experience.
 
 - **Profile Management:**
-  Enable users to manage their profiles through APIs for updating avatars and other user-specific details.
+Created APIs for managing user profiles, including updating avatars and personal information.
 
 - **Help Email Integration:**
-  Integrate backend services to support email functionalities for user assistance requests. Implement APIs for sending and receiving help emails directly from the application.
+Integrated email services to allow users to send support requests directly from the application. Built APIs to handle sending and processing help messages.
+
+- **API Design**
+Designed clean and well-structured RESTful APIs with clear routes, controllers, and middleware to ensure maintainability and scalability.
+
+- **Error Handling and Validation**
+Implemented consistent error handling and input validation to improve reliability and prevent invalid data from entering the system.
 
 ## Project Contributors
 
