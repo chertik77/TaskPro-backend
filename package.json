@@ -18,13 +18,13 @@
     "schema": "./prisma"
   },
   "dependencies": {
-    "@azure/msal-node": "^5.1.1",
+    "@azure/msal-node": "^5.1.2",
     "@prisma/client": "^6.13.0",
     "argon2": "^0.44.0",
     "cloudinary": "^2.9.0",
     "cookie-parser": "^1.4.7",
     "cors": "2.8.6",
-    "dotenv": "^17.3.1",
+    "dotenv": "^17.4.1",
     "express": "^5.2.1",
     "google-auth-library": "^10.6.2",
     "helmet": "^8.1.0",
@@ -33,7 +33,7 @@
     "jose": "^6.2.2",
     "morgan": "1.10.1",
     "multer": "^2.1.1",
-    "nodemailer": "^8.0.4",
+    "nodemailer": "^8.0.5",
     "swagger-ui-express": "^5.0.1",
     "zod": "^4.3.6"
   },
@@ -42,17 +42,17 @@
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^10.0.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
-    "@swc/cli": "^0.8.0",
-    "@swc/core": "^1.15.21",
+    "@swc/cli": "^0.8.1",
+    "@swc/core": "^1.15.24",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "5.0.6",
     "@types/morgan": "^1.9.10",
     "@types/multer": "^2.1.0",
-    "@types/node": "^25.5.0",
-    "@types/nodemailer": "^7.0.11",
+    "@types/node": "^25.5.2",
+    "@types/nodemailer": "^8.0.0",
     "@types/swagger-ui-express": "^4.1.8",
-    "eslint": "^10.1.0",
+    "eslint": "^10.2.0",
     "eslint-formatter-mo": "^2.4.1",
     "globals": "^17.4.0",
     "husky": "^9.1.7",
@@ -63,6 +63,6 @@
     "tsc-files": "^1.1.4",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2",
-    "typescript-eslint": "^8.57.2"
+    "typescript-eslint": "^8.58.1"
   }
 }
