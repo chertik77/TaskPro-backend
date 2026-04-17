@@ -115,7 +115,7 @@
                 "description": "Frontend redirect URL",
                 "schema": {
                   "type": "string",
-                  "example": "https://taskpro.qzz.io/auth/callback?error=oauth_error"
+                  "example": "https://taskpro.qzz.io?error=oauth_error"
                 }
               }
             }
@@ -151,7 +151,7 @@
                 "description": "Frontend redirect URL",
                 "schema": {
                   "type": "string",
-                  "example": "https://taskpro.qzz.io/auth/callback?error=oauth_error"
+                  "example": "https://taskpro.qzz.io?error=oauth_error"
                 }
               }
             }
