@@ -2,32 +2,32 @@ name: Code Quality & Standards Check
 
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository 🛎️
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Dependencies 📦
+      - name: Install Dependencies
         uses: borales/actions-yarn@v4
         with:
           cmd: install
 
-      - name: Run Linter 🔧
+      - name: Run Linter
         uses: borales/actions-yarn@v4
         with:
           cmd: lint
 
-      - name: Verify Code Formatting 📝
+      - name: Verify Code Formatting
         uses: borales/actions-yarn@v4
         with:
           cmd: format:check
 
-      - name: Enforce Conventional Commits 🔒
+      - name: Enforce Conventional Commits
         uses: webiny/action-conventional-commits@v1.1.0
