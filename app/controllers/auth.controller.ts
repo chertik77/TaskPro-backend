@@ -204,7 +204,12 @@ class AuthController {
   microsoftInitiate = async (_: Request, res: Response) => {
     const state = randomBytes(32).toString('hex')
 
-    await redisClient.set(`microsoft_oauth_state:${state}`, 'true', 'EX', 300)
+    await redisClient.set(
+      `microsoft_oauth_state:${state}`,
+      'true',
+      'EX',
+      5 * 60
+    )
 
     const url = await this.microsoftClient.getAuthCodeUrl({
       scopes: ['openid', 'profile', 'email', 'User.Read'],

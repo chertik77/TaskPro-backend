@@ -60,7 +60,6 @@
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
     "prisma": "^6.13.0",
-    "tsc-files": "^1.1.4",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.58.1"

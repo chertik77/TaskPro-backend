@@ -1,8 +1,3 @@
 {
-  "*.{ts,tsx}": [
-    "prettier --write",
-    "eslint --fix -f mo",
-    "eslint -f mo",
-    "sh -c 'tsc-files --noEmit $(find ./app -name *.d.ts ! -path \"./app/.*/*\") $0 $@'"
-  ]
+  "*.{ts,tsx}": ["prettier --write", "eslint --fix -f mo", "eslint -f mo"]
 }

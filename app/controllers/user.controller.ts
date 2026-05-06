@@ -31,7 +31,7 @@ class UserController {
         where: { id: req.user.id }
       })
 
-      await redisClient.set(cacheKey, JSON.stringify(user), 'EX', 300)
+      await redisClient.set(cacheKey, JSON.stringify(user), 'EX', 5 * 60)
 
       res.json(user)
     }

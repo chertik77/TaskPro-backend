@@ -28,7 +28,7 @@ class BoardController {
     } else {
       const boards = await prisma.board.findMany({ where: { userId: user.id } })
 
-      await redisClient.set(cacheKey, JSON.stringify(boards))
+      await redisClient.set(cacheKey, JSON.stringify(boards), 'EX', 5 * 60)
 
       res.json(boards)
     }
@@ -58,7 +58,7 @@ class BoardController {
 
       if (!board) return next(NotFound('Board not found'))
 
-      await redisClient.set(cacheKey, JSON.stringify(board))
+      await redisClient.set(cacheKey, JSON.stringify(board), 'EX', 5 * 60)
 
       res.json(board)
     }
