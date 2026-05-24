@@ -2,19 +2,18 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    ":dependencyDashboard",
     ":semanticCommits",
     ":semanticCommitTypeAll(chore)",
     ":timezone(Europe/London)",
     "group:allNonMajor"
   ],
-  "labels": ["dependencies", "renovate"],
-  "schedule": ["before 6am every monday"],
+  "labels": ["dependencies"],
+  "schedule": ["at any time"],
   "rangeStrategy": "bump",
   "prConcurrentLimit": 1,
   "prHourlyLimit": 0,
   "rebaseWhen": "behind-base-branch",
-  "dependencyDashboard": true,
+  "dependencyDashboard": false,
   "lockFileMaintenance": {
     "enabled": true,
     "schedule": ["before 6am on the first day of the month"]
@@ -48,6 +47,5 @@
   "ignoreTests": false,
   "commitMessagePrefix": "chore(deps):",
   "prCreation": "immediate",
-  "platformAutomerge": true,
-  "dependencyDashboardApproval": false
+  "platformAutomerge": true
 }
