@@ -48,5 +48,6 @@
   "ignoreTests": false,
   "commitMessagePrefix": "chore(deps):",
   "prCreation": "immediate",
-  "platformAutomerge": true
+  "platformAutomerge": true,
+  "dependencyDashboardApproval": false
 }
