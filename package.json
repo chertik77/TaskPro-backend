@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.16.0"
   },
   "scripts": {
     "start": "node dist/app/server.js",
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@azure/msal-node": "^5.2.2",
-    "@prisma/client": "^6.13.0",
+    "@prisma/client": "^7.8.0",
     "argon2": "^0.44.0",
     "cloudinary": "^2.10.0",
     "cookie-parser": "^1.4.7",
@@ -59,7 +59,7 @@
     "jiti": "^2.7.0",
     "lint-staged": "^17.0.5",
     "prettier": "^3.8.3",
-    "prisma": "^6.13.0",
+    "prisma": "^7.8.0",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.4"
