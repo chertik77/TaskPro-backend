@@ -7,7 +7,7 @@
     ":timezone(Europe/London)"
   ],
   "labels": ["dependencies"],
-  "schedule": ["before 6am every monday"],
+  "schedule": ["before 6am on monday"],
   "rangeStrategy": "bump",
   "prConcurrentLimit": 5,
   "prHourlyLimit": 0,
