@@ -35,6 +35,11 @@
       "description": "Automerge GitHub Actions",
       "matchManagers": ["github-actions"],
       "automerge": true
+    },
+    {
+      "description": "Ignore node updates",
+      "matchDepNames": ["node"],
+      "enabled": false
     }
   ]
 }
