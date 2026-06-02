@@ -92,7 +92,7 @@
   resolved "https://registry.yarnpkg.com/@borewit/text-codec/-/text-codec-0.2.2.tgz#75025f735c0983b3a871668804a57387e3649375"
   integrity sha512-DDaRehssg1aNrH4+2hnj1B7vnUGEjU6OIlyRdkMd0aUdIUvKXrJfXsy8LVtXAy7DRvYVluWbMspsRhz2lcW0mQ==
 
-"@commitlint/cli@^21.0.1":
+"@commitlint/cli@^21.0.2":
   version "21.0.2"
   resolved "https://registry.yarnpkg.com/@commitlint/cli/-/cli-21.0.2.tgz#34f006f2ffa77ade13a6bfe97296290f99aaddeb"
   integrity sha512-YMmfLbqBg+ZRvvmPhc+cilSQFrh/AgzVgCT1U/OifmUZEwPbvCtA8rN//YNaF9d5eoZphxVMGYtmwA2QgQORgg==
@@ -105,7 +105,7 @@
     tinyexec "^1.0.0"
     yargs "^18.0.0"
 
-"@commitlint/config-conventional@^21.0.1":
+"@commitlint/config-conventional@^21.0.2":
   version "21.0.2"
   resolved "https://registry.yarnpkg.com/@commitlint/config-conventional/-/config-conventional-21.0.2.tgz#10858dd7f499edd6336a748247d005b81efd5b54"
   integrity sha512-P/ZRhryQmkj0Z0dY9FOoRwe3xkwJyyAdtXwt01NT2kuZttcG2CNYp1q5Ci3u+nDT2jcbJRw2kt13Czl1qKNPfg==
@@ -628,7 +628,7 @@
   resolved "https://registry.yarnpkg.com/@phc/format/-/format-1.0.0.tgz#b5627003b3216dc4362125b13f48a4daa76680e4"
   integrity sha512-m7X9U6BG2+J+R1lSOdCiITLLrxm+cWlNI3HUFA92oLO77ObGNzaKdh8pMLqdZcshtkKuV84olNNXDfMc4FezBQ==
 
-"@prisma/client@^6.13.0":
+"@prisma/client@^6.19.3":
   version "6.19.3"
   resolved "https://registry.yarnpkg.com/@prisma/client/-/client-6.19.3.tgz#b04413143eeb0812a323451bbc1a22767cee11ef"
   integrity sha512-mKq3jQFhjvko5LTJFHGilsuQs+W+T3Gm451NzuTDGQxwCzwXHYnIu2zGkRoW+Exq3Rob7yp2MfzSrdIiZVhrBg==
@@ -2003,7 +2003,7 @@ eslint-visitor-keys@^5.0.0, eslint-visitor-keys@^5.0.1:
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-5.0.1.tgz#9e3c9489697824d2d4ce3a8ad12628f91e9f59be"
   integrity sha512-tD40eHxA35h0PEIZNeIjkHoDR4YjjJp34biM0mDvplBe//mB+IHCqHDGV7pxF+7MklTvighcCPPZC7ynWyjdTA==
 
-eslint@^10.4.0:
+eslint@^10.4.1:
   version "10.4.1"
   resolved "https://registry.yarnpkg.com/eslint/-/eslint-10.4.1.tgz#f6640b176e0912246d9ddbf8fcfa5e8b7f02445a"
   integrity sha512-AyIKhnOBuOAdueD7RB3xB+YeAWScb9jHsJBgH2Hcde8InP5JYhqrRR6iTMHyTEwgENK54Cp44e4v8BwNhsuHuw==
@@ -2647,7 +2647,7 @@ inspect-with-kind@^1.0.5:
   dependencies:
     kind-of "^6.0.2"
 
-ioredis@^5.10.1:
+ioredis@^5.11.0:
   version "5.11.0"
   resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.11.0.tgz#cb87081f2a888060579d0ddeaccbf8ee5323ef4f"
   integrity sha512-EZBErytyVovD8f6pDfG3Kb37N6Y3lmDA9NNj+4+IP13CzzHGeX+OyeRM2Um13khRzoBSzzL+5lVnCX8V2RLeMg==
@@ -2868,7 +2868,7 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
 
-lint-staged@^17.0.5:
+lint-staged@^17.0.6:
   version "17.0.7"
   resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-17.0.7.tgz#2ed5ffb49d283425778125386278bb4d7ce24d22"
   integrity sha512-JrSobt+tW3rH8IOMi8tDZd3foorM5yPEkLD/V2NxobgHrFfHWGee4MOLVuZeScgxftEwbHrPHIFA/ZL+nUJeuA==
@@ -3163,7 +3163,7 @@ node-gyp-build@^4.8.4:
   resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.8.4.tgz#8a70ee85464ae52327772a90d66c6077a900cfc8"
   integrity sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ==
 
-nodemailer@^8.0.8:
+nodemailer@^8.0.10:
   version "8.0.10"
   resolved "https://registry.yarnpkg.com/nodemailer/-/nodemailer-8.0.10.tgz#009d4deaa06f54b6bd7ddc6cac1bf78e3bcb0bf2"
   integrity sha512-BLFuSth7QtHOkBzyqTehWWyub0NTRDuK2Q2SQfnGLsrJnzyU+Yeh4WpV1eZGuARFj1xQJHIdnTuJZLP+b9R1GQ==
@@ -3416,7 +3416,7 @@ pretty-ms@^9.2.0:
   dependencies:
     parse-ms "^4.0.0"
 
-prisma@^6.13.0:
+prisma@^6.19.3:
   version "6.19.3"
   resolved "https://registry.yarnpkg.com/prisma/-/prisma-6.19.3.tgz#48c80d6a7b74269f6f30e27c1f8781a83249410c"
   integrity sha512-++ZJ0ijLrDJF6hNB4t4uxg2br3fC4H9Yc9tcbjr2fcNFP3rh/SBNrAgjhsqBU4Ght8JPrVofG/ZkXfnSfnYsFg==
@@ -4036,7 +4036,7 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
 
-typescript-eslint@^8.59.4:
+typescript-eslint@^8.60.0:
   version "8.60.1"
   resolved "https://registry.yarnpkg.com/typescript-eslint/-/typescript-eslint-8.60.1.tgz#13db05c6eabb89669deec44545b788a0e9aee640"
   integrity sha512-6m5hkkRAp8lKvhVpcprAIn5KkehQEh+47oHH2VGnExEh7dhNxXlg6GPAOIu6TxbVQxhebrJDvjl3020ooiWCMA==

@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@azure/msal-node": "^5.2.2",
-    "@prisma/client": "^6.13.0",
+    "@prisma/client": "^6.19.3",
     "argon2": "^0.44.0",
     "cloudinary": "^2.10.0",
     "cookie-parser": "^1.4.7",
@@ -29,17 +29,17 @@
     "google-auth-library": "^10.6.2",
     "helmet": "^8.2.0",
     "http-errors": "^2.0.1",
-    "ioredis": "^5.10.1",
+    "ioredis": "^5.11.0",
     "jose": "^6.2.3",
     "morgan": "1.10.1",
     "multer": "^2.1.1",
-    "nodemailer": "^8.0.8",
+    "nodemailer": "^8.0.10",
     "swagger-ui-express": "^5.0.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@commitlint/cli": "^21.0.1",
-    "@commitlint/config-conventional": "^21.0.1",
+    "@commitlint/cli": "^21.0.2",
+    "@commitlint/config-conventional": "^21.0.2",
     "@eslint/js": "^10.0.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@swc/cli": "^0.8.1",
@@ -52,16 +52,16 @@
     "@types/node": "^25.9.1",
     "@types/nodemailer": "^8.0.0",
     "@types/swagger-ui-express": "^4.1.8",
-    "eslint": "^10.4.0",
+    "eslint": "^10.4.1",
     "eslint-formatter-mo": "^2.4.1",
     "globals": "^17.6.0",
     "husky": "^9.1.7",
     "jiti": "^2.7.0",
-    "lint-staged": "^17.0.5",
+    "lint-staged": "^17.0.6",
     "prettier": "^3.8.3",
-    "prisma": "^6.13.0",
+    "prisma": "^6.19.3",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.59.4"
+    "typescript-eslint": "^8.60.0"
   }
 }
