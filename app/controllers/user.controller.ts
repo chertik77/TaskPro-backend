@@ -2,13 +2,16 @@ import type { EditUserSchema, NeedHelpSchema } from '@/schemas'
 import type { TypedRequestBody } from '@/types'
 import type { User } from '@prisma/client'
 import type { NextFunction, Request, Response } from 'express'
-import type { Options } from 'nodemailer/lib/mailer'
 
+import {
+  supportRequestAdminTemplate,
+  supportRequestUserTemplate
+} from '@/emails/templates'
 import { prisma } from '@/prisma'
 import { hash } from 'argon2'
 import { Conflict, InternalServerError, NotAcceptable } from 'http-errors'
 
-import cloudinary, { env, redisClient, transport } from '@/config'
+import cloudinary, { env, redisClient, resend } from '@/config'
 
 class UserController {
   me = async (req: Request, res: Response) => {
@@ -100,23 +103,53 @@ class UserController {
     res: Response,
     next: NextFunction
   ) => {
-    const emailBody: Options = {
-      from: env.EMAIL_USER,
-      to: env.EMAIL_RECEIVER,
-      subject: 'Need help',
-      html: `
-        <div>
-         <h4>email: ${body.email}</h4>
-         <p>${body.comment}</p>
-        </div>`
+    const supportRequestAdmin = supportRequestAdminTemplate({
+      email: body.email,
+      comment: body.comment
+    })
+
+    const supportRequestUser = supportRequestUserTemplate({
+      comment: body.comment
+    })
+
+    const results = await Promise.allSettled([
+      resend.emails.send({
+        from: 'TaskPro <support@taskpro.qzz.io>',
+        subject: '🆕 New Support Request',
+        to: env.RESEND_RECEIVER,
+        replyTo: body.email,
+        html: supportRequestAdmin
+      }),
+
+      resend.emails.send({
+        from: 'TaskPro <support@taskpro.qzz.io>',
+        subject: 'Help Request',
+        to: body.email,
+        html: supportRequestUser
+      })
+    ])
+
+    const [adminResult, userResult] = results
+
+    const adminError =
+      adminResult.status === 'rejected'
+        ? adminResult.reason
+        : adminResult.value?.error
+
+    const userError =
+      userResult.status === 'rejected'
+        ? userResult.reason
+        : userResult.value?.error
+
+    if (adminError || userError) {
+      return next(
+        InternalServerError(
+          adminError?.message || userError?.message || 'Email sending failed'
+        )
+      )
     }
 
-    try {
-      await transport.sendMail(emailBody)
-      res.json({ message: 'Email sent' })
-    } catch {
-      return next(InternalServerError('Sending email error'))
-    }
+    res.json({ message: 'Email sent' })
   }
 }
 

@@ -2,8 +2,6 @@ import 'dotenv/config'
 
 import * as z from 'zod'
 
-const availableEmailPorts = [25, 587, 465]
-
 const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
@@ -29,16 +27,8 @@ const envSchema = z.object({
     .string()
     .transform(v => v.split(','))
     .pipe(z.array(z.url())),
-  EMAIL_HOST: z.string(),
-  EMAIL_PORT: z.coerce
-    .number()
-    .refine(
-      v => availableEmailPorts.includes(v),
-      `Email port must be one of the following: ${availableEmailPorts.join(', ')}`
-    ),
-  EMAIL_USER: z.email(),
-  EMAIL_RECEIVER: z.email(),
-  EMAIL_PASSWORD: z.string(),
+  RESEND_API_KEY: z.string(),
+  RESEND_RECEIVER: z.email(),
   ACCESS_JWT_EXPIRES_IN: z.string(),
   REFRESH_JWT_EXPIRES_IN: z.string(),
   ACCESS_JWT_ALGORITHM: z.string(),
