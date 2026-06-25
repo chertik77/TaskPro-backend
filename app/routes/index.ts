@@ -6,8 +6,8 @@ import swaggerUi from 'swagger-ui-express'
 
 import { authRouter } from './api/auth'
 import { boardRouter } from './api/board'
-import { cardRouter } from './api/card'
 import { columnRouter } from './api/column'
+import { taskRouter } from './api/task'
 import { userRouter } from './api/user'
 
 export const apiRouter = Router()
@@ -25,4 +25,4 @@ apiRouter.use('/auth', authRouter)
 apiRouter.use('/user', userRouter)
 apiRouter.use('/board', boardRouter)
 apiRouter.use('/column', columnRouter)
-apiRouter.use('/card', cardRouter)
+apiRouter.use('/task', taskRouter)

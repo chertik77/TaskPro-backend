@@ -1,4 +1,4 @@
-model Card {
+model Task {
     id          String   @id @default(auto()) @map("_id") @db.ObjectId
     title       String
     description String
@@ -8,7 +8,7 @@ model Card {
     columnId    String   @map("column_id") @db.ObjectId
     column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
 
-    @@map("cards")
+    @@map("tasks")
 }
 
 enum Priority {

@@ -4,7 +4,7 @@ model Column {
     order   Int
     boardId String @map("board_id") @db.ObjectId
     board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
-    cards   Card[]
+    tasks   Task[]
 
     @@map("columns")
 }

@@ -4,11 +4,11 @@ export {
   BoardParamsSchema
 } from './board.schema'
 export {
-  AddCardSchema,
-  EditCardSchema,
-  CardParamsSchema,
-  UpdateCardOrderSchema
-} from './card.schema'
+  AddTaskSchema,
+  EditTaskSchema,
+  TaskParamsSchema,
+  UpdateTaskOrderSchema
+} from './task.schema'
 export {
   AddColumnSchema,
   EditColumnSchema,

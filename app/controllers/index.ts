@@ -1,5 +1,5 @@
 export { authController } from './auth.controller'
 export { boardController } from './board.controller'
-export { cardController } from './card.controller'
+export { taskController } from './task.controller'
 export { columnController } from './column.controller'
 export { userController } from './user.controller'

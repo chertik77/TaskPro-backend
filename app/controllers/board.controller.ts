@@ -51,7 +51,7 @@ class BoardController {
         include: {
           columns: {
             orderBy: { order: 'asc' },
-            include: { cards: { orderBy: { order: 'asc' } } }
+            include: { tasks: { orderBy: { order: 'asc' } } }
           }
         }
       })

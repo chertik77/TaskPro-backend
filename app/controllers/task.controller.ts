@@ -1,9 +1,9 @@
 import type {
-  AddCardSchema,
-  CardParamsSchema,
+  AddTaskSchema,
   ColumnParamsSchema,
-  EditCardSchema,
-  UpdateCardOrderSchema
+  EditTaskSchema,
+  TaskParamsSchema,
+  UpdateTaskOrderSchema
 } from '@/schemas'
 import type { TypedRequest, TypedRequestParams } from '@/types'
 import type { NextFunction, Response } from 'express'
@@ -14,12 +14,12 @@ import { BadRequest, NotFound } from 'http-errors'
 
 import { redisClient } from '@/config'
 
-class CardController {
+class TaskController {
   add = async (
     {
       params,
       body
-    }: TypedRequest<typeof ColumnParamsSchema, ZodType, typeof AddCardSchema>,
+    }: TypedRequest<typeof ColumnParamsSchema, ZodType, typeof AddTaskSchema>,
     res: Response,
     next: NextFunction
   ) => {
@@ -30,22 +30,22 @@ class CardController {
 
     if (!column) return next(NotFound('Column not found'))
 
-    const newOrder = await this.getNewCardOrder(column.id)
+    const newOrder = await this.getNewTaskOrder(column.id)
 
-    const newCard = await prisma.card.create({
+    const newTask = await prisma.task.create({
       data: { ...body, columnId: column.id, order: newOrder }
     })
 
     await redisClient.del(`board:${column.boardId}:user:${column.board.userId}`)
 
-    res.json(newCard)
+    res.json(newTask)
   }
 
   updateById = async (
     {
       params,
       body
-    }: TypedRequest<typeof CardParamsSchema, ZodType, typeof EditCardSchema>,
+    }: TypedRequest<typeof TaskParamsSchema, ZodType, typeof EditTaskSchema>,
     res: Response,
     next: NextFunction
   ) => {
@@ -57,19 +57,19 @@ class CardController {
       if (!column) return next(NotFound('Column not found'))
     }
 
-    const updatedCard = await prisma.card.updateIgnoreNotFound({
-      where: { id: params.cardId },
+    const updatedTask = await prisma.task.updateIgnoreNotFound({
+      where: { id: params.taskId },
       data: body,
       include: { column: { include: { board: { select: { userId: true } } } } }
     })
 
-    if (!updatedCard) return next(NotFound('Card not found'))
+    if (!updatedTask) return next(NotFound('Task not found'))
 
-    const { column, ...card } = updatedCard
+    const { column, ...task } = updatedTask
 
     await redisClient.del(`board:${column.boardId}:user:${column.board.userId}`)
 
-    res.json(card)
+    res.json(task)
   }
 
   updateOrder = async (
@@ -79,7 +79,7 @@ class CardController {
     }: TypedRequest<
       typeof ColumnParamsSchema,
       ZodType,
-      typeof UpdateCardOrderSchema
+      typeof UpdateTaskOrderSchema
     >,
     res: Response,
     next: NextFunction
@@ -92,55 +92,55 @@ class CardController {
     if (!column) return next(NotFound('Column not found'))
 
     const transaction = body.ids.map((id, order) =>
-      prisma.card.update({
+      prisma.task.update({
         where: { id },
         data: { order, columnId: column.id }
       })
     )
 
     try {
-      const updatedCards = await prisma.$transaction(transaction)
+      const updatedTasks = await prisma.$transaction(transaction)
 
       await redisClient.del(
         `board:${column.boardId}:user:${column.board.userId}`
       )
 
-      res.json(updatedCards)
+      res.json(updatedTasks)
     } catch {
       return next(BadRequest('Invalid order'))
     }
   }
 
   deleteById = async (
-    { params }: TypedRequestParams<typeof CardParamsSchema>,
+    { params }: TypedRequestParams<typeof TaskParamsSchema>,
     res: Response,
     next: NextFunction
   ) => {
-    const deletedCard = await prisma.card.deleteIgnoreNotFound({
-      where: { id: params.cardId },
+    const deletedTask = await prisma.task.deleteIgnoreNotFound({
+      where: { id: params.taskId },
       include: { column: { include: { board: { select: { userId: true } } } } }
     })
 
-    if (!deletedCard) return next(NotFound('Card not found'))
+    if (!deletedTask) return next(NotFound('Task not found'))
 
     await redisClient.del(
-      `board:${deletedCard.column.boardId}:user:${deletedCard.column.board.userId}`
+      `board:${deletedTask.column.boardId}:user:${deletedTask.column.board.userId}`
     )
 
     res.sendStatus(204)
   }
 
-  private getNewCardOrder = async (columnId: string) => {
-    const lastCard = await prisma.card.findFirst({
+  private getNewTaskOrder = async (columnId: string) => {
+    const lastTask = await prisma.task.findFirst({
       where: { columnId },
       orderBy: { order: 'desc' },
       select: { order: true }
     })
 
-    const newOrder = lastCard ? lastCard.order + 1 : 1
+    const newOrder = lastTask ? lastTask.order + 1 : 1
 
     return newOrder
   }
 }
 
-export const cardController = new CardController()
+export const taskController = new TaskController()

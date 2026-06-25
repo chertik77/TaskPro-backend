@@ -609,10 +609,10 @@
         }
       }
     },
-    "/card/{columnId}": {
+    "/task/{columnId}": {
       "post": {
-        "tags": ["Card"],
-        "summary": "Add new card",
+        "tags": ["Task"],
+        "summary": "Add new task",
         "parameters": [
           {
             "in": "path",
@@ -658,17 +658,17 @@
           }
         },
         "responses": {
-          "201": { "$ref": "#/components/responses/CardResponse" },
-          "400": { "$ref": "#/components/responses/CardBadRequest" },
+          "201": { "$ref": "#/components/responses/TaskResponse" },
+          "400": { "$ref": "#/components/responses/TaskBadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
     },
-    "/card/{columnId}/order": {
+    "/task/{columnId}/order": {
       "patch": {
-        "tags": ["Card"],
-        "summary": "Update cards order",
+        "tags": ["Task"],
+        "summary": "Update tasks order",
         "parameters": [
           {
             "in": "path",
@@ -706,21 +706,21 @@
           }
         },
         "responses": {
-          "200": { "$ref": "#/components/responses/UpdateCardOrderResponse" },
+          "200": { "$ref": "#/components/responses/UpdateTaskOrderResponse" },
           "400": { "$ref": "#/components/responses/UpdateOrderBadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
     },
-    "/card/{cardId}": {
+    "/task/{taskId}": {
       "patch": {
-        "tags": ["Card"],
-        "summary": "Edit card by id",
+        "tags": ["Task"],
+        "summary": "Edit task by id",
         "parameters": [
           {
             "in": "path",
-            "name": "cardId",
+            "name": "taskId",
             "required": true,
             "schema": {
               "type": "string",
@@ -761,19 +761,19 @@
           }
         },
         "responses": {
-          "200": { "$ref": "#/components/responses/CardResponse" },
-          "400": { "$ref": "#/components/responses/CardBadRequest" },
+          "200": { "$ref": "#/components/responses/TaskResponse" },
+          "400": { "$ref": "#/components/responses/TaskBadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "404": { "$ref": "#/components/responses/NotFound" }
         }
       },
       "delete": {
-        "tags": ["Card"],
-        "summary": "Delete card by id",
+        "tags": ["Task"],
+        "summary": "Delete task by id",
         "parameters": [
           {
             "in": "path",
-            "name": "cardId",
+            "name": "taskId",
             "required": true,
             "schema": {
               "type": "string",
@@ -840,7 +840,7 @@
           }
         }
       },
-      "Card": {
+      "Task": {
         "type": "object",
         "properties": {
           "id": {
@@ -889,9 +889,9 @@
             "pattern": "^[0-9a-fA-F]{24}$",
             "example": "67470718ed1b2ff3a2e5bd55"
           },
-          "cards": {
+          "tasks": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/Card" }
+            "items": { "$ref": "#/components/schemas/Task" }
           }
         }
       },
@@ -1120,9 +1120,9 @@
                           {
                             "type": "object",
                             "properties": {
-                              "cards": {
+                              "tasks": {
                                 "type": "array",
-                                "items": { "$ref": "#/components/schemas/Card" }
+                                "items": { "$ref": "#/components/schemas/Task" }
                               }
                             }
                           }
@@ -1169,14 +1169,14 @@
           }
         }
       },
-      "CardResponse": {
+      "TaskResponse": {
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Card" }
+            "schema": { "$ref": "#/components/schemas/Task" }
           }
         }
       },
-      "CardBadRequest": {
+      "TaskBadRequest": {
         "content": {
           "application/json": {
             "schema": {
@@ -1193,12 +1193,12 @@
           }
         }
       },
-      "UpdateCardOrderResponse": {
+      "UpdateTaskOrderResponse": {
         "content": {
           "application/json": {
             "schema": {
               "type": "array",
-              "items": { "$ref": "#/components/schemas/Card" }
+              "items": { "$ref": "#/components/schemas/Task" }
             }
           }
         }
