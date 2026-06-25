@@ -8,7 +8,14 @@ export const AddTaskSchema = z.object({
   description: z.string().min(3),
   priority: z.enum(Priority),
   deadline: z.iso.datetime().refine(value => {
-    return new Date(value) >= new Date()
+    const checkDate = new Date(value)
+    const today = new Date()
+
+    // Strip time down to the day level for fair comparison
+    checkDate.setHours(0, 0, 0, 0)
+    today.setHours(0, 0, 0, 0)
+
+    return checkDate >= today
   }, 'Deadline must be today or in the future')
 })
 
