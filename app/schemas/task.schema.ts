@@ -7,6 +7,7 @@ export const AddTaskSchema = z.object({
   title: z.string().min(3),
   description: z.string().min(3),
   priority: z.enum(Priority),
+  labels: z.optional(z.array(objectIdSchema())),
   deadline: z.iso.datetime().refine(value => {
     const checkDate = new Date(value)
     const today = new Date()

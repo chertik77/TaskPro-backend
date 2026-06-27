@@ -7,6 +7,7 @@ import swaggerUi from 'swagger-ui-express'
 import { authRouter } from './api/auth'
 import { boardRouter } from './api/board'
 import { columnRouter } from './api/column'
+import { labelRouter } from './api/label'
 import { taskRouter } from './api/task'
 import { userRouter } from './api/user'
 
@@ -26,3 +27,4 @@ apiRouter.use('/user', userRouter)
 apiRouter.use('/board', boardRouter)
 apiRouter.use('/column', columnRouter)
 apiRouter.use('/task', taskRouter)
+apiRouter.use('/label', labelRouter)
