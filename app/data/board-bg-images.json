@@ -1,66 +1,18 @@
 {
-  "flowers": {
-    "identifier": "flowers",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/bg_images/flowers.jpg"
-  },
-  "mountains-night": {
-    "identifier": "mountains-night",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/bg_images/mountains_night.jpg"
-  },
-  "sakura": {
-    "identifier": "sakura",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782511692/TaskPro/board_bg_images/bg_images/sakura.avif"
-  },
-  "night-sky": {
-    "identifier": "night-sky",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/bg_images/night_sky.jpg"
-  },
-  "tropics": {
-    "identifier": "tropics",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099151/TaskPro/board_bg_images/bg_images/tropics.jpg"
-  },
-  "light-sky": {
-    "identifier": "light-sky",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/bg_images/light_sky.jpg"
-  },
-  "sea-rocks": {
-    "identifier": "sea-rocks",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/bg_images/sea_rocks.jpg"
-  },
-  "blue-ball": {
-    "identifier": "blue-ball",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/bg_images/blue_ball.jpg"
-  },
-  "red-moon": {
-    "identifier": "red-moon",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/bg_images/red_moon.jpg"
-  },
-  "sea-boat": {
-    "identifier": "sea-boat",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099094/TaskPro/board_bg_images/bg_images/sea_boat.jpg"
-  },
-  "air-balloons": {
-    "identifier": "air-balloons",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099095/TaskPro/board_bg_images/bg_images/air_balloons.jpg"
-  },
-  "gorge": {
-    "identifier": "gorge",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099095/TaskPro/board_bg_images/bg_images/gorge.jpg"
-  },
-  "sea-boat-2": {
-    "identifier": "sea-boat-2",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099095/TaskPro/board_bg_images/bg_images/sea_boat_2.jpg"
-  },
-  "air-balloons-2": {
-    "identifier": "air-balloons-2",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099095/TaskPro/board_bg_images/bg_images/air_balloons_2.jpg"
-  },
-  "northern-lights": {
-    "identifier": "northern-lights",
-    "url": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099096/TaskPro/board_bg_images/bg_images/northern_lights.jpg"
-  },
-  "default": {
-    "identifier": "default",
-    "url": null
-  }
+  "flowers": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519862/TaskPro/board_bg_images/bg_images/flowers_su8zop.avif",
+  "mountains-night": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519871/TaskPro/board_bg_images/bg_images/mountains-night_jz1rmh.avif",
+  "sakura": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519874/TaskPro/board_bg_images/bg_images/sakura_dvhao0.avif",
+  "night-sky": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519865/TaskPro/board_bg_images/bg_images/night-sky_blqbh5.avif",
+  "tropics": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519877/TaskPro/board_bg_images/bg_images/tropics_bnospy.avif",
+  "light-sky": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519860/TaskPro/board_bg_images/bg_images/light-sky_vf1l3y.avif",
+  "sea-rocks": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519877/TaskPro/board_bg_images/bg_images/sea-rocks_uyhyrv.avif",
+  "blue-ball": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519863/TaskPro/board_bg_images/bg_images/blue-ball_vtjgje.avif",
+  "red-moon": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519870/TaskPro/board_bg_images/bg_images/red-moon_mfjv2w.avif",
+  "sea-boat": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519875/TaskPro/board_bg_images/bg_images/sea-boat_db9hfl.avif",
+  "air-balloons": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519876/TaskPro/board_bg_images/bg_images/air-balloons_oehdhx.avif",
+  "gorge": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519861/TaskPro/board_bg_images/bg_images/gorge_gkih38.avif",
+  "sea-boat-2": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519874/TaskPro/board_bg_images/bg_images/sea-boat-2_xzavm8.avif",
+  "air-balloons-2": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519875/TaskPro/board_bg_images/bg_images/air-balloons-2_xe8hqj.avif",
+  "northern-lights": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1782519869/TaskPro/board_bg_images/bg_images/northern-lights_a2wxpl.avif",
+  "default": null
 }
