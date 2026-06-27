@@ -72,7 +72,10 @@ class BoardController {
       data: {
         ...body,
         userId: user.id,
-        background: boardImages[body.background]
+        background: {
+          identifier: body.background,
+          url: boardImages[body.background]
+        }
       }
     })
 
@@ -94,7 +97,12 @@ class BoardController {
       where: { id: params.boardId, userId: user.id },
       data: {
         ...body,
-        background: body.background && boardImages[body.background]
+        background: body.background
+          ? {
+              identifier: body.background,
+              url: boardImages[body.background]
+            }
+          : undefined
       }
     })
 
