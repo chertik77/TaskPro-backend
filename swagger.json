@@ -788,6 +788,111 @@
           "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
+    },
+    "/label": {
+      "get": {
+        "tags": ["Label"],
+        "summary": "Get all labels",
+        "security": [{ "CookieAuth": [] }],
+        "responses": {
+          "200": { "$ref": "#/components/responses/AllLabelsResponse" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+      "post": {
+        "tags": ["Label"],
+        "summary": "Add new label",
+        "security": [{ "CookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "color"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 3,
+                    "example": "Bug"
+                  },
+                  "color": {
+                    "type": "string",
+                    "example": "rose"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "$ref": "#/components/responses/LabelResponse" },
+          "400": { "$ref": "#/components/responses/LabelBadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/label/{labelId}": {
+      "patch": {
+        "tags": ["Label"],
+        "summary": "Edit label by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "labelId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
+        "security": [{ "CookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 3,
+                    "example": "Bug"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/LabelResponse" },
+          "400": { "$ref": "#/components/responses/LabelBadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["Label"],
+        "summary": "Delete label by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "labelId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
+        "security": [{ "CookieAuth": [] }],
+        "responses": {
+          "204": { "description": "The resource was deleted successfully." },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
     }
   },
   "components": {
@@ -840,6 +945,58 @@
           }
         }
       },
+      "Board": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "6672f1d2f02c8b04130c718c"
+          },
+          "title": { "type": "string", "example": "Project office" },
+          "icon": {
+            "type": "string",
+            "enum": [
+              "project",
+              "star",
+              "loading",
+              "puzzle",
+              "container",
+              "lightning",
+              "colors",
+              "hexagon"
+            ],
+            "example": "project"
+          },
+          "background": { "$ref": "#/components/schemas/BoardBackground" },
+          "userId": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "6671743db85c96453e04a684"
+          }
+        }
+      },
+      "Column": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "6672f604c07147fc7ae1bb81"
+          },
+          "title": { "type": "string", "example": "In progress" },
+          "order": { "type": "integer", "example": 1 },
+          "boardId": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "67470718ed1b2ff3a2e5bd55"
+          },
+          "tasks": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Task" }
+          }
+        }
+      },
       "Task": {
         "type": "object",
         "properties": {
@@ -874,55 +1031,42 @@
           }
         }
       },
-      "Column": {
+      "Label": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "pattern": "^[0-9a-fA-F]{24}$",
-            "example": "6672f604c07147fc7ae1bb81"
+            "example": "6672fdccc07147fc7ae1bb93"
           },
-          "title": { "type": "string", "example": "In progress" },
-          "order": { "type": "integer", "example": 1 },
-          "boardId": {
+          "name": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
-            "example": "67470718ed1b2ff3a2e5bd55"
+            "example": "Bug"
           },
-          "tasks": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/Task" }
-          }
-        }
-      },
-      "Board": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
-            "example": "6672f1d2f02c8b04130c718c"
-          },
-          "title": { "type": "string", "example": "Project office" },
-          "icon": {
+          "color": {
             "type": "string",
             "enum": [
-              "project",
-              "star",
-              "loading",
-              "puzzle",
-              "container",
-              "lightning",
-              "colors",
-              "hexagon"
+              "blue",
+              "violet",
+              "rose",
+              "gray",
+              "cyan",
+              "amber",
+              "indigo",
+              "emerald"
             ],
-            "example": "project"
+            "example": "rose"
           },
-          "background": { "$ref": "#/components/schemas/BoardBackground" },
           "userId": {
             "type": "string",
             "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6671743db85c96453e04a684"
+          },
+          "taskId": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": null
           }
         }
       },
@@ -1199,6 +1343,38 @@
             "schema": {
               "type": "array",
               "items": { "$ref": "#/components/schemas/Task" }
+            }
+          }
+        }
+      },
+      "AllLabelsResponse": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/Label" }
+            }
+          }
+        }
+      },
+      "LabelResponse": {
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Label" }
+          }
+        }
+      },
+      "LabelBadRequest": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse",
+              "example": {
+                "statusCode": 400,
+                "message": {
+                  "color": "The field must be one of the following values: blue, violet, rose, gray, cyan, amber, indigo, emerald"
+                }
+              }
             }
           }
         }
