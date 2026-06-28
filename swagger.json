@@ -813,7 +813,7 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "minLength": 3,
+                    "minLength": 2,
                     "example": "Bug"
                   },
                   "color": {
@@ -857,7 +857,7 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "minLength": 3,
+                    "minLength": 2,
                     "example": "Bug"
                   }
                 }
