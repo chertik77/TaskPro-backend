@@ -1,12 +1,12 @@
 model Task {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   title       String
-  description String
+  description String?
   priority    Priority
-  deadline    DateTime
+  deadline    DateTime?
   order       Int
-  columnId    String   @map("column_id") @db.ObjectId
-  column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  columnId    String    @map("column_id") @db.ObjectId
+  column      Column    @relation(fields: [columnId], references: [id], onDelete: Cascade)
   labels      Label[]
 
   @@map("tasks")

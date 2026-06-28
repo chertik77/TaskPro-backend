@@ -631,7 +631,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["title", "description", "priority", "deadline"],
+                "required": ["title", "priority"],
                 "properties": {
                   "title": {
                     "type": "string",
@@ -1011,6 +1011,7 @@
           },
           "description": {
             "type": "string",
+            "nullable": true,
             "example": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials."
           },
           "priority": {
