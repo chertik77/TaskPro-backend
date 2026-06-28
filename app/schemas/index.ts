@@ -15,5 +15,10 @@ export {
   ColumnParamsSchema,
   UpdateColumnOrderSchema
 } from './column.schema'
+export {
+  CreateLabelSchema,
+  EditLabelSchema,
+  LabelParamsSchema
+} from './label.schema'
 export { SigninSchema, SignupSchema } from './auth.schema'
 export { EditUserSchema, NeedHelpSchema } from './user.schema'

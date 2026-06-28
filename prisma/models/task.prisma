@@ -1,19 +1,20 @@
 model Task {
-    id          String   @id @default(auto()) @map("_id") @db.ObjectId
-    title       String
-    description String
-    priority    Priority
-    deadline    DateTime
-    order       Int
-    columnId    String   @map("column_id") @db.ObjectId
-    column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  priority    Priority
+  deadline    DateTime?
+  order       Int
+  columnId    String    @map("column_id") @db.ObjectId
+  column      Column    @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  labels      Label[]
 
-    @@map("tasks")
+  @@map("tasks")
 }
 
 enum Priority {
-    Without
-    Low
-    Medium
-    High
+  Without
+  Low
+  Medium
+  High
 }

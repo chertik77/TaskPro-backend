@@ -33,7 +33,13 @@ class TaskController {
     const newOrder = await this.getNewTaskOrder(column.id)
 
     const newTask = await prisma.task.create({
-      data: { ...body, columnId: column.id, order: newOrder }
+      data: {
+        ...body,
+        columnId: column.id,
+        order: newOrder,
+        labels: { connect: body.labels?.map(id => ({ id })) }
+      },
+      include: { labels: true }
     })
 
     await redisClient.del(`board:${column.boardId}:user:${column.board.userId}`)
@@ -59,8 +65,14 @@ class TaskController {
 
     const updatedTask = await prisma.task.updateIgnoreNotFound({
       where: { id: params.taskId },
-      data: body,
-      include: { column: { include: { board: { select: { userId: true } } } } }
+      data: {
+        ...body,
+        labels: { set: body.labels?.map(id => ({ id })) }
+      },
+      include: {
+        labels: true,
+        column: { include: { board: { select: { userId: true } } } }
+      }
     })
 
     if (!updatedTask) return next(NotFound('Task not found'))

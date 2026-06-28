@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node dist/app/server.js",
     "build": "swc app -d dist --copy-files",
-    "dev": "tsx watch app/server.ts",
+    "dev": "tsx watch --include ./swagger.json app/server.ts",
     "lint": "eslint --fix app/**/*.ts",
     "format": "prettier --write ./app",
     "format:check": "prettier --check ./app",
