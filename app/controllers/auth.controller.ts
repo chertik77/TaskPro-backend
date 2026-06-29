@@ -11,7 +11,7 @@ import { Conflict, Forbidden, Unauthorized } from 'http-errors'
 import { jwtVerify, SignJWT } from 'jose'
 import { JWTExpired } from 'jose/errors'
 
-import cloudinary, { defaultUserAvatars, env, redisClient } from '@/config'
+import cloudinary, { env, redisClient } from '@/config'
 
 const {
   ACCESS_JWT_EXPIRES_IN,
@@ -179,11 +179,7 @@ class AuthController {
         return res.redirect(`${FRONTEND_URL}?error=oauth_error`)
       }
 
-      const {
-        email,
-        name = 'Guest',
-        picture = defaultUserAvatars.light
-      } = payload
+      const { email, name = 'Guest', picture = null } = payload
 
       let user = await prisma.user.findFirst({ where: { email } })
 
@@ -276,7 +272,7 @@ class AuthController {
 
           avatar = uploadedAvatar.url
         } else {
-          avatar = defaultUserAvatars.light
+          avatar = null
         }
 
         user = await prisma.user.create({

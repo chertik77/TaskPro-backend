@@ -21,7 +21,7 @@ _Link to the frontend repo:_ https://github.com/chertik77/TaskPro-frontend
   Integrated MongoDB for efficient and secure data storage. Designed data models to handle users, boards, and tasks with good performance and scalability in mind.
 
 - **Theme Configuration:**
-  Added backend support for dynamic theme switching (light, dark, and violet), ensuring smooth integration with the frontend and consistent user experience.
+  Added backend support for dynamic theme switching (light, dark, and system), ensuring smooth integration with the frontend and consistent user experience.
 
 - **Profile Management:**
   Created APIs for managing user profiles, including updating avatars and personal information.

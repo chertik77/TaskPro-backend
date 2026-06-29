@@ -15,5 +15,5 @@ model User {
 enum Theme {
   light
   dark
-  violet
+  system
 }

@@ -271,7 +271,7 @@
                   },
                   "theme": {
                     "type": "string",
-                    "enum": ["light", "dark", "violet"],
+                    "enum": ["light", "dark", "system"],
                     "example": "dark"
                   }
                 }
@@ -913,7 +913,7 @@
           },
           "theme": {
             "type": "string",
-            "enum": ["light", "dark", "violet"],
+            "enum": ["light", "dark", "system"],
             "example": "light"
           },
           "avatar": {
