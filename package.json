@@ -18,7 +18,7 @@
     "schema": "./prisma"
   },
   "dependencies": {
-    "@azure/msal-node": "^5.2.5",
+    "@azure/msal-node": "^5.3.0",
     "@prisma/client": "^6.19.3",
     "argon2": "^0.44.0",
     "cloudinary": "^2.10.0",
@@ -26,24 +26,24 @@
     "cors": "2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "google-auth-library": "^10.7.0",
+    "google-auth-library": "^10.9.0",
     "helmet": "^8.2.0",
     "http-errors": "^2.0.1",
     "ioredis": "^5.11.1",
     "jose": "^6.2.3",
     "morgan": "1.11.0",
     "multer": "^2.2.0",
-    "resend": "^6.14.0",
+    "resend": "^6.16.0",
     "swagger-ui-express": "^5.0.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@commitlint/cli": "^21.0.2",
-    "@commitlint/config-conventional": "^21.0.2",
+    "@commitlint/cli": "^21.1.0",
+    "@commitlint/config-conventional": "^21.1.0",
     "@eslint/js": "^10.0.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@swc/cli": "^0.8.1",
-    "@swc/core": "^1.15.41",
+    "@swc/core": "^1.15.43",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "5.0.6",
@@ -54,14 +54,14 @@
     "@types/swagger-ui-express": "^4.1.8",
     "eslint": "^10.5.0",
     "eslint-formatter-mo": "^2.4.1",
-    "globals": "^17.6.0",
+    "globals": "^17.7.0",
     "husky": "^9.1.7",
     "jiti": "^2.7.0",
-    "lint-staged": "^17.0.7",
-    "prettier": "^3.8.4",
+    "lint-staged": "^17.0.8",
+    "prettier": "^3.8.5",
     "prisma": "^6.19.3",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.61.1"
+    "typescript-eslint": "^8.62.0"
   }
 }
