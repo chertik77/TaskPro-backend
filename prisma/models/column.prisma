@@ -1,10 +1,15 @@
 model Column {
-    id      String @id @default(auto()) @map("_id") @db.ObjectId
-    title   String
-    order   Int
-    boardId String @map("board_id") @db.ObjectId
-    board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
-    tasks   Task[]
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  order Int
 
-    @@map("columns")
+  boardId String @map("board_id") @db.ObjectId
+  board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  tasks Task[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("columns")
 }

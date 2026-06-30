@@ -2,5 +2,8 @@ model Session {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
   userId String @map("user_id")
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@map("sessions")
 }

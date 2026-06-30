@@ -67,6 +67,7 @@ class TaskController {
       where: { id: params.taskId },
       data: {
         ...body,
+        completedAt: body.completed ? new Date() : null,
         labels: { set: body.labels?.map(id => ({ id })) }
       },
       include: {

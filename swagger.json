@@ -649,7 +649,7 @@
                   },
                   "priority": {
                     "type": "string",
-                    "enum": ["Without", "Low", "Medium", "High"],
+                    "enum": ["without", "low", "medium", "high"],
                     "example": "High"
                   }
                 }
@@ -752,7 +752,7 @@
                   },
                   "priority": {
                     "type": "string",
-                    "enum": ["Without", "Low", "Medium", "High"],
+                    "enum": ["without", "low", "medium", "high"],
                     "example": "Low"
                   }
                 }
@@ -818,7 +818,7 @@
                   },
                   "color": {
                     "type": "string",
-                    "example": "rose"
+                    "example": "red"
                   }
                 }
               }
@@ -925,6 +925,16 @@
             "type": "string",
             "nullable": true,
             "example": null
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-29T14:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-29T14:30:00.000Z"
           }
         }
       },
@@ -973,6 +983,16 @@
             "type": "string",
             "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6671743db85c96453e04a684"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-29T14:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-29T14:30:00.000Z"
           }
         }
       },
@@ -994,6 +1014,16 @@
           "tasks": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/Task" }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-29T14:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-29T14:30:00.000Z"
           }
         }
       },
@@ -1016,8 +1046,8 @@
           },
           "priority": {
             "type": "string",
-            "enum": ["Without", "Low", "Medium", "High"],
-            "example": "High"
+            "enum": ["without", "low", "medium", "high"],
+            "example": "high"
           },
           "deadline": {
             "type": "string",
@@ -1025,10 +1055,26 @@
             "example": "2025-10-15T00:00:00.000Z"
           },
           "order": { "type": "integer", "example": 1 },
+          "completed": { "type": "boolean", "example": false },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-29T14:30:00.000Z"
+          },
           "columnId": {
             "type": "string",
             "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6671743db85c96453e04a684"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-29T14:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-29T14:30:00.000Z"
           }
         }
       },
@@ -1048,15 +1094,15 @@
             "type": "string",
             "enum": [
               "blue",
-              "violet",
-              "rose",
+              "purple",
+              "red",
               "gray",
               "cyan",
-              "amber",
+              "yellow",
               "indigo",
-              "emerald"
+              "green"
             ],
-            "example": "rose"
+            "example": "red"
           },
           "userId": {
             "type": "string",
@@ -1068,6 +1114,16 @@
             "nullable": true,
             "pattern": "^[0-9a-fA-F]{24}$",
             "example": null
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-29T14:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-29T14:30:00.000Z"
           }
         }
       },
@@ -1330,7 +1386,7 @@
                 "statusCode": 400,
                 "message": {
                   "description": "The field must be of type string",
-                  "priority": "The field must be one of the following values: Without, Low, Medium, High",
+                  "priority": "The field must be one of the following values: without, low, medium, high",
                   "columnId": "The field must have a valid ObjectId format"
                 }
               }

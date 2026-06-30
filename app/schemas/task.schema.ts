@@ -27,6 +27,7 @@ export const AddTaskSchema = z.object({
 export const EditTaskSchema = z
   .object({
     ...AddTaskSchema.shape,
+    completed: z.boolean(),
     description: z.nullable(z.string().min(3)),
     deadline: z.nullable(z.iso.datetime()),
     columnId: objectIdSchema()

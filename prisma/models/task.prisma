@@ -5,16 +5,24 @@ model Task {
   priority    Priority
   deadline    DateTime?
   order       Int
-  columnId    String    @map("column_id") @db.ObjectId
-  column      Column    @relation(fields: [columnId], references: [id], onDelete: Cascade)
-  labels      Label[]
+
+  columnId String @map("column_id") @db.ObjectId
+  column   Column @relation(fields: [columnId], references: [id], onDelete: Cascade)
+
+  labels Label[]
+
+  completed   Boolean   @default(false)
+  completedAt DateTime? @map("completed_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("tasks")
 }
 
 enum Priority {
-  Without
-  Low
-  Medium
-  High
+  without
+  low
+  medium
+  high
 }
