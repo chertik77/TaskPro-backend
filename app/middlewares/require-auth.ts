@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 
-import { auth } from '@/auth'
+import { auth } from '@/lib'
 import { fromNodeHeaders } from 'better-auth/node'
 import { Unauthorized } from 'http-errors'
 

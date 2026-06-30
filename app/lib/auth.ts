@@ -3,8 +3,9 @@ import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { openAPI } from 'better-auth/plugins'
 
-import { env } from './config'
-import { prisma } from './prisma'
+import { env } from '../config'
+import { prisma } from '../prisma'
+import { uploadToCloudinary } from './upload-to-cloudinary'
 
 export const auth = betterAuth({
   appName: 'Task Pro',
@@ -15,6 +16,7 @@ export const auth = betterAuth({
     database: { generateId: false },
     disableOriginCheck: env.NODE_ENV !== 'production'
   },
+  account: { accountLinking: { trustedProviders: ['google', 'microsoft'] } },
   user: {
     additionalFields: {
       theme: { type: Object.values(Theme), input: false }
@@ -28,7 +30,13 @@ export const auth = betterAuth({
     },
     microsoft: {
       clientId: env.MICROSOFT_CLIENT_ID,
-      clientSecret: env.MICROSOFT_CLIENT_SECRET
+      clientSecret: env.MICROSOFT_CLIENT_SECRET,
+      prompt: 'select_account',
+      async mapProfileToUser(profile) {
+        const imgUrl = await uploadToCloudinary({ file: profile.picture })
+
+        return { image: imgUrl }
+      }
     }
   },
   trustedOrigins: env.ALLOWED_ORIGINS,

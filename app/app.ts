@@ -6,8 +6,8 @@ import helmet from 'helmet'
 import logger from 'morgan'
 import * as z from 'zod'
 
-import { auth } from './auth'
 import { env, zodConfig } from './config'
+import { auth } from './lib'
 import { globalErrorHandler, notFoundHandler } from './middlewares'
 import { apiRouter } from './routes'
 
