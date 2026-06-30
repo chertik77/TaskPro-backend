@@ -2,7 +2,7 @@ import { Router } from 'express'
 
 import { columnController } from '@/controllers'
 
-import { authenticate, validateRequest } from '@/middlewares'
+import { requireAuth, validateRequest } from '@/middlewares'
 
 import {
   AddColumnSchema,
@@ -14,7 +14,7 @@ import {
 
 export const columnRouter = Router()
 
-columnRouter.use(authenticate)
+columnRouter.use(requireAuth)
 
 columnRouter.post(
   '/:boardId',

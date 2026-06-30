@@ -2,7 +2,7 @@ import { Router } from 'express'
 
 import { taskController } from '@/controllers'
 
-import { authenticate, validateRequest } from '@/middlewares'
+import { requireAuth, validateRequest } from '@/middlewares'
 
 import {
   AddTaskSchema,
@@ -14,7 +14,7 @@ import {
 
 export const taskRouter = Router()
 
-taskRouter.use(authenticate)
+taskRouter.use(requireAuth)
 
 taskRouter.post(
   '/:columnId',

@@ -4,7 +4,6 @@ import path from 'path'
 import { Router } from 'express'
 import swaggerUi from 'swagger-ui-express'
 
-import { authRouter } from './api/auth'
 import { boardRouter } from './api/board'
 import { columnRouter } from './api/column'
 import { labelRouter } from './api/label'
@@ -22,7 +21,6 @@ apiRouter.use(
   swaggerUi.setup(swagger, { customSiteTitle: 'TaskPro API Docs' })
 )
 
-apiRouter.use('/auth', authRouter)
 apiRouter.use('/user', userRouter)
 apiRouter.use('/board', boardRouter)
 apiRouter.use('/column', columnRouter)

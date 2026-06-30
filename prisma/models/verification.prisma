@@ -1,0 +1,12 @@
+model Verification {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  value      String
+
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([identifier])
+  @@map("verifications")
+}

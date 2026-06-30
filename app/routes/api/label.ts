@@ -2,13 +2,13 @@ import { Router } from 'express'
 
 import { labelController } from '@/controllers'
 
-import { authenticate, validateRequest } from '@/middlewares'
+import { requireAuth, validateRequest } from '@/middlewares'
 
 import { CreateLabelSchema } from '@/schemas'
 
 export const labelRouter = Router()
 
-labelRouter.use(authenticate)
+labelRouter.use(requireAuth)
 
 labelRouter.get('/', labelController.getAll)
 

@@ -2,13 +2,13 @@ import { Router } from 'express'
 
 import { boardController } from '@/controllers'
 
-import { authenticate, validateRequest } from '@/middlewares'
+import { requireAuth, validateRequest } from '@/middlewares'
 
 import { AddBoardSchema, BoardParamsSchema, EditBoardSchema } from '@/schemas'
 
 export const boardRouter = Router()
 
-boardRouter.use(authenticate)
+boardRouter.use(requireAuth)
 
 boardRouter.get('/', boardController.getAll)
 
