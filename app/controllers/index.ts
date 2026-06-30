@@ -1,4 +1,3 @@
-export { authController } from './auth.controller'
 export { boardController } from './board.controller'
 export { taskController } from './task.controller'
 export { labelController } from './label.controller'

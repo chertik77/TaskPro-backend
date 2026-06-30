@@ -1,6 +1,5 @@
-import type { EditUserSchema, NeedHelpSchema } from '@/schemas'
+import type { NeedHelpSchema } from '@/schemas'
 import type { TypedRequestBody } from '@/types'
-import type { User } from '@prisma/client'
 import type { NextFunction, Request, Response } from 'express'
 
 import {
@@ -8,10 +7,9 @@ import {
   supportRequestUserTemplate
 } from '@/emails/templates'
 import { prisma } from '@/prisma'
-import { hash } from 'argon2'
-import { Conflict, InternalServerError, NotAcceptable } from 'http-errors'
+import { InternalServerError } from 'http-errors'
 
-import cloudinary, { env, redisClient, resend } from '@/config'
+import { env, redisClient, resend } from '@/config'
 
 class UserController {
   me = async (req: Request, res: Response) => {
@@ -40,63 +38,63 @@ class UserController {
     }
   }
 
-  update = async (
-    { user, body, file }: TypedRequestBody<typeof EditUserSchema>,
-    res: Response,
-    next: NextFunction
-  ) => {
-    const { id, avatarPublicId, email: userEmail } = user
-    const { email, password } = body
+  // update = async (
+  //   { user, body, file }: TypedRequestBody<typeof EditUserSchema>,
+  //   res: Response,
+  //   next: NextFunction
+  // ) => {
+  //   const { id, avatarPublicId, email: userEmail } = user
+  //   const { email, password } = body
 
-    const isEmailExists =
-      email && (await prisma.user.findFirst({ where: { email } }))
+  //   const isEmailExists =
+  //     email && (await prisma.user.findFirst({ where: { email } }))
 
-    if (email && email !== userEmail && isEmailExists) {
-      return next(Conflict('Email already exist'))
-    }
+  //   if (email && email !== userEmail && isEmailExists) {
+  //     return next(Conflict('Email already exist'))
+  //   }
 
-    const updateData: Partial<User> = body
+  //   const updateData: Partial<User> = body
 
-    if (password) {
-      updateData.password = await hash(password)
-    }
+  //   if (password) {
+  //     updateData.password = await hash(password)
+  //   }
 
-    if (file) {
-      const extArr = ['jpeg', 'png']
-      const ext = file.mimetype.split('/').pop()
+  //   if (file) {
+  //     const extArr = ['jpeg', 'png']
+  //     const ext = file.mimetype.split('/').pop()
 
-      if (!extArr.includes(ext!)) {
-        return next(NotAcceptable('File must have .jpeg or .png extension'))
-      }
+  //     if (!extArr.includes(ext!)) {
+  //       return next(NotAcceptable('File must have .jpeg or .png extension'))
+  //     }
 
-      try {
-        const newAvatar = await cloudinary.uploader.upload(file.path, {
-          folder: 'TaskPro/user_avatars'
-        })
+  //     try {
+  //       const newAvatar = await cloudinary.uploader.upload(file.path, {
+  //         folder: 'TaskPro/user_avatars'
+  //       })
 
-        if (avatarPublicId) {
-          await cloudinary.uploader.destroy(avatarPublicId, {
-            type: 'upload',
-            resource_type: 'image'
-          })
-        }
+  //       if (avatarPublicId) {
+  //         await cloudinary.uploader.destroy(avatarPublicId, {
+  //           type: 'upload',
+  //           resource_type: 'image'
+  //         })
+  //       }
 
-        updateData.avatar = newAvatar.url
-        updateData.avatarPublicId = newAvatar.public_id
-      } catch {
-        return next(InternalServerError('Uploading avatar error'))
-      }
-    }
+  //       updateData.avatar = newAvatar.url
+  //       updateData.avatarPublicId = newAvatar.public_id
+  //     } catch {
+  //       return next(InternalServerError('Uploading avatar error'))
+  //     }
+  //   }
 
-    const updatedUser = await prisma.user.update({
-      where: { id },
-      data: updateData
-    })
+  //   const updatedUser = await prisma.user.update({
+  //     where: { id },
+  //     data: updateData
+  //   })
 
-    await redisClient.del(`user:${updatedUser.id}`)
+  //   await redisClient.del(`user:${updatedUser.id}`)
 
-    res.json(updatedUser)
-  }
+  //   res.json(updatedUser)
+  // }
 
   help = async (
     { body }: TypedRequestBody<typeof NeedHelpSchema>,

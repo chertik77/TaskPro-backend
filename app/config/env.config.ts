@@ -7,19 +7,15 @@ const envSchema = z.object({
   CLOUDINARY_API_SECRET: z.string(),
   CLOUDINARY_CLOUD_NAME: z.string(),
   DATABASE_URL: z.string(),
-  FRONTEND_URL: z.url(),
+  BETTER_AUTH_URL: z.url(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
-  GOOGLE_REDIRECT_URI: z.url(),
   MICROSOFT_CLIENT_ID: z.string(),
   MICROSOFT_CLIENT_SECRET: z.string(),
-  MICROSOFT_REDIRECT_URI: z.url(),
   REDIS_USERNAME: z.string(),
   REDIS_PASSWORD: z.string(),
   REDIS_HOST: z.string(),
   REDIS_PORT: z.coerce.number().int().positive().min(1000).max(65535),
-  ACCESS_JWT_SECRET: z.string().transform(v => new TextEncoder().encode(v)),
-  REFRESH_JWT_SECRET: z.string().transform(v => new TextEncoder().encode(v)),
   PORT: z.coerce.number().int().positive().min(1000).max(65535),
   API_PREFIX: z.string(),
   NODE_ENV: z.enum(['development', 'production']).default('development'),
@@ -28,11 +24,7 @@ const envSchema = z.object({
     .transform(v => v.split(','))
     .pipe(z.array(z.url())),
   RESEND_API_KEY: z.string(),
-  RESEND_RECEIVER: z.email(),
-  ACCESS_JWT_EXPIRES_IN: z.string(),
-  REFRESH_JWT_EXPIRES_IN: z.string(),
-  ACCESS_JWT_ALGORITHM: z.string(),
-  REFRESH_JWT_ALGORITHM: z.string()
+  RESEND_RECEIVER: z.email()
 })
 
 // eslint-disable-next-line no-restricted-syntax

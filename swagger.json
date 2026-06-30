@@ -3,7 +3,7 @@
   "info": {
     "version": "2.2.0",
     "title": "Task Pro API",
-    "description": "The Task Pro API provides endpoints to manage projects and user assignments, ensuring secure and efficient request handling.",
+    "description": "Task Pro API provides endpoints for managing projects, tasks, and user assignments with secure authentication and efficient workflows.",
     "contact": {
       "name": "TaskPro",
       "url": "https://www.taskpro.qzz.io"
@@ -14,191 +14,11 @@
     { "url": "https://api.taskpro.qzz.io" }
   ],
   "paths": {
-    "/auth/signup": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Create a new user",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["name", "email", "password"],
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 2,
-                    "example": "John Doe"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "user@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "minLength": 8,
-                    "maxLength": 64,
-                    "example": "qwerty123"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": { "$ref": "#/components/responses/AuthResponse" },
-          "400": { "$ref": "#/components/responses/BadRequestError" },
-          "409": { "$ref": "#/components/responses/Conflict" }
-        }
-      }
-    },
-    "/auth/signin": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Signin a user",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["email", "password"],
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "user@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "qwerty123"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": { "$ref": "#/components/responses/AuthResponse" },
-          "400": { "$ref": "#/components/responses/BadRequestError" },
-          "401": { "$ref": "#/components/responses/Unauthorized" }
-        }
-      }
-    },
-    "/auth/google/initiate": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Redirect user to Google OAuth",
-        "responses": {
-          "302": {
-            "headers": {
-              "Location": {
-                "description": "Google OAuth URL",
-                "schema": { "type": "string" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/google/callback": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Handles Google's OAuth redirect",
-        "responses": {
-          "302": {
-            "description": "Redirects to frontend with success or error",
-            "headers": {
-              "Location": {
-                "description": "Frontend redirect URL",
-                "schema": {
-                  "type": "string",
-                  "example": "https://taskpro.qzz.io?error=oauth_error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/microsoft/initiate": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Redirect user to Microsoft OAuth",
-        "responses": {
-          "302": {
-            "headers": {
-              "Location": {
-                "description": "Microsoft OAuth URL",
-                "schema": { "type": "string" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/microsoft/callback": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Handles Microsoft's OAuth redirect",
-        "responses": {
-          "302": {
-            "description": "Redirects to frontend with success or error",
-            "headers": {
-              "Location": {
-                "description": "Frontend redirect URL",
-                "schema": {
-                  "type": "string",
-                  "example": "https://taskpro.qzz.io?error=oauth_error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/refresh": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Get new access and refresh tokens",
-        "security": [{ "CookieAuth": [] }],
-        "responses": {
-          "200": { "$ref": "#/components/responses/RefreshResponse" },
-          "400": { "$ref": "#/components/responses/BadRequestError" },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" }
-        }
-      }
-    },
-    "/auth/logout": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Logout a user",
-        "security": [{ "CookieAuth": [] }],
-        "responses": {
-          "204": { "description": "The user was logged out successfully." },
-          "401": { "$ref": "#/components/responses/Unauthorized" }
-        }
-      }
-    },
-    "/user/me": {
-      "get": {
-        "tags": ["User"],
-        "summary": "Get current user",
-        "security": [{ "CookieAuth": [] }],
-        "responses": {
-          "200": { "$ref": "#/components/responses/UserResponse" },
-          "401": { "$ref": "#/components/responses/Unauthorized" }
-        }
-      }
-    },
     "/user/help": {
       "post": {
         "tags": ["User"],
         "summary": "Send email need help",
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -242,65 +62,11 @@
         }
       }
     },
-    "/user": {
-      "patch": {
-        "tags": ["User"],
-        "summary": "Edit user profile",
-        "security": [{ "CookieAuth": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 2,
-                    "example": "Jane Doe"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "jane.doe@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "minLength": 8,
-                    "example": "newsecurepassword123"
-                  },
-                  "theme": {
-                    "type": "string",
-                    "enum": ["light", "dark", "system"],
-                    "example": "dark"
-                  }
-                }
-              }
-            },
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "avatar": { "type": "string", "format": "binary" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": { "$ref": "#/components/responses/UserResponse" },
-          "400": { "$ref": "#/components/responses/BadRequestError" },
-          "406": { "$ref": "#/components/responses/NotAcceptable" },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "409": { "$ref": "#/components/responses/Conflict" }
-        }
-      }
-    },
     "/board": {
       "get": {
         "tags": ["Board"],
         "summary": "Get all boards",
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "200": { "$ref": "#/components/responses/AllBoardsResponse" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
@@ -309,7 +75,7 @@
       "post": {
         "tags": ["Board"],
         "summary": "Add new board",
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -368,7 +134,7 @@
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "200": { "$ref": "#/components/responses/BoardByIdResponse" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -389,7 +155,7 @@
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -446,7 +212,7 @@
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -469,7 +235,7 @@
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -511,7 +277,7 @@
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -562,7 +328,7 @@
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -601,7 +367,7 @@
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -624,7 +390,7 @@
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -680,7 +446,7 @@
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -728,7 +494,7 @@
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -781,7 +547,7 @@
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -793,7 +559,7 @@
       "get": {
         "tags": ["Label"],
         "summary": "Get all labels",
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "200": { "$ref": "#/components/responses/AllLabelsResponse" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
@@ -802,7 +568,7 @@
       "post": {
         "tags": ["Label"],
         "summary": "Add new label",
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -847,7 +613,7 @@
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -886,7 +652,7 @@
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -897,53 +663,6 @@
   },
   "components": {
     "schemas": {
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
-            "example": "674723719b47fd08e6a2d517"
-          },
-          "name": { "type": "string", "example": "John Doe" },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "user@example.com"
-          },
-          "theme": {
-            "type": "string",
-            "enum": ["light", "dark", "system"],
-            "example": "light"
-          },
-          "avatar": {
-            "type": "string",
-            "format": "url",
-            "example": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png"
-          },
-          "avatarPublicId": {
-            "type": "string",
-            "nullable": true,
-            "example": null
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2026-06-29T14:30:00.000Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2026-06-29T14:30:00.000Z"
-          }
-        }
-      },
-      "AuthResponseSchema": {
-        "type": "object",
-        "properties": {
-          "user": { "$ref": "#/components/schemas/User" }
-        }
-      },
       "BoardBackground": {
         "type": "object",
         "properties": {
@@ -1198,64 +917,6 @@
           }
         }
       },
-      "NotAcceptable": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ErrorResponse",
-              "example": {
-                "statusCode": 406,
-                "message": "File must have .jpeg or .png extension"
-              }
-            }
-          }
-        }
-      },
-      "AuthResponse": {
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/AuthResponseSchema" }
-          }
-        },
-        "headers": {
-          "Set-Cookie": {
-            "schema": {
-              "type": "string",
-              "example": "accessToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure; refreshToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure;"
-            }
-          }
-        }
-      },
-      "RefreshResponse": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "example": "Tokens refreshed successfully"
-                }
-              }
-            }
-          }
-        },
-        "headers": {
-          "Set-Cookie": {
-            "schema": {
-              "type": "string",
-              "example": "accessToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure; refreshToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure;"
-            }
-          }
-        }
-      },
-      "UserResponse": {
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/User" }
-          }
-        }
-      },
       "UpdateOrderBadRequest": {
         "content": {
           "application/json": {
@@ -1438,11 +1099,10 @@
       }
     },
     "securitySchemes": {
-      "CookieAuth": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": "accessToken",
-        "description": "Access token is sent as an HTTP-only cookie."
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }

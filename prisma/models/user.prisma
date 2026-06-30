@@ -1,19 +1,21 @@
 model User {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  email    String  @unique
-  password String?
-  theme    Theme   @default(light)
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String
+  emailVerified Boolean @default(false) @map("email_verified")
+  image         String?
+  imagePublicId String? @map("image_public_id")
+  theme         Theme   @default(light)
 
-  avatar         String?
-  avatarPublicId String? @map("avatar_public_id")
-
-  boards Board[]
-  labels Label[]
+  sessions Session[]
+  accounts Account[]
+  boards   Board[]
+  labels   Label[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@unique([email])
   @@map("users")
 }
 

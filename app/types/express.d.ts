@@ -1,10 +1,10 @@
-import type { User } from '@prisma/client'
+import type { Session, User } from 'better-auth'
 
 declare global {
   namespace Express {
     interface Request {
       user: User
-      session: string
+      session: Session
     }
   }
 }
