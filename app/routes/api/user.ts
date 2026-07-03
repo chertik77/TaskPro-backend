@@ -10,8 +10,6 @@ export const userRouter = Router()
 
 userRouter.use(requireAuth)
 
-userRouter.get('/me', userController.me)
-
 // userRouter.patch(
 //   '/',
 //   upload.single('avatar'),

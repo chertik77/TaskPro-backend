@@ -18,8 +18,8 @@
     "schema": "./prisma"
   },
   "dependencies": {
+    "@better-auth/redis-storage": "^1.6.23",
     "@prisma/client": "^6.19.3",
-    "@scalar/express-api-reference": "^0.10.7",
     "better-auth": "^1.6.23",
     "cloudinary": "^2.10.0",
     "cookie-parser": "^1.4.7",
@@ -33,7 +33,6 @@
     "morgan": "1.11.0",
     "multer": "^2.2.0",
     "resend": "^6.16.0",
-    "swagger-merger": "^1.5.4",
     "swagger-ui-express": "^5.0.1",
     "zod": "^4.4.3"
   },

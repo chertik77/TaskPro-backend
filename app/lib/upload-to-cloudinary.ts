@@ -15,7 +15,7 @@ export async function uploadToCloudinary({
     file,
     { folder, public_id, resource_type: 'auto' },
     err => {
-      if (err) throw new Error('Cloudinary upload failed')
+      if (err) throw new Error(err.message)
     }
   )
 

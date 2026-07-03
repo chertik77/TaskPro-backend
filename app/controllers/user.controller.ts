@@ -1,97 +1,77 @@
 import type { NeedHelpSchema } from '@/schemas'
 import type { TypedRequestBody } from '@/types'
-import type { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Response } from 'express'
 
 import {
   supportRequestAdminTemplate,
   supportRequestUserTemplate
 } from '@/emails/templates'
-import { prisma } from '@/prisma'
 import { InternalServerError } from 'http-errors'
 
-import { env, redisClient, resend } from '@/config'
+import { env, resend } from '@/config'
 
 class UserController {
-  me = async (req: Request, res: Response) => {
-    // Disable caching for this route to prevent stale data
-    res.setHeader(
-      'Cache-Control',
-      'no-store, no-cache, must-revalidate, proxy-revalidate'
-    )
-    res.setHeader('Pragma', 'no-cache')
-    res.setHeader('Expires', '0')
-
-    const cacheKey = `user:${req.user.id}`
-
-    const cachedUser = await redisClient.get(cacheKey)
-
-    if (cachedUser) {
-      res.json(JSON.parse(cachedUser))
-    } else {
-      const user = await prisma.user.findUnique({
-        where: { id: req.user.id }
-      })
-
-      await redisClient.set(cacheKey, JSON.stringify(user), 'EX', 5 * 60)
-
-      res.json(user)
-    }
-  }
-
   // update = async (
-  //   { user, body, file }: TypedRequestBody<typeof EditUserSchema>,
+  //   { user, body, headers, file }: TypedRequestBody<typeof EditUserSchema>,
   //   res: Response,
   //   next: NextFunction
   // ) => {
-  //   const { id, avatarPublicId, email: userEmail } = user
-  //   const { email, password } = body
+  //   // @ts-expect-error it exists
+  //   const { imagePublicId } = user
+  //   const { email, currentPassword, newPassword, ...data } = body
 
-  //   const isEmailExists =
-  //     email && (await prisma.user.findFirst({ where: { email } }))
+  //   if (email) auth.api.changeEmail({ body: { newEmail: email } })
 
-  //   if (email && email !== userEmail && isEmailExists) {
-  //     return next(Conflict('Email already exist'))
+  //   if (currentPassword && newPassword) {
+  //     auth.api.changePassword({
+  //       body: { currentPassword, newPassword }
+  //     })
   //   }
 
-  //   const updateData: Partial<User> = body
-
-  //   if (password) {
-  //     updateData.password = await hash(password)
-  //   }
+  //   const updateData: Partial<User> = data
 
   //   if (file) {
-  //     const extArr = ['jpeg', 'png']
+  //     const extArr = ['jpeg', 'png', 'jpg', 'webp']
   //     const ext = file.mimetype.split('/').pop()
 
   //     if (!extArr.includes(ext!)) {
-  //       return next(NotAcceptable('File must have .jpeg or .png extension'))
+  //       return next(
+  //         NotAcceptable(
+  //           'File must have .jpeg or .png or .jpg or .webp extension'
+  //         )
+  //       )
   //     }
 
   //     try {
-  //       const newAvatar = await cloudinary.uploader.upload(file.path, {
+  //       const newImage = await uploadToCloudinary({
+  //         file: file.path,
   //         folder: 'TaskPro/user_avatars'
   //       })
 
-  //       if (avatarPublicId) {
-  //         await cloudinary.uploader.destroy(avatarPublicId, {
+  //       if (imagePublicId) {
+  //         await cloudinary.uploader.destroy(imagePublicId, {
   //           type: 'upload',
   //           resource_type: 'image'
   //         })
   //       }
 
-  //       updateData.avatar = newAvatar.url
-  //       updateData.avatarPublicId = newAvatar.public_id
+  //       updateData.image = newImage.url
+  //       // @ts-expect-error it exists
+  //       updateData.imagePublicId = newImage.public_id
   //     } catch {
   //       return next(InternalServerError('Uploading avatar error'))
   //     }
   //   }
 
-  //   const updatedUser = await prisma.user.update({
-  //     where: { id },
-  //     data: updateData
+  //   console.log(updateData)
+
+  //   const updatedUser = await auth.api.updateUser({
+  //     headers: fromNodeHeaders(headers),
+  //     body: updateData,
+  //     asResponse: true
   //   })
 
-  //   await redisClient.del(`user:${updatedUser.id}`)
+  //   console.log(updatedUser)
 
   //   res.json(updatedUser)
   // }
