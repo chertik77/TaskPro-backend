@@ -13,10 +13,10 @@ import { userRouter } from './api/user'
 
 export const apiRouter = Router()
 
-const swaggerPath = path.join(process.cwd(), 'swagger.json')
+const swaggerPath = path.join(process.cwd(), 'openapi.json')
 const swagger = JSON.parse(fs.readFileSync(swaggerPath, 'utf-8'))
 
-apiRouter.get('/swagger.json', (_, res) => {
+apiRouter.get('/openapi.json', (_, res) => {
   res.json(swagger)
 })
 
@@ -25,7 +25,7 @@ const swaggerOptions: SwaggerUiOptions = {
   explorer: true,
   swaggerOptions: {
     urls: [
-      { url: '/api/swagger.json', name: 'Main API' },
+      { url: '/api/openapi.json', name: 'Main API' },
       { url: '/api/auth/open-api/generate-schema', name: 'Auth' }
     ],
     'urls.primaryName': 'Main API'

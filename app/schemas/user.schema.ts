@@ -6,7 +6,7 @@ export const NeedHelpSchema = z.object({
   comment: z.string().min(5)
 })
 
-export const EditUserSchema = z
+export const UpdateUserSchema = z
   .object({
     name: z.string().min(2),
     email: z.email(),

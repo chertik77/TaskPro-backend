@@ -4,7 +4,11 @@ import { boardController } from '@/controllers'
 
 import { requireAuth, validateRequest } from '@/middlewares'
 
-import { AddBoardSchema, BoardParamsSchema, EditBoardSchema } from '@/schemas'
+import {
+  BoardParamsSchema,
+  CreateBoardSchema,
+  UpdateBoardSchema
+} from '@/schemas'
 
 export const boardRouter = Router()
 
@@ -20,13 +24,13 @@ boardRouter.get(
 
 boardRouter.post(
   '/',
-  validateRequest({ body: AddBoardSchema }),
-  boardController.add
+  validateRequest({ body: CreateBoardSchema }),
+  boardController.create
 )
 
 boardRouter.patch(
   '/:boardId',
-  validateRequest({ body: EditBoardSchema, params: BoardParamsSchema }),
+  validateRequest({ body: UpdateBoardSchema, params: BoardParamsSchema }),
   boardController.updateById
 )
 

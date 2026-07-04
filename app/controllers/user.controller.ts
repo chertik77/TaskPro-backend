@@ -12,7 +12,7 @@ import { env, resend } from '@/config'
 
 class UserController {
   // update = async (
-  //   { user, body, headers, file }: TypedRequestBody<typeof EditUserSchema>,
+  //   { user, body, headers, file }: TypedRequestBody<typeof UpdateUserSchema>,
   //   res: Response,
   //   next: NextFunction
   // ) => {

@@ -3,7 +3,7 @@ import * as z from 'zod'
 
 import { objectIdSchema } from './object-id.schema'
 
-export const AddTaskSchema = z.object({
+export const CreateTaskSchema = z.object({
   title: z.string().min(3),
   description: z.optional(z.string().min(3)),
   priority: z.enum(Priority),
@@ -24,9 +24,9 @@ export const AddTaskSchema = z.object({
     .transform(v => (v ? new Date(v) : null))
 })
 
-export const EditTaskSchema = z
+export const UpdateTaskSchema = z
   .object({
-    ...AddTaskSchema.shape,
+    ...CreateTaskSchema.shape,
     completed: z.boolean(),
     description: z.nullable(z.string().min(3)),
     deadline: z.nullable(z.iso.datetime()),

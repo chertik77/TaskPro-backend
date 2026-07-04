@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "version": "2.2.0",
+    "version": "2.3.0",
     "title": "Task Pro API",
     "description": "Task Pro API provides endpoints for managing projects, tasks, and user assignments with secure authentication and efficient workflows.",
     "contact": {
@@ -17,6 +17,7 @@
     "/user/help": {
       "post": {
         "tags": ["User"],
+        "operationId": "help",
         "summary": "Send email need help",
         "security": [{ "bearerAuth": [] }],
         "requestBody": {
@@ -65,6 +66,7 @@
     "/board": {
       "get": {
         "tags": ["Board"],
+        "operationId": "getAllBoards",
         "summary": "Get all boards",
         "security": [{ "bearerAuth": [] }],
         "responses": {
@@ -74,7 +76,8 @@
       },
       "post": {
         "tags": ["Board"],
-        "summary": "Add new board",
+        "operationId": "createBoard",
+        "summary": "Create new board",
         "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
@@ -82,30 +85,15 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["title", "icon"],
                 "properties": {
                   "title": {
                     "type": "string",
                     "minLength": 3,
                     "example": "My New Project"
                   },
-                  "icon": {
-                    "type": "string",
-                    "enum": [
-                      "project",
-                      "star",
-                      "loading",
-                      "puzzle",
-                      "container",
-                      "lightning",
-                      "colors",
-                      "hexagon"
-                    ],
-                    "example": "project"
-                  },
+                  "icon": { "$ref": "#/components/schemas/BoardIcon" },
                   "background": {
-                    "type": "string",
-                    "example": "blue-ball"
+                    "$ref": "#/components/schemas/BoardBackgroundId"
                   }
                 }
               }
@@ -122,6 +110,7 @@
     "/board/{boardId}": {
       "get": {
         "tags": ["Board"],
+        "operationId": "getBoardById",
         "summary": "Get board by id",
         "parameters": [
           {
@@ -129,8 +118,7 @@
             "name": "boardId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
@@ -143,15 +131,15 @@
       },
       "patch": {
         "tags": ["Board"],
-        "summary": "Edit board by id",
+        "operationId": "updateBoard",
+        "summary": "Update board by id",
         "parameters": [
           {
             "in": "path",
             "name": "boardId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
@@ -168,23 +156,9 @@
                     "minLength": 3,
                     "example": "Updated Project Office"
                   },
-                  "icon": {
-                    "type": "string",
-                    "enum": [
-                      "project",
-                      "star",
-                      "loading",
-                      "puzzle",
-                      "container",
-                      "lightning",
-                      "colors",
-                      "hexagon"
-                    ],
-                    "example": "star"
-                  },
+                  "icon": { "$ref": "#/components/schemas/BoardIcon" },
                   "background": {
-                    "type": "string",
-                    "example": "flowers"
+                    "$ref": "#/components/schemas/BoardBackgroundId"
                   }
                 }
               }
@@ -200,6 +174,7 @@
       },
       "delete": {
         "tags": ["Board"],
+        "operationId": "deleteBoard",
         "summary": "Delete board by id",
         "parameters": [
           {
@@ -207,8 +182,7 @@
             "name": "boardId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
@@ -223,15 +197,15 @@
     "/column/{boardId}": {
       "post": {
         "tags": ["Column"],
-        "summary": "Add new column",
+        "operationId": "createColumn",
+        "summary": "Create new column",
         "parameters": [
           {
             "in": "path",
             "name": "boardId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
@@ -265,6 +239,7 @@
     "/column/{boardId}/order": {
       "patch": {
         "tags": ["Column"],
+        "operationId": "updateColumnsOrder",
         "summary": "Update columns order",
         "parameters": [
           {
@@ -272,8 +247,7 @@
             "name": "boardId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
@@ -289,8 +263,7 @@
                   "ids": {
                     "type": "array",
                     "items": {
-                      "type": "string",
-                      "pattern": "^[0-9a-fA-F]{24}$"
+                      "type": "string"
                     },
                     "example": [
                       "67470731ed1b2ff3a2e5bd56",
@@ -316,15 +289,15 @@
     "/column/{columnId}": {
       "patch": {
         "tags": ["Column"],
-        "summary": "Edit column by id",
+        "operationId": "updateColumn",
+        "summary": "Update column by id",
         "parameters": [
           {
             "in": "path",
             "name": "columnId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
@@ -355,6 +328,7 @@
       },
       "delete": {
         "tags": ["Column"],
+        "operationId": "deleteColumn",
         "summary": "Delete column by id",
         "parameters": [
           {
@@ -362,8 +336,7 @@
             "name": "columnId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
@@ -378,15 +351,15 @@
     "/task/{columnId}": {
       "post": {
         "tags": ["Task"],
-        "summary": "Add new task",
+        "operationId": "createTask",
+        "summary": "Create new task",
         "parameters": [
           {
             "in": "path",
             "name": "columnId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
@@ -406,6 +379,7 @@
                   },
                   "description": {
                     "type": "string",
+                    "minLength": 3,
                     "example": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials."
                   },
                   "deadline": {
@@ -413,10 +387,12 @@
                     "format": "date",
                     "example": "2025-10-15"
                   },
-                  "priority": {
-                    "type": "string",
-                    "enum": ["without", "low", "medium", "high"],
-                    "example": "High"
+                  "priority": { "$ref": "#/components/schemas/TaskPriority" },
+                  "labels": {
+                    "type": "array",
+                    "description": "Array of Label ids to attach to the task",
+                    "items": { "type": "string" },
+                    "example": ["6672fdccc07147fc7ae1bb93"]
                   }
                 }
               }
@@ -434,6 +410,7 @@
     "/task/{columnId}/order": {
       "patch": {
         "tags": ["Task"],
+        "operationId": "updateTaskOrder",
         "summary": "Update tasks order",
         "parameters": [
           {
@@ -441,8 +418,7 @@
             "name": "columnId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
@@ -458,8 +434,7 @@
                   "ids": {
                     "type": "array",
                     "items": {
-                      "type": "string",
-                      "pattern": "^[0-9a-fA-F]{24}$"
+                      "type": "string"
                     },
                     "example": [
                       "6672fdccc07147fc7ae1bb93",
@@ -482,15 +457,15 @@
     "/task/{taskId}": {
       "patch": {
         "tags": ["Task"],
-        "summary": "Edit task by id",
+        "operationId": "updateTask",
+        "summary": "Update task by id",
         "parameters": [
           {
             "in": "path",
             "name": "taskId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
@@ -508,18 +483,28 @@
                     "example": "Final Project Review"
                   },
                   "description": {
-                    "type": "string",
+                    "type": ["string", "null"],
+                    "minLength": 3,
                     "example": "Review and finalize all project documentation."
                   },
                   "deadline": {
-                    "type": "string",
+                    "type": ["string", "null"],
                     "format": "date",
                     "example": "2025-11-01"
                   },
                   "priority": {
-                    "type": "string",
-                    "enum": ["without", "low", "medium", "high"],
-                    "example": "Low"
+                    "allOf": [{ "$ref": "#/components/schemas/TaskPriority" }],
+                    "example": "low"
+                  },
+                  "completed": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "labels": {
+                    "type": "array",
+                    "description": "Array of Label ids to attach to the task",
+                    "items": { "type": "string" },
+                    "example": ["6672fdccc07147fc7ae1bb93"]
                   }
                 }
               }
@@ -535,6 +520,7 @@
       },
       "delete": {
         "tags": ["Task"],
+        "operationId": "deleteTask",
         "summary": "Delete task by id",
         "parameters": [
           {
@@ -542,8 +528,7 @@
             "name": "taskId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
@@ -558,6 +543,7 @@
     "/label": {
       "get": {
         "tags": ["Label"],
+        "operationId": "getAllLabels",
         "summary": "Get all labels",
         "security": [{ "bearerAuth": [] }],
         "responses": {
@@ -567,7 +553,8 @@
       },
       "post": {
         "tags": ["Label"],
-        "summary": "Add new label",
+        "operationId": "createLabel",
+        "summary": "Create new label",
         "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
@@ -582,10 +569,7 @@
                     "minLength": 2,
                     "example": "Bug"
                   },
-                  "color": {
-                    "type": "string",
-                    "example": "red"
-                  }
+                  "color": { "$ref": "#/components/schemas/LabelColor" }
                 }
               }
             }
@@ -601,15 +585,15 @@
     "/label/{labelId}": {
       "patch": {
         "tags": ["Label"],
-        "summary": "Edit label by id",
+        "operationId": "updateLabel",
+        "summary": "Update label by id",
         "parameters": [
           {
             "in": "path",
             "name": "labelId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
@@ -625,7 +609,8 @@
                     "type": "string",
                     "minLength": 2,
                     "example": "Bug"
-                  }
+                  },
+                  "color": { "$ref": "#/components/schemas/LabelColor" }
                 }
               }
             }
@@ -640,6 +625,7 @@
       },
       "delete": {
         "tags": ["Label"],
+        "operationId": "deleteLabel",
         "summary": "Delete label by id",
         "parameters": [
           {
@@ -647,8 +633,7 @@
             "name": "labelId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
@@ -663,45 +648,35 @@
   },
   "components": {
     "schemas": {
-      "BoardBackground": {
-        "type": "object",
-        "properties": {
-          "identifier": { "type": "string", "example": "flowers" },
-          "url": {
-            "type": "string",
-            "format": "url",
-            "example": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg"
-          }
-        }
-      },
       "Board": {
         "type": "object",
+        "required": [
+          "id",
+          "title",
+          "icon",
+          "background",
+          "userId",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6672f1d2f02c8b04130c718c"
           },
-          "title": { "type": "string", "example": "Project office" },
-          "icon": {
+          "title": {
             "type": "string",
-            "enum": [
-              "project",
-              "star",
-              "loading",
-              "puzzle",
-              "container",
-              "lightning",
-              "colors",
-              "hexagon"
-            ],
-            "example": "project"
+            "example": "Project office"
           },
+          "icon": { "$ref": "#/components/schemas/BoardIcon" },
           "background": { "$ref": "#/components/schemas/BoardBackground" },
           "userId": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6671743db85c96453e04a684"
+          },
+          "columns": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Column" }
           },
           "createdAt": {
             "type": "string",
@@ -715,19 +690,74 @@
           }
         }
       },
+      "BoardBackground": {
+        "type": "object",
+        "required": ["identifier", "url"],
+        "properties": {
+          "identifier": { "$ref": "#/components/schemas/BoardBackgroundId" },
+          "url": {
+            "type": ["string", "null"],
+            "format": "url",
+            "example": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg"
+          }
+        }
+      },
+      "BoardBackgroundId": {
+        "type": "string",
+        "enum": [
+          "default",
+          "flowers",
+          "mountains-night",
+          "sakura",
+          "night-sky",
+          "tropics",
+          "light-sky",
+          "sea-rocks",
+          "blue-ball",
+          "red-moon",
+          "sea-boat",
+          "air-balloons",
+          "gorge",
+          "sea-boat-2",
+          "air-balloons-2",
+          "northern-lights"
+        ],
+        "example": "flowers"
+      },
+      "BoardIcon": {
+        "type": "string",
+        "enum": [
+          "project",
+          "star",
+          "loading",
+          "puzzle",
+          "container",
+          "lightning",
+          "colors",
+          "hexagon"
+        ],
+        "example": "project"
+      },
       "Column": {
         "type": "object",
+        "required": [
+          "id",
+          "title",
+          "order",
+          "boardId",
+          "tasks",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6672f604c07147fc7ae1bb81"
           },
           "title": { "type": "string", "example": "In progress" },
           "order": { "type": "integer", "example": 1 },
           "boardId": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "67470718ed1b2ff3a2e5bd55"
           },
           "tasks": {
@@ -748,10 +778,22 @@
       },
       "Task": {
         "type": "object",
+        "required": [
+          "id",
+          "title",
+          "description",
+          "priority",
+          "deadline",
+          "completed",
+          "columnId",
+          "order",
+          "completedAt",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6672fdccc07147fc7ae1bb93"
           },
           "title": {
@@ -759,31 +801,29 @@
             "example": "Publication of the project"
           },
           "description": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "example": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials."
           },
-          "priority": {
-            "type": "string",
-            "enum": ["without", "low", "medium", "high"],
-            "example": "high"
-          },
+          "priority": { "$ref": "#/components/schemas/TaskPriority" },
           "deadline": {
-            "type": "string",
+            "type": ["string", "null"],
             "format": "date-time",
             "example": "2025-10-15T00:00:00.000Z"
           },
           "order": { "type": "integer", "example": 1 },
           "completed": { "type": "boolean", "example": false },
           "completedAt": {
-            "type": "string",
+            "type": ["string", "null"],
             "format": "date-time",
-            "example": "2026-06-29T14:30:00.000Z"
+            "example": null
           },
           "columnId": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6671743db85c96453e04a684"
+          },
+          "labels": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Label" }
           },
           "createdAt": {
             "type": "string",
@@ -797,41 +837,38 @@
           }
         }
       },
+      "TaskPriority": {
+        "type": "string",
+        "enum": ["without", "low", "medium", "high"],
+        "example": "high"
+      },
       "Label": {
         "type": "object",
+        "required": [
+          "id",
+          "name",
+          "color",
+          "userId",
+          "taskId",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6672fdccc07147fc7ae1bb93"
           },
           "name": {
             "type": "string",
             "example": "Bug"
           },
-          "color": {
-            "type": "string",
-            "enum": [
-              "blue",
-              "purple",
-              "red",
-              "gray",
-              "cyan",
-              "yellow",
-              "indigo",
-              "green"
-            ],
-            "example": "red"
-          },
+          "color": { "$ref": "#/components/schemas/LabelColor" },
           "userId": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6671743db85c96453e04a684"
           },
           "taskId": {
-            "type": "string",
-            "nullable": true,
-            "pattern": "^[0-9a-fA-F]{24}$",
+            "type": ["string", "null"],
             "example": null
           },
           "createdAt": {
@@ -845,6 +882,20 @@
             "example": "2026-06-29T14:30:00.000Z"
           }
         }
+      },
+      "LabelColor": {
+        "type": "string",
+        "enum": [
+          "blue",
+          "purple",
+          "red",
+          "gray",
+          "cyan",
+          "yellow",
+          "indigo",
+          "green"
+        ],
+        "example": "red"
       },
       "ErrorResponse": {
         "type": "object",
@@ -1090,7 +1141,7 @@
               "example": {
                 "statusCode": 400,
                 "message": {
-                  "color": "The field must be one of the following values: blue, violet, rose, gray, cyan, amber, indigo, emerald"
+                  "color": "The field must be one of the following values: blue, purple, red, gray, cyan, yellow, indigo, green"
                 }
               }
             }

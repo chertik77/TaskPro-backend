@@ -1,7 +1,7 @@
 import type {
   CreateLabelSchema,
-  EditLabelSchema,
-  LabelParamsSchema
+  LabelParamsSchema,
+  UpdateLabelSchema
 } from '@/schemas'
 import type {
   TypedRequest,
@@ -53,7 +53,11 @@ class LabelController {
       params,
       body,
       user
-    }: TypedRequest<typeof LabelParamsSchema, ZodType, typeof EditLabelSchema>,
+    }: TypedRequest<
+      typeof LabelParamsSchema,
+      ZodType,
+      typeof UpdateLabelSchema
+    >,
     res: Response,
     next: NextFunction
   ) => {

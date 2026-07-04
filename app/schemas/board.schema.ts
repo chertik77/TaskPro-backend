@@ -13,12 +13,12 @@ const zObjectKeys = <T extends Record<string, unknown>>(obj: T) => {
   )
 }
 
-export const AddBoardSchema = z.object({
+export const CreateBoardSchema = z.object({
   title: z.string().min(3),
   icon: z.enum(Icon),
   background: zObjectKeys(boardImages)
 })
 
-export const EditBoardSchema = AddBoardSchema.partial()
+export const UpdateBoardSchema = CreateBoardSchema.partial()
 
 export const BoardParamsSchema = z.object({ boardId: objectIdSchema() })

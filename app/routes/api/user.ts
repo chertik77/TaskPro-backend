@@ -13,7 +13,7 @@ userRouter.use(requireAuth)
 // userRouter.patch(
 //   '/',
 //   upload.single('avatar'),
-//   validateRequest({ body: EditUserSchema }),
+//   validateRequest({ body: UpdateUserSchema }),
 //   userController.update
 // )
 
