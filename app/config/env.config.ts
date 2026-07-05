@@ -18,7 +18,7 @@ const envSchema = z.object({
   REDIS_HOST: z.string(),
   REDIS_PORT: z.coerce.number().int().positive().min(1000).max(65535),
   PORT: z.coerce.number().int().positive().min(1000).max(65535),
-  API_PREFIX: z.string(),
+  API_PREFIX: z.string().default(''),
   NODE_ENV: z.enum(['development', 'production']).default('development'),
   ALLOWED_ORIGINS: z
     .string()

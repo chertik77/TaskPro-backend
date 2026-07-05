@@ -11,6 +11,7 @@ import { mapMicrosoftProfileToUser } from './map-microsoft-profile-to-user'
 export const auth = betterAuth({
   appName: 'Task Pro',
   baseURL: env.BETTER_AUTH_URL,
+  basePath: env.API_PREFIX + '/auth',
   secret: env.BETTER_AUTH_SECRET,
   database: prismaAdapter(prisma, { provider: 'mongodb' }),
   advanced: {
