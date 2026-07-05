@@ -500,6 +500,11 @@
                     "type": "boolean",
                     "example": true
                   },
+                  "columnId": {
+                    "type": "string",
+                    "example": "6672fdccc07147fc7ae1bb93",
+                    "description": "Id of the column to move the task to"
+                  },
                   "labels": {
                     "type": "array",
                     "description": "Array of Label ids to attach to the task",
