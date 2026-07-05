@@ -2,29 +2,29 @@ import { Router } from 'express'
 
 import { columnController } from '@/controllers'
 
-import { authenticate, validateRequest } from '@/middlewares'
+import { requireAuth, validateRequest } from '@/middlewares'
 
 import {
-  AddColumnSchema,
   BoardParamsSchema,
   ColumnParamsSchema,
-  EditColumnSchema,
-  UpdateColumnOrderSchema
+  CreateColumnSchema,
+  UpdateColumnOrderSchema,
+  UpdateColumnSchema
 } from '@/schemas'
 
 export const columnRouter = Router()
 
-columnRouter.use(authenticate)
+columnRouter.use(requireAuth)
 
 columnRouter.post(
   '/:boardId',
-  validateRequest({ body: AddColumnSchema, params: BoardParamsSchema }),
-  columnController.add
+  validateRequest({ body: CreateColumnSchema, params: BoardParamsSchema }),
+  columnController.create
 )
 
 columnRouter.patch(
   '/:columnId',
-  validateRequest({ body: EditColumnSchema, params: ColumnParamsSchema }),
+  validateRequest({ body: UpdateColumnSchema, params: ColumnParamsSchema }),
   columnController.updateById
 )
 

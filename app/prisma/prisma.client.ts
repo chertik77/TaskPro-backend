@@ -5,6 +5,6 @@ import {
   updateIgnoreNotFoundExtension
 } from './extensions'
 
-export const prisma = new PrismaClient({ omit: { user: { password: true } } })
+export const prisma = new PrismaClient()
   .$extends(updateIgnoreNotFoundExtension)
   .$extends(deleteIgnoreNotFoundExtension)

@@ -1,9 +1,9 @@
 import type {
-  AddBoardSchema,
   BoardParamsSchema,
   ColumnParamsSchema,
-  EditColumnSchema,
-  UpdateColumnOrderSchema
+  CreateBoardSchema,
+  UpdateColumnOrderSchema,
+  UpdateColumnSchema
 } from '@/schemas'
 import type { TypedRequest, TypedRequestParams } from '@/types'
 import type { NextFunction, Response } from 'express'
@@ -15,12 +15,16 @@ import { BadRequest, NotFound } from 'http-errors'
 import { redisClient } from '@/config'
 
 class ColumnController {
-  add = async (
+  create = async (
     {
       params,
       user,
       body
-    }: TypedRequest<typeof BoardParamsSchema, ZodType, typeof AddBoardSchema>,
+    }: TypedRequest<
+      typeof BoardParamsSchema,
+      ZodType,
+      typeof CreateBoardSchema
+    >,
     res: Response,
     next: NextFunction
   ) => {
@@ -54,7 +58,7 @@ class ColumnController {
     }: TypedRequest<
       typeof ColumnParamsSchema,
       ZodType,
-      typeof EditColumnSchema
+      typeof UpdateColumnSchema
     >,
     res: Response,
     next: NextFunction

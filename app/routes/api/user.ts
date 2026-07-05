@@ -2,22 +2,20 @@ import { Router } from 'express'
 
 import { userController } from '@/controllers'
 
-import { authenticate, upload, validateRequest } from '@/middlewares'
+import { requireAuth, validateRequest } from '@/middlewares'
 
-import { EditUserSchema, NeedHelpSchema } from '@/schemas'
+import { NeedHelpSchema } from '@/schemas'
 
 export const userRouter = Router()
 
-userRouter.use(authenticate)
+userRouter.use(requireAuth)
 
-userRouter.get('/me', userController.me)
-
-userRouter.patch(
-  '/',
-  upload.single('avatar'),
-  validateRequest({ body: EditUserSchema }),
-  userController.update
-)
+// userRouter.patch(
+//   '/',
+//   upload.single('avatar'),
+//   validateRequest({ body: UpdateUserSchema }),
+//   userController.update
+// )
 
 userRouter.post(
   '/help',

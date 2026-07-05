@@ -1,24 +1,23 @@
 export {
-  AddBoardSchema,
-  EditBoardSchema,
+  CreateBoardSchema,
+  UpdateBoardSchema,
   BoardParamsSchema
 } from './board.schema'
 export {
-  AddTaskSchema,
-  EditTaskSchema,
+  CreateTaskSchema,
+  UpdateTaskSchema,
   TaskParamsSchema,
   UpdateTaskOrderSchema
 } from './task.schema'
 export {
-  AddColumnSchema,
-  EditColumnSchema,
+  CreateColumnSchema,
+  UpdateColumnSchema,
   ColumnParamsSchema,
   UpdateColumnOrderSchema
 } from './column.schema'
 export {
   CreateLabelSchema,
-  EditLabelSchema,
+  UpdateLabelSchema,
   LabelParamsSchema
 } from './label.schema'
-export { SigninSchema, SignupSchema } from './auth.schema'
-export { EditUserSchema, NeedHelpSchema } from './user.schema'
+export { UpdateUserSchema, NeedHelpSchema } from './user.schema'

@@ -1,102 +1,80 @@
-import type { EditUserSchema, NeedHelpSchema } from '@/schemas'
+import type { NeedHelpSchema } from '@/schemas'
 import type { TypedRequestBody } from '@/types'
-import type { User } from '@prisma/client'
-import type { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Response } from 'express'
 
 import {
   supportRequestAdminTemplate,
   supportRequestUserTemplate
 } from '@/emails/templates'
-import { prisma } from '@/prisma'
-import { hash } from 'argon2'
-import { Conflict, InternalServerError, NotAcceptable } from 'http-errors'
+import { InternalServerError } from 'http-errors'
 
-import cloudinary, { env, redisClient, resend } from '@/config'
+import { env, resend } from '@/config'
 
 class UserController {
-  me = async (req: Request, res: Response) => {
-    // Disable caching for this route to prevent stale data
-    res.setHeader(
-      'Cache-Control',
-      'no-store, no-cache, must-revalidate, proxy-revalidate'
-    )
-    res.setHeader('Pragma', 'no-cache')
-    res.setHeader('Expires', '0')
+  // update = async (
+  //   { user, body, headers, file }: TypedRequestBody<typeof UpdateUserSchema>,
+  //   res: Response,
+  //   next: NextFunction
+  // ) => {
+  //   // @ts-expect-error it exists
+  //   const { imagePublicId } = user
+  //   const { email, currentPassword, newPassword, ...data } = body
 
-    const cacheKey = `user:${req.user.id}`
+  //   if (email) auth.api.changeEmail({ body: { newEmail: email } })
 
-    const cachedUser = await redisClient.get(cacheKey)
+  //   if (currentPassword && newPassword) {
+  //     auth.api.changePassword({
+  //       body: { currentPassword, newPassword }
+  //     })
+  //   }
 
-    if (cachedUser) {
-      res.json(JSON.parse(cachedUser))
-    } else {
-      const user = await prisma.user.findUnique({
-        where: { id: req.user.id }
-      })
+  //   const updateData: Partial<User> = data
 
-      await redisClient.set(cacheKey, JSON.stringify(user), 'EX', 5 * 60)
+  //   if (file) {
+  //     const extArr = ['jpeg', 'png', 'jpg', 'webp']
+  //     const ext = file.mimetype.split('/').pop()
 
-      res.json(user)
-    }
-  }
+  //     if (!extArr.includes(ext!)) {
+  //       return next(
+  //         NotAcceptable(
+  //           'File must have .jpeg or .png or .jpg or .webp extension'
+  //         )
+  //       )
+  //     }
 
-  update = async (
-    { user, body, file }: TypedRequestBody<typeof EditUserSchema>,
-    res: Response,
-    next: NextFunction
-  ) => {
-    const { id, avatarPublicId, email: userEmail } = user
-    const { email, password } = body
+  //     try {
+  //       const newImage = await uploadToCloudinary({
+  //         file: file.path,
+  //         folder: 'TaskPro/user_avatars'
+  //       })
 
-    const isEmailExists =
-      email && (await prisma.user.findFirst({ where: { email } }))
+  //       if (imagePublicId) {
+  //         await cloudinary.uploader.destroy(imagePublicId, {
+  //           type: 'upload',
+  //           resource_type: 'image'
+  //         })
+  //       }
 
-    if (email && email !== userEmail && isEmailExists) {
-      return next(Conflict('Email already exist'))
-    }
+  //       updateData.image = newImage.url
+  //       // @ts-expect-error it exists
+  //       updateData.imagePublicId = newImage.public_id
+  //     } catch {
+  //       return next(InternalServerError('Uploading avatar error'))
+  //     }
+  //   }
 
-    const updateData: Partial<User> = body
+  //   console.log(updateData)
 
-    if (password) {
-      updateData.password = await hash(password)
-    }
+  //   const updatedUser = await auth.api.updateUser({
+  //     headers: fromNodeHeaders(headers),
+  //     body: updateData,
+  //     asResponse: true
+  //   })
 
-    if (file) {
-      const extArr = ['jpeg', 'png']
-      const ext = file.mimetype.split('/').pop()
+  //   console.log(updatedUser)
 
-      if (!extArr.includes(ext!)) {
-        return next(NotAcceptable('File must have .jpeg or .png extension'))
-      }
-
-      try {
-        const newAvatar = await cloudinary.uploader.upload(file.path, {
-          folder: 'TaskPro/user_avatars'
-        })
-
-        if (avatarPublicId) {
-          await cloudinary.uploader.destroy(avatarPublicId, {
-            type: 'upload',
-            resource_type: 'image'
-          })
-        }
-
-        updateData.avatar = newAvatar.url
-        updateData.avatarPublicId = newAvatar.public_id
-      } catch {
-        return next(InternalServerError('Uploading avatar error'))
-      }
-    }
-
-    const updatedUser = await prisma.user.update({
-      where: { id },
-      data: updateData
-    })
-
-    await redisClient.del(`user:${updatedUser.id}`)
-
-    res.json(updatedUser)
-  }
+  //   res.json(updatedUser)
+  // }
 
   help = async (
     { body }: TypedRequestBody<typeof NeedHelpSchema>,

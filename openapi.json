@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "version": "2.2.0",
+    "version": "2.3.0",
     "title": "Task Pro API",
-    "description": "The Task Pro API provides endpoints to manage projects and user assignments, ensuring secure and efficient request handling.",
+    "description": "Task Pro API provides endpoints for managing projects, tasks, and user assignments with secure authentication and efficient workflows.",
     "contact": {
       "name": "TaskPro",
       "url": "https://www.taskpro.qzz.io"
@@ -14,191 +14,12 @@
     { "url": "https://api.taskpro.qzz.io" }
   ],
   "paths": {
-    "/auth/signup": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Create a new user",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["name", "email", "password"],
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 2,
-                    "example": "John Doe"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "user@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "minLength": 8,
-                    "maxLength": 64,
-                    "example": "qwerty123"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": { "$ref": "#/components/responses/AuthResponse" },
-          "400": { "$ref": "#/components/responses/BadRequestError" },
-          "409": { "$ref": "#/components/responses/Conflict" }
-        }
-      }
-    },
-    "/auth/signin": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Signin a user",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["email", "password"],
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "user@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "qwerty123"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": { "$ref": "#/components/responses/AuthResponse" },
-          "400": { "$ref": "#/components/responses/BadRequestError" },
-          "401": { "$ref": "#/components/responses/Unauthorized" }
-        }
-      }
-    },
-    "/auth/google/initiate": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Redirect user to Google OAuth",
-        "responses": {
-          "302": {
-            "headers": {
-              "Location": {
-                "description": "Google OAuth URL",
-                "schema": { "type": "string" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/google/callback": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Handles Google's OAuth redirect",
-        "responses": {
-          "302": {
-            "description": "Redirects to frontend with success or error",
-            "headers": {
-              "Location": {
-                "description": "Frontend redirect URL",
-                "schema": {
-                  "type": "string",
-                  "example": "https://taskpro.qzz.io?error=oauth_error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/microsoft/initiate": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Redirect user to Microsoft OAuth",
-        "responses": {
-          "302": {
-            "headers": {
-              "Location": {
-                "description": "Microsoft OAuth URL",
-                "schema": { "type": "string" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/microsoft/callback": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Handles Microsoft's OAuth redirect",
-        "responses": {
-          "302": {
-            "description": "Redirects to frontend with success or error",
-            "headers": {
-              "Location": {
-                "description": "Frontend redirect URL",
-                "schema": {
-                  "type": "string",
-                  "example": "https://taskpro.qzz.io?error=oauth_error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/refresh": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Get new access and refresh tokens",
-        "security": [{ "CookieAuth": [] }],
-        "responses": {
-          "200": { "$ref": "#/components/responses/RefreshResponse" },
-          "400": { "$ref": "#/components/responses/BadRequestError" },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" }
-        }
-      }
-    },
-    "/auth/logout": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Logout a user",
-        "security": [{ "CookieAuth": [] }],
-        "responses": {
-          "204": { "description": "The user was logged out successfully." },
-          "401": { "$ref": "#/components/responses/Unauthorized" }
-        }
-      }
-    },
-    "/user/me": {
-      "get": {
-        "tags": ["User"],
-        "summary": "Get current user",
-        "security": [{ "CookieAuth": [] }],
-        "responses": {
-          "200": { "$ref": "#/components/responses/UserResponse" },
-          "401": { "$ref": "#/components/responses/Unauthorized" }
-        }
-      }
-    },
     "/user/help": {
       "post": {
         "tags": ["User"],
+        "operationId": "help",
         "summary": "Send email need help",
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -242,65 +63,12 @@
         }
       }
     },
-    "/user": {
-      "patch": {
-        "tags": ["User"],
-        "summary": "Edit user profile",
-        "security": [{ "CookieAuth": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 2,
-                    "example": "Jane Doe"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "jane.doe@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "minLength": 8,
-                    "example": "newsecurepassword123"
-                  },
-                  "theme": {
-                    "type": "string",
-                    "enum": ["light", "dark", "system"],
-                    "example": "dark"
-                  }
-                }
-              }
-            },
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "avatar": { "type": "string", "format": "binary" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": { "$ref": "#/components/responses/UserResponse" },
-          "400": { "$ref": "#/components/responses/BadRequestError" },
-          "406": { "$ref": "#/components/responses/NotAcceptable" },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "409": { "$ref": "#/components/responses/Conflict" }
-        }
-      }
-    },
     "/board": {
       "get": {
         "tags": ["Board"],
+        "operationId": "getAllBoards",
         "summary": "Get all boards",
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "200": { "$ref": "#/components/responses/AllBoardsResponse" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
@@ -308,38 +76,24 @@
       },
       "post": {
         "tags": ["Board"],
-        "summary": "Add new board",
-        "security": [{ "CookieAuth": [] }],
+        "operationId": "createBoard",
+        "summary": "Create new board",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["title", "icon"],
                 "properties": {
                   "title": {
                     "type": "string",
                     "minLength": 3,
                     "example": "My New Project"
                   },
-                  "icon": {
-                    "type": "string",
-                    "enum": [
-                      "project",
-                      "star",
-                      "loading",
-                      "puzzle",
-                      "container",
-                      "lightning",
-                      "colors",
-                      "hexagon"
-                    ],
-                    "example": "project"
-                  },
+                  "icon": { "$ref": "#/components/schemas/BoardIcon" },
                   "background": {
-                    "type": "string",
-                    "example": "blue-ball"
+                    "$ref": "#/components/schemas/BoardBackgroundId"
                   }
                 }
               }
@@ -356,6 +110,7 @@
     "/board/{boardId}": {
       "get": {
         "tags": ["Board"],
+        "operationId": "getBoardById",
         "summary": "Get board by id",
         "parameters": [
           {
@@ -363,12 +118,11 @@
             "name": "boardId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "200": { "$ref": "#/components/responses/BoardByIdResponse" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -377,19 +131,19 @@
       },
       "patch": {
         "tags": ["Board"],
-        "summary": "Edit board by id",
+        "operationId": "updateBoard",
+        "summary": "Update board by id",
         "parameters": [
           {
             "in": "path",
             "name": "boardId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -402,23 +156,9 @@
                     "minLength": 3,
                     "example": "Updated Project Office"
                   },
-                  "icon": {
-                    "type": "string",
-                    "enum": [
-                      "project",
-                      "star",
-                      "loading",
-                      "puzzle",
-                      "container",
-                      "lightning",
-                      "colors",
-                      "hexagon"
-                    ],
-                    "example": "star"
-                  },
+                  "icon": { "$ref": "#/components/schemas/BoardIcon" },
                   "background": {
-                    "type": "string",
-                    "example": "flowers"
+                    "$ref": "#/components/schemas/BoardBackgroundId"
                   }
                 }
               }
@@ -434,6 +174,7 @@
       },
       "delete": {
         "tags": ["Board"],
+        "operationId": "deleteBoard",
         "summary": "Delete board by id",
         "parameters": [
           {
@@ -441,12 +182,11 @@
             "name": "boardId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -457,19 +197,19 @@
     "/column/{boardId}": {
       "post": {
         "tags": ["Column"],
-        "summary": "Add new column",
+        "operationId": "createColumn",
+        "summary": "Create new column",
         "parameters": [
           {
             "in": "path",
             "name": "boardId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -499,6 +239,7 @@
     "/column/{boardId}/order": {
       "patch": {
         "tags": ["Column"],
+        "operationId": "updateColumnsOrder",
         "summary": "Update columns order",
         "parameters": [
           {
@@ -506,12 +247,11 @@
             "name": "boardId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -523,8 +263,7 @@
                   "ids": {
                     "type": "array",
                     "items": {
-                      "type": "string",
-                      "pattern": "^[0-9a-fA-F]{24}$"
+                      "type": "string"
                     },
                     "example": [
                       "67470731ed1b2ff3a2e5bd56",
@@ -550,19 +289,19 @@
     "/column/{columnId}": {
       "patch": {
         "tags": ["Column"],
-        "summary": "Edit column by id",
+        "operationId": "updateColumn",
+        "summary": "Update column by id",
         "parameters": [
           {
             "in": "path",
             "name": "columnId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -589,6 +328,7 @@
       },
       "delete": {
         "tags": ["Column"],
+        "operationId": "deleteColumn",
         "summary": "Delete column by id",
         "parameters": [
           {
@@ -596,12 +336,11 @@
             "name": "columnId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -612,19 +351,19 @@
     "/task/{columnId}": {
       "post": {
         "tags": ["Task"],
-        "summary": "Add new task",
+        "operationId": "createTask",
+        "summary": "Create new task",
         "parameters": [
           {
             "in": "path",
             "name": "columnId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -640,6 +379,7 @@
                   },
                   "description": {
                     "type": "string",
+                    "minLength": 3,
                     "example": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials."
                   },
                   "deadline": {
@@ -647,10 +387,12 @@
                     "format": "date",
                     "example": "2025-10-15"
                   },
-                  "priority": {
-                    "type": "string",
-                    "enum": ["without", "low", "medium", "high"],
-                    "example": "High"
+                  "priority": { "$ref": "#/components/schemas/TaskPriority" },
+                  "labels": {
+                    "type": "array",
+                    "description": "Array of Label ids to attach to the task",
+                    "items": { "type": "string" },
+                    "example": ["6672fdccc07147fc7ae1bb93"]
                   }
                 }
               }
@@ -668,6 +410,7 @@
     "/task/{columnId}/order": {
       "patch": {
         "tags": ["Task"],
+        "operationId": "updateTaskOrder",
         "summary": "Update tasks order",
         "parameters": [
           {
@@ -675,12 +418,11 @@
             "name": "columnId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -692,8 +434,7 @@
                   "ids": {
                     "type": "array",
                     "items": {
-                      "type": "string",
-                      "pattern": "^[0-9a-fA-F]{24}$"
+                      "type": "string"
                     },
                     "example": [
                       "6672fdccc07147fc7ae1bb93",
@@ -716,19 +457,19 @@
     "/task/{taskId}": {
       "patch": {
         "tags": ["Task"],
-        "summary": "Edit task by id",
+        "operationId": "updateTask",
+        "summary": "Update task by id",
         "parameters": [
           {
             "in": "path",
             "name": "taskId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -742,18 +483,33 @@
                     "example": "Final Project Review"
                   },
                   "description": {
-                    "type": "string",
+                    "type": ["string", "null"],
+                    "minLength": 3,
                     "example": "Review and finalize all project documentation."
                   },
                   "deadline": {
-                    "type": "string",
+                    "type": ["string", "null"],
                     "format": "date",
                     "example": "2025-11-01"
                   },
                   "priority": {
+                    "allOf": [{ "$ref": "#/components/schemas/TaskPriority" }],
+                    "example": "low"
+                  },
+                  "completed": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "columnId": {
                     "type": "string",
-                    "enum": ["without", "low", "medium", "high"],
-                    "example": "Low"
+                    "example": "6672fdccc07147fc7ae1bb93",
+                    "description": "Id of the column to move the task to"
+                  },
+                  "labels": {
+                    "type": "array",
+                    "description": "Array of Label ids to attach to the task",
+                    "items": { "type": "string" },
+                    "example": ["6672fdccc07147fc7ae1bb93"]
                   }
                 }
               }
@@ -769,6 +525,7 @@
       },
       "delete": {
         "tags": ["Task"],
+        "operationId": "deleteTask",
         "summary": "Delete task by id",
         "parameters": [
           {
@@ -776,12 +533,11 @@
             "name": "taskId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -792,8 +548,9 @@
     "/label": {
       "get": {
         "tags": ["Label"],
+        "operationId": "getAllLabels",
         "summary": "Get all labels",
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "200": { "$ref": "#/components/responses/AllLabelsResponse" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
@@ -801,8 +558,9 @@
       },
       "post": {
         "tags": ["Label"],
-        "summary": "Add new label",
-        "security": [{ "CookieAuth": [] }],
+        "operationId": "createLabel",
+        "summary": "Create new label",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -816,10 +574,7 @@
                     "minLength": 2,
                     "example": "Bug"
                   },
-                  "color": {
-                    "type": "string",
-                    "example": "red"
-                  }
+                  "color": { "$ref": "#/components/schemas/LabelColor" }
                 }
               }
             }
@@ -835,19 +590,19 @@
     "/label/{labelId}": {
       "patch": {
         "tags": ["Label"],
-        "summary": "Edit label by id",
+        "operationId": "updateLabel",
+        "summary": "Update label by id",
         "parameters": [
           {
             "in": "path",
             "name": "labelId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -859,7 +614,8 @@
                     "type": "string",
                     "minLength": 2,
                     "example": "Bug"
-                  }
+                  },
+                  "color": { "$ref": "#/components/schemas/LabelColor" }
                 }
               }
             }
@@ -874,6 +630,7 @@
       },
       "delete": {
         "tags": ["Label"],
+        "operationId": "deleteLabel",
         "summary": "Delete label by id",
         "parameters": [
           {
@@ -881,12 +638,11 @@
             "name": "labelId",
             "required": true,
             "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
+              "type": "string"
             }
           }
         ],
-        "security": [{ "CookieAuth": [] }],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "204": { "description": "The resource was deleted successfully." },
           "401": { "$ref": "#/components/responses/Unauthorized" },
@@ -897,34 +653,35 @@
   },
   "components": {
     "schemas": {
-      "User": {
+      "Board": {
         "type": "object",
+        "required": [
+          "id",
+          "title",
+          "icon",
+          "background",
+          "userId",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
-            "example": "674723719b47fd08e6a2d517"
+            "example": "6672f1d2f02c8b04130c718c"
           },
-          "name": { "type": "string", "example": "John Doe" },
-          "email": {
+          "title": {
             "type": "string",
-            "format": "email",
-            "example": "user@example.com"
+            "example": "Project office"
           },
-          "theme": {
+          "icon": { "$ref": "#/components/schemas/BoardIcon" },
+          "background": { "$ref": "#/components/schemas/BoardBackground" },
+          "userId": {
             "type": "string",
-            "enum": ["light", "dark", "system"],
-            "example": "light"
+            "example": "6671743db85c96453e04a684"
           },
-          "avatar": {
-            "type": "string",
-            "format": "url",
-            "example": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatar_default/user_light.png"
-          },
-          "avatarPublicId": {
-            "type": "string",
-            "nullable": true,
-            "example": null
+          "columns": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Column" }
           },
           "createdAt": {
             "type": "string",
@@ -938,77 +695,74 @@
           }
         }
       },
-      "AuthResponseSchema": {
-        "type": "object",
-        "properties": {
-          "user": { "$ref": "#/components/schemas/User" }
-        }
-      },
       "BoardBackground": {
         "type": "object",
+        "required": ["identifier", "url"],
         "properties": {
-          "identifier": { "type": "string", "example": "flowers" },
+          "identifier": { "$ref": "#/components/schemas/BoardBackgroundId" },
           "url": {
-            "type": "string",
+            "type": ["string", "null"],
             "format": "url",
             "example": "https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg"
           }
         }
       },
-      "Board": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
-            "example": "6672f1d2f02c8b04130c718c"
-          },
-          "title": { "type": "string", "example": "Project office" },
-          "icon": {
-            "type": "string",
-            "enum": [
-              "project",
-              "star",
-              "loading",
-              "puzzle",
-              "container",
-              "lightning",
-              "colors",
-              "hexagon"
-            ],
-            "example": "project"
-          },
-          "background": { "$ref": "#/components/schemas/BoardBackground" },
-          "userId": {
-            "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
-            "example": "6671743db85c96453e04a684"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2026-06-29T14:30:00.000Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2026-06-29T14:30:00.000Z"
-          }
-        }
+      "BoardBackgroundId": {
+        "type": "string",
+        "enum": [
+          "default",
+          "flowers",
+          "mountains-night",
+          "sakura",
+          "night-sky",
+          "tropics",
+          "light-sky",
+          "sea-rocks",
+          "blue-ball",
+          "red-moon",
+          "sea-boat",
+          "air-balloons",
+          "gorge",
+          "sea-boat-2",
+          "air-balloons-2",
+          "northern-lights"
+        ],
+        "example": "flowers"
+      },
+      "BoardIcon": {
+        "type": "string",
+        "enum": [
+          "project",
+          "star",
+          "loading",
+          "puzzle",
+          "container",
+          "lightning",
+          "colors",
+          "hexagon"
+        ],
+        "example": "project"
       },
       "Column": {
         "type": "object",
+        "required": [
+          "id",
+          "title",
+          "order",
+          "boardId",
+          "tasks",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6672f604c07147fc7ae1bb81"
           },
           "title": { "type": "string", "example": "In progress" },
           "order": { "type": "integer", "example": 1 },
           "boardId": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "67470718ed1b2ff3a2e5bd55"
           },
           "tasks": {
@@ -1029,10 +783,22 @@
       },
       "Task": {
         "type": "object",
+        "required": [
+          "id",
+          "title",
+          "description",
+          "priority",
+          "deadline",
+          "completed",
+          "columnId",
+          "order",
+          "completedAt",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6672fdccc07147fc7ae1bb93"
           },
           "title": {
@@ -1040,31 +806,29 @@
             "example": "Publication of the project"
           },
           "description": {
-            "type": "string",
-            "nullable": true,
+            "type": ["string", "null"],
             "example": "Review the project materials: Familiarize yourself with the project's content, including text, images, and any supplementary materials."
           },
-          "priority": {
-            "type": "string",
-            "enum": ["without", "low", "medium", "high"],
-            "example": "high"
-          },
+          "priority": { "$ref": "#/components/schemas/TaskPriority" },
           "deadline": {
-            "type": "string",
+            "type": ["string", "null"],
             "format": "date-time",
             "example": "2025-10-15T00:00:00.000Z"
           },
           "order": { "type": "integer", "example": 1 },
           "completed": { "type": "boolean", "example": false },
           "completedAt": {
-            "type": "string",
+            "type": ["string", "null"],
             "format": "date-time",
-            "example": "2026-06-29T14:30:00.000Z"
+            "example": null
           },
           "columnId": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6671743db85c96453e04a684"
+          },
+          "labels": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Label" }
           },
           "createdAt": {
             "type": "string",
@@ -1078,41 +842,38 @@
           }
         }
       },
+      "TaskPriority": {
+        "type": "string",
+        "enum": ["without", "low", "medium", "high"],
+        "example": "high"
+      },
       "Label": {
         "type": "object",
+        "required": [
+          "id",
+          "name",
+          "color",
+          "userId",
+          "taskId",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6672fdccc07147fc7ae1bb93"
           },
           "name": {
             "type": "string",
             "example": "Bug"
           },
-          "color": {
-            "type": "string",
-            "enum": [
-              "blue",
-              "purple",
-              "red",
-              "gray",
-              "cyan",
-              "yellow",
-              "indigo",
-              "green"
-            ],
-            "example": "red"
-          },
+          "color": { "$ref": "#/components/schemas/LabelColor" },
           "userId": {
             "type": "string",
-            "pattern": "^[0-9a-fA-F]{24}$",
             "example": "6671743db85c96453e04a684"
           },
           "taskId": {
-            "type": "string",
-            "nullable": true,
-            "pattern": "^[0-9a-fA-F]{24}$",
+            "type": ["string", "null"],
             "example": null
           },
           "createdAt": {
@@ -1126,6 +887,20 @@
             "example": "2026-06-29T14:30:00.000Z"
           }
         }
+      },
+      "LabelColor": {
+        "type": "string",
+        "enum": [
+          "blue",
+          "purple",
+          "red",
+          "gray",
+          "cyan",
+          "yellow",
+          "indigo",
+          "green"
+        ],
+        "example": "red"
       },
       "ErrorResponse": {
         "type": "object",
@@ -1195,64 +970,6 @@
                 }
               }
             }
-          }
-        }
-      },
-      "NotAcceptable": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ErrorResponse",
-              "example": {
-                "statusCode": 406,
-                "message": "File must have .jpeg or .png extension"
-              }
-            }
-          }
-        }
-      },
-      "AuthResponse": {
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/AuthResponseSchema" }
-          }
-        },
-        "headers": {
-          "Set-Cookie": {
-            "schema": {
-              "type": "string",
-              "example": "accessToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure; refreshToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure;"
-            }
-          }
-        }
-      },
-      "RefreshResponse": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "example": "Tokens refreshed successfully"
-                }
-              }
-            }
-          }
-        },
-        "headers": {
-          "Set-Cookie": {
-            "schema": {
-              "type": "string",
-              "example": "accessToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure; refreshToken=eyJhbGci...; Path=/; HttpOnly; SameSite=Lax; Secure;"
-            }
-          }
-        }
-      },
-      "UserResponse": {
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/User" }
           }
         }
       },
@@ -1429,7 +1146,7 @@
               "example": {
                 "statusCode": 400,
                 "message": {
-                  "color": "The field must be one of the following values: blue, violet, rose, gray, cyan, amber, indigo, emerald"
+                  "color": "The field must be one of the following values: blue, purple, red, gray, cyan, yellow, indigo, green"
                 }
               }
             }
@@ -1438,11 +1155,10 @@
       }
     },
     "securitySchemes": {
-      "CookieAuth": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": "accessToken",
-        "description": "Access token is sent as an HTTP-only cookie."
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }

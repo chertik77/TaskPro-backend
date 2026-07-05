@@ -46,4 +46,4 @@ _Link to the frontend repo:_ https://github.com/chertik77/TaskPro-frontend
 
 ## Languages and Tools
 
-![Languages and Tools](https://skills.syvixor.com/api/icons?i=nodejs,ts,expressjs,prisma,mongodb,swagger,cloudinary,redis,zod,gcp,resend,azure,githubactions,yarn,commitlint,eslint,prettier,postman,vscode&perline=10)
+![Languages and Tools](https://skills.syvixor.com/api/icons?i=nodejs,ts,expressjs,prisma,mongodb,swagger,cloudinary,redis,zod,betterauth,resend,githubactions,yarn,commitlint,eslint,prettier,postman,vscode&perline=9)

@@ -1,7 +1,7 @@
 import type {
-  AddBoardSchema,
   BoardParamsSchema,
-  EditBoardSchema
+  CreateBoardSchema,
+  UpdateBoardSchema
 } from '@/schemas'
 import type {
   TypedRequest,
@@ -66,8 +66,8 @@ class BoardController {
     }
   }
 
-  add = async (
-    { body, user }: TypedRequestBody<typeof AddBoardSchema>,
+  create = async (
+    { body, user }: TypedRequestBody<typeof CreateBoardSchema>,
     res: Response
   ) => {
     const newBoard = await prisma.board.create({
@@ -91,7 +91,11 @@ class BoardController {
       body,
       params,
       user
-    }: TypedRequest<typeof BoardParamsSchema, ZodType, typeof EditBoardSchema>,
+    }: TypedRequest<
+      typeof BoardParamsSchema,
+      ZodType,
+      typeof UpdateBoardSchema
+    >,
     res: Response,
     next: NextFunction
   ) => {

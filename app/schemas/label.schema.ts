@@ -8,6 +8,6 @@ export const CreateLabelSchema = z.object({
   color: z.enum(LabelColor)
 })
 
-export const EditLabelSchema = CreateLabelSchema.partial()
+export const UpdateLabelSchema = CreateLabelSchema.partial()
 
 export const LabelParamsSchema = z.object({ labelId: objectIdSchema() })

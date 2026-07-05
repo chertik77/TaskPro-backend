@@ -1,9 +1,9 @@
 import type {
-  AddTaskSchema,
   ColumnParamsSchema,
-  EditTaskSchema,
+  CreateTaskSchema,
   TaskParamsSchema,
-  UpdateTaskOrderSchema
+  UpdateTaskOrderSchema,
+  UpdateTaskSchema
 } from '@/schemas'
 import type { TypedRequest, TypedRequestParams } from '@/types'
 import type { NextFunction, Response } from 'express'
@@ -15,11 +15,15 @@ import { BadRequest, NotFound } from 'http-errors'
 import { redisClient } from '@/config'
 
 class TaskController {
-  add = async (
+  create = async (
     {
       params,
       body
-    }: TypedRequest<typeof ColumnParamsSchema, ZodType, typeof AddTaskSchema>,
+    }: TypedRequest<
+      typeof ColumnParamsSchema,
+      ZodType,
+      typeof CreateTaskSchema
+    >,
     res: Response,
     next: NextFunction
   ) => {
@@ -51,7 +55,7 @@ class TaskController {
     {
       params,
       body
-    }: TypedRequest<typeof TaskParamsSchema, ZodType, typeof EditTaskSchema>,
+    }: TypedRequest<typeof TaskParamsSchema, ZodType, typeof UpdateTaskSchema>,
     res: Response,
     next: NextFunction
   ) => {

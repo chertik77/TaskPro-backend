@@ -2,29 +2,29 @@ import { Router } from 'express'
 
 import { taskController } from '@/controllers'
 
-import { authenticate, validateRequest } from '@/middlewares'
+import { requireAuth, validateRequest } from '@/middlewares'
 
 import {
-  AddTaskSchema,
   ColumnParamsSchema,
-  EditTaskSchema,
+  CreateTaskSchema,
   TaskParamsSchema,
-  UpdateTaskOrderSchema
+  UpdateTaskOrderSchema,
+  UpdateTaskSchema
 } from '@/schemas'
 
 export const taskRouter = Router()
 
-taskRouter.use(authenticate)
+taskRouter.use(requireAuth)
 
 taskRouter.post(
   '/:columnId',
-  validateRequest({ body: AddTaskSchema, params: ColumnParamsSchema }),
-  taskController.add
+  validateRequest({ body: CreateTaskSchema, params: ColumnParamsSchema }),
+  taskController.create
 )
 
 taskRouter.patch(
   '/:taskId',
-  validateRequest({ body: EditTaskSchema, params: TaskParamsSchema }),
+  validateRequest({ body: UpdateTaskSchema, params: TaskParamsSchema }),
   taskController.updateById
 )
 
