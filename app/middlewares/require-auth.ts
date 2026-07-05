@@ -9,18 +9,14 @@ export const requireAuth = async (
   _: Response,
   next: NextFunction
 ) => {
-  try {
-    const session = await auth.api.getSession({
-      headers: fromNodeHeaders(req.headers)
-    })
+  const session = await auth.api.getSession({
+    headers: fromNodeHeaders(req.headers)
+  })
 
-    if (!session) return next(Unauthorized())
+  if (!session) return next(Unauthorized())
 
-    req.user = session.user
-    req.session = session.session
+  req.user = session.user
+  req.session = session.session
 
-    next()
-  } catch {
-    return next(Unauthorized())
-  }
+  next()
 }
