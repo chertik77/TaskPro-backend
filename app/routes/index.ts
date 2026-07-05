@@ -5,6 +5,8 @@ import type { SwaggerUiOptions } from 'swagger-ui-express'
 import { Router } from 'express'
 import swaggerUi from 'swagger-ui-express'
 
+import { env } from '@/config'
+
 import { boardRouter } from './api/board'
 import { columnRouter } from './api/column'
 import { labelRouter } from './api/label'
@@ -25,8 +27,8 @@ const swaggerOptions: SwaggerUiOptions = {
   explorer: true,
   swaggerOptions: {
     urls: [
-      { url: '/api/openapi.json', name: 'Main API' },
-      { url: '/api/auth/open-api/generate-schema', name: 'Auth' }
+      { url: `${env.API_PREFIX}/openapi.json`, name: 'Main API' },
+      { url: `${env.API_PREFIX}/auth/open-api/generate-schema`, name: 'Auth' }
     ],
     'urls.primaryName': 'Main API'
   }
