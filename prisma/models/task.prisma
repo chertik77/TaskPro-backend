@@ -9,7 +9,8 @@ model Task {
   columnId String @map("column_id") @db.ObjectId
   column   Column @relation(fields: [columnId], references: [id], onDelete: Cascade)
 
-  labels Label[]
+  labelIds String[] @db.ObjectId
+  labels   Label[]  @relation(fields: [labelIds], references: [id])
 
   completed   Boolean   @default(false)
   completedAt DateTime? @map("completed_at")

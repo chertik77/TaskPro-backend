@@ -410,7 +410,7 @@
     "/task/{columnId}/order": {
       "patch": {
         "tags": ["Task"],
-        "operationId": "updateTaskOrder",
+        "operationId": "updateTasksOrder",
         "summary": "Update tasks order",
         "parameters": [
           {
