@@ -750,7 +750,6 @@
           "title",
           "order",
           "boardId",
-          "tasks",
           "createdAt",
           "updatedAt"
         ],
@@ -849,15 +848,7 @@
       },
       "Label": {
         "type": "object",
-        "required": [
-          "id",
-          "name",
-          "color",
-          "userId",
-          "taskId",
-          "createdAt",
-          "updatedAt"
-        ],
+        "required": ["id", "name", "color", "userId", "createdAt", "updatedAt"],
         "properties": {
           "id": {
             "type": "string",
