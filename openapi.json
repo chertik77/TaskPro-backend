@@ -732,16 +732,18 @@
       "BoardIcon": {
         "type": "string",
         "enum": [
-          "project",
-          "star",
-          "loading",
-          "puzzle",
-          "container",
-          "lightning",
-          "colors",
-          "hexagon"
+          "sparkles",
+          "layout",
+          "kanban",
+          "layers",
+          "compass",
+          "target",
+          "sunrise",
+          "orbit",
+          "palette",
+          "leaf"
         ],
-        "example": "project"
+        "example": "grid"
       },
       "Column": {
         "type": "object",
@@ -1005,7 +1007,7 @@
                 "statusCode": 400,
                 "message": {
                   "title": "The field must be at least 3 characters",
-                  "icon": "The field must be one of the following values: project, star, loading, puzzle, container, lightning, colors, hexagon"
+                  "icon": "The field must be one of the following values: sparkles, layout, kanban, layers, compass, target, sunrise, orbit, palette, leaf"
                 }
               }
             }
