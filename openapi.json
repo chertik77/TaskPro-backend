@@ -87,21 +87,50 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "firstDayOfWeek",
-                  "boardBackgroundBlur",
-                  "usePointerCursors"
-                ],
                 "properties": {
+                  "theme": {
+                    "type": "string",
+                    "enum": ["light", "dark", "system"],
+                    "example": "light"
+                  },
+                  "accentColor": {
+                    "type": "string",
+                    "enum": [
+                      "blue",
+                      "purple",
+                      "red",
+                      "gray",
+                      "cyan",
+                      "yellow",
+                      "indigo",
+                      "green"
+                    ],
+                    "example": "blue"
+                  },
                   "firstDayOfWeek": {
                     "type": "string",
+                    "enum": ["monday", "sunday"],
                     "example": "monday"
+                  },
+                  "dateFormat": {
+                    "type": "string",
+                    "enum": ["dd_mm_yyyy", "mm_dd_yyyy", "yyyy_mm_dd"],
+                    "example": "dd_mm_yyyy"
                   },
                   "boardBackgroundBlur": {
                     "type": "string",
+                    "enum": ["off", "low", "medium"],
                     "example": "off"
                   },
                   "usePointerCursors": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "enableAnimations": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "confirmBeforeDelete": {
                     "type": "boolean",
                     "example": true
                   }
@@ -127,26 +156,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "cardDensity",
-                  "sortTasksBy",
-                  "showCompletedTasks"
-                ],
-                "properties": {
-                  "cardDensity": {
-                    "type": "string",
-                    "example": "compact"
-                  },
-                  "sortTasksBy": {
-                    "type": "string",
-                    "example": "manual"
-                  },
-                  "showCompletedTasks": {
-                    "type": "boolean",
-                    "example": true
-                  }
-                }
+                "$ref": "#/components/schemas/TaskSettings"
               }
             }
           }
@@ -168,26 +178,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "showLabelsOnCard",
-                  "labelDisplay",
-                  "maxLabelsShown"
-                ],
-                "properties": {
-                  "showLabelsOnCard": {
-                    "type": "boolean",
-                    "example": true
-                  },
-                  "labelDisplay": {
-                    "type": "string",
-                    "example": "full"
-                  },
-                  "maxLabelsShown": {
-                    "type": "string",
-                    "example": "three"
-                  }
-                }
+                "$ref": "#/components/schemas/LabelSettings"
               }
             }
           }
@@ -209,22 +200,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": ["fontSize", "reducedMotion", "highContrast"],
-                "properties": {
-                  "fontSize": {
-                    "type": "string",
-                    "example": "small"
-                  },
-                  "reducedMotion": {
-                    "type": "boolean",
-                    "example": true
-                  },
-                  "highContrast": {
-                    "type": "boolean",
-                    "example": true
-                  }
-                }
+                "$ref": "#/components/schemas/AccessibilitySettings"
               }
             }
           }
