@@ -1,5 +1,4 @@
 import { redisStorage } from '@better-auth/redis-storage'
-import { Theme } from '@prisma/client'
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { openAPI } from 'better-auth/plugins'
@@ -26,15 +25,21 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        before: async user => ({ data: { ...user, emailVerified: true } })
+        before: async user => ({ data: { ...user, emailVerified: true } }),
+        after: async user => {
+          const userId = user.id
+          await prisma.$transaction([
+            prisma.userSettings.create({ data: { userId } }),
+            prisma.taskSettings.create({ data: { userId } }),
+            prisma.labelSettings.create({ data: { userId } }),
+            prisma.accessibilitySettings.create({ data: { userId } })
+          ])
+        }
       }
     }
   },
   user: {
-    additionalFields: {
-      theme: { type: Object.values(Theme), input: true },
-      imagePublicId: { type: 'string', input: true }
-    }
+    additionalFields: { imagePublicId: { type: 'string', input: true } }
   },
   emailAndPassword: { enabled: true, requireEmailVerification: false },
   socialProviders: {

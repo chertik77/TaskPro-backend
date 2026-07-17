@@ -1,0 +1,148 @@
+model UserSettings {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  theme       Theme       @default(light)
+  accentColor AccentColor @default(blue) @map("accent_color")
+
+  firstDayOfWeek      WeekStart           @default(monday) @map("first_day_of_week")
+  dateFormat          DateFormat          @default(dd_mm_yyyy) @map("date_format")
+  boardBackgroundBlur BoardBackgroundBlur @default(off) @map("board_background_blur")
+  usePointerCursors   Boolean             @default(true) @map("use_pointer_cursors")
+  enableAnimations    Boolean             @default(true) @map("enable_animations")
+  confirmBeforeDelete Boolean             @default(true) @map("confirm_before_delete")
+
+  userId String @map("user_id") @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId])
+  @@map("user_settings")
+}
+
+model TaskSettings {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  sortTasksBy TaskSort @default(manual) @map("sort_tasks_by")
+
+  defaultPriority     Priority        @default(without) @map("default_priority")
+  defaultDeadlineDays DefaultDeadline @default(none) @map("default_deadline_days")
+
+  cardDensity        CardDensity     @default(compact) @map("card_density")
+  showCompletedTasks Boolean         @default(true) @map("show_completed_tasks")
+  newTaskPosition    NewTaskPosition @default(bottom) @map("new_task_position")
+
+  naturalLanguageDates Boolean @default(true) @map("natural_language_dates")
+
+  userId String @map("user_id") @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId])
+  @@map("task_settings")
+}
+
+model LabelSettings {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  showLabelsOnCard Boolean        @default(true) @map("show_labels_on_card")
+  labelDisplay     LabelDisplay   @default(full) @map("label_display")
+  maxLabelsShown   MaxLabelsShown @default(three) @map("max_labels_shown")
+
+  userId String @map("user_id") @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId])
+  @@map("label_settings")
+}
+
+model AccessibilitySettings {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  fontSize                FontSize @default(medium) @map("font_size")
+  reducedMotion           Boolean  @default(false) @map("reduced_motion")
+  highContrast            Boolean  @default(false) @map("high_contrast")
+  focusIndicators         Boolean  @default(true) @map("focus_indicators")
+  keyboardNavigationHints Boolean  @default(false) @map("keyboard_navigation_hints")
+
+  userId String @map("user_id") @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId])
+  @@map("accessibility_settings")
+}
+
+enum Theme {
+  light
+  dark
+  system
+}
+
+enum AccentColor {
+  blue
+  purple
+  red
+  gray
+  cyan
+  yellow
+  indigo
+  green
+}
+
+enum WeekStart {
+  sunday
+  monday
+}
+
+enum BoardBackgroundBlur {
+  off
+  low
+  medium
+}
+
+enum NewTaskPosition {
+  top
+  bottom
+}
+
+enum DefaultDeadline {
+  none
+  today
+  tomorrow
+  three_days
+  one_week
+}
+
+enum FontSize {
+  small
+  medium
+  large
+}
+
+enum MaxLabelsShown {
+  one
+  two
+  three
+  all
+}
+
+enum CardDensity {
+  compact
+  comfortable
+}
+
+enum TaskSort {
+  manual
+  priority
+  deadline
+  created
+  alphabetical
+}
+
+enum LabelDisplay {
+  full
+  compact
+}
+
+enum DateFormat {
+  dd_mm_yyyy
+  mm_dd_yyyy
+  yyyy_mm_dd
+}

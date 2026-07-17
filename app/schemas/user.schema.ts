@@ -1,4 +1,3 @@
-import { Theme } from '@prisma/client'
 import * as z from 'zod'
 
 export const NeedHelpSchema = z.object({
@@ -10,7 +9,6 @@ export const UpdateUserSchema = z
   .object({
     name: z.string().min(2),
     email: z.email(),
-    password: z.string().min(8).max(64),
-    theme: z.enum(Theme)
+    password: z.string().min(8).max(64)
   })
   .partial()

@@ -63,6 +63,180 @@
         }
       }
     },
+    "/user/settings": {
+      "get": {
+        "tags": ["User"],
+        "operationId": "getAllSettings",
+        "summary": "Get all user settings",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "$ref": "#/components/responses/GetAllSettingsResponse" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/user/settings/general": {
+      "patch": {
+        "tags": ["User"],
+        "operationId": "updateGeneralSettings",
+        "summary": "Update general settings",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "firstDayOfWeek",
+                  "boardBackgroundBlur",
+                  "usePointerCursors"
+                ],
+                "properties": {
+                  "firstDayOfWeek": {
+                    "type": "string",
+                    "example": "monday"
+                  },
+                  "boardBackgroundBlur": {
+                    "type": "string",
+                    "example": "off"
+                  },
+                  "usePointerCursors": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/GeneralSettingsResponse" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/user/settings/task": {
+      "patch": {
+        "tags": ["User"],
+        "operationId": "updateTaskSettings",
+        "summary": "Update task settings",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "cardDensity",
+                  "sortTasksBy",
+                  "showCompletedTasks"
+                ],
+                "properties": {
+                  "cardDensity": {
+                    "type": "string",
+                    "example": "compact"
+                  },
+                  "sortTasksBy": {
+                    "type": "string",
+                    "example": "manual"
+                  },
+                  "showCompletedTasks": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/TaskSettingsResponse" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/user/settings/label": {
+      "patch": {
+        "tags": ["User"],
+        "operationId": "updateLabelSettings",
+        "summary": "Update label settings",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "showLabelsOnCard",
+                  "labelDisplay",
+                  "maxLabelsShown"
+                ],
+                "properties": {
+                  "showLabelsOnCard": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "labelDisplay": {
+                    "type": "string",
+                    "example": "full"
+                  },
+                  "maxLabelsShown": {
+                    "type": "string",
+                    "example": "three"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/LabelSettingsResponse" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/user/settings/accessibility": {
+      "patch": {
+        "tags": ["User"],
+        "operationId": "updateAccessibilitySettings",
+        "summary": "Update accessibility settings",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["fontSize", "reducedMotion", "highContrast"],
+                "properties": {
+                  "fontSize": {
+                    "type": "string",
+                    "example": "small"
+                  },
+                  "reducedMotion": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "highContrast": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/AccessibilitySettingsResponse"
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
     "/board": {
       "get": {
         "tags": ["Board"],
@@ -895,6 +1069,216 @@
         ],
         "example": "red"
       },
+      "GeneralSettings": {
+        "type": "object",
+        "required": [
+          "id",
+          "theme",
+          "accentColor",
+          "firstDayOfWeek",
+          "boardBackgroundBlur",
+          "usePointerCursors",
+          "enableAnimations",
+          "confirmBeforeDelete",
+          "userId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "6672fdccc07147fc7ae1bb93"
+          },
+          "theme": {
+            "type": "string",
+            "enum": ["light", "dark", "system"],
+            "default": "light"
+          },
+          "accentColor": {
+            "type": "string",
+            "enum": [
+              "blue",
+              "purple",
+              "red",
+              "gray",
+              "cyan",
+              "yellow",
+              "indigo",
+              "green"
+            ],
+            "default": "blue"
+          },
+          "firstDayOfWeek": {
+            "type": "string",
+            "enum": ["monday", "sunday"],
+            "default": "monday"
+          },
+          "dateFormat": {
+            "type": "string",
+            "enum": ["dd_mm_yyyy", "mm_dd_yyyy", "yyyy_mm_dd"],
+            "default": "dd_mm_yyyy"
+          },
+          "boardBackgroundBlur": {
+            "type": "string",
+            "enum": ["off", "low", "medium"],
+            "default": "off"
+          },
+          "usePointerCursors": {
+            "type": "boolean",
+            "default": true
+          },
+          "enableAnimations": {
+            "type": "boolean",
+            "default": true
+          },
+          "confirmBeforeDelete": {
+            "type": "boolean",
+            "default": true
+          },
+          "userId": {
+            "type": "string",
+            "example": "6671743db85c96453e04a684"
+          }
+        }
+      },
+      "TaskSettings": {
+        "type": "object",
+        "required": [
+          "id",
+          "sortTasksBy",
+          "defaultPriority",
+          "defaultDeadlineDays",
+          "cardDensity",
+          "showCompletedTasks",
+          "newTaskPosition",
+          "naturalLanguageDates",
+          "userId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "6672fdccc07147fc7ae1bb93"
+          },
+          "sortTasksBy": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "priority",
+              "deadline",
+              "created",
+              "alphabetical"
+            ],
+            "default": "manual"
+          },
+          "defaultPriority": {
+            "type": "string",
+            "$ref": "#/components/schemas/TaskPriority",
+            "default": "without"
+          },
+          "defaultDeadlineDays": {
+            "type": "string",
+            "enum": ["none", "today", "tomorrow", "three_days", "one_week"],
+            "default": "none"
+          },
+          "cardDensity": {
+            "type": "string",
+            "enum": ["compact", "comfortable"],
+            "default": "compact"
+          },
+          "showCompletedTasks": {
+            "type": "boolean",
+            "default": true
+          },
+          "newTaskPosition": {
+            "type": "string",
+            "enum": ["top", "bottom"],
+            "default": "bottom"
+          },
+          "naturalLanguageDates": {
+            "type": "boolean",
+            "default": true
+          },
+          "userId": {
+            "type": "string",
+            "example": "6671743db85c96453e04a684"
+          }
+        }
+      },
+      "LabelSettings": {
+        "type": "object",
+        "required": [
+          "id",
+          "showLabelsOnCard",
+          "labelDisplay",
+          "maxLabelsShown",
+          "userId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "6672fdccc07147fc7ae1bb93"
+          },
+          "showLabelsOnCard": {
+            "type": "boolean",
+            "default": true
+          },
+          "labelDisplay": {
+            "type": "string",
+            "enum": ["full", "compact"],
+            "default": "full"
+          },
+          "maxLabelsShown": {
+            "type": "string",
+            "enum": ["one", "two", "three", "all"],
+            "default": "three"
+          },
+          "userId": {
+            "type": "string",
+            "example": "6671743db85c96453e04a684"
+          }
+        }
+      },
+      "AccessibilitySettings": {
+        "type": "object",
+        "required": [
+          "id",
+          "fontSize",
+          "reducedMotion",
+          "highContrast",
+          "focusIndicators",
+          "keyboardNavigationHints",
+          "userId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "6672fdccc07147fc7ae1bb93"
+          },
+          "fontSize": {
+            "type": "string",
+            "enum": ["small", "medium", "large"],
+            "default": "medium"
+          },
+          "reducedMotion": {
+            "type": "boolean",
+            "default": false
+          },
+          "highContrast": {
+            "type": "boolean",
+            "default": false
+          },
+          "focusIndicators": {
+            "type": "boolean",
+            "default": true
+          },
+          "keyboardNavigationHints": {
+            "type": "boolean",
+            "default": false
+          },
+          "userId": {
+            "type": "string",
+            "example": "6671743db85c96453e04a684"
+          }
+        }
+      },
       "ErrorResponse": {
         "type": "object",
         "properties": {
@@ -977,6 +1361,70 @@
                   "ids": "The field must be of type array"
                 }
               }
+            }
+          }
+        }
+      },
+      "GetAllSettingsResponse": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "general": {
+                      "$ref": "#/components/schemas/GeneralSettings"
+                    },
+                    "task": { "$ref": "#/components/schemas/TaskSettings" },
+                    "label": { "$ref": "#/components/schemas/LabelSettings" },
+                    "accessibility": {
+                      "$ref": "#/components/schemas/AccessibilitySettings"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "GeneralSettingsResponse": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "$ref": "#/components/schemas/GeneralSettings"
+            }
+          }
+        }
+      },
+      "TaskSettingsResponse": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "$ref": "#/components/schemas/TaskSettings"
+            }
+          }
+        }
+      },
+      "LabelSettingsResponse": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "$ref": "#/components/schemas/LabelSettings"
+            }
+          }
+        }
+      },
+      "AccessibilitySettingsResponse": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "$ref": "#/components/schemas/AccessibilitySettings"
             }
           }
         }

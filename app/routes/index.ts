@@ -10,6 +10,7 @@ import { env } from '@/config'
 import { boardRouter } from './api/board'
 import { columnRouter } from './api/column'
 import { labelRouter } from './api/label'
+import { settingsRouter } from './api/settings'
 import { taskRouter } from './api/task'
 import { userRouter } from './api/user'
 
@@ -45,3 +46,4 @@ apiRouter.use('/board', boardRouter)
 apiRouter.use('/column', columnRouter)
 apiRouter.use('/task', taskRouter)
 apiRouter.use('/label', labelRouter)
+apiRouter.use('/user/settings', settingsRouter)

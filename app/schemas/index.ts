@@ -20,4 +20,10 @@ export {
   UpdateLabelSchema,
   LabelParamsSchema
 } from './label.schema'
+export {
+  UpdateGeneralSettingsSchema,
+  UpdateTaskSettingsSchema,
+  UpdateLabelSettingsSchema,
+  UpdateaccessibilitySettingsSchema
+} from './settings.schema'
 export { UpdateUserSchema, NeedHelpSchema } from './user.schema'
