@@ -534,7 +534,7 @@
                   },
                   "deadline": {
                     "type": "string",
-                    "format": "date",
+                    "format": "date-time",
                     "example": "2025-10-15"
                   },
                   "priority": { "$ref": "#/components/schemas/TaskPriority" },
@@ -639,7 +639,7 @@
                   },
                   "deadline": {
                     "type": ["string", "null"],
-                    "format": "date",
+                    "format": "date-time",
                     "example": "2025-11-01"
                   },
                   "priority": {
@@ -724,7 +724,7 @@
                     "minLength": 2,
                     "example": "Bug"
                   },
-                  "color": { "$ref": "#/components/schemas/LabelColor" }
+                  "color": { "$ref": "#/components/schemas/AccentColor" }
                 }
               }
             }
@@ -765,7 +765,7 @@
                     "minLength": 2,
                     "example": "Bug"
                   },
-                  "color": { "$ref": "#/components/schemas/LabelColor" }
+                  "color": { "$ref": "#/components/schemas/AccentColor" }
                 }
               }
             }
@@ -1010,7 +1010,7 @@
             "type": "string",
             "example": "Bug"
           },
-          "color": { "$ref": "#/components/schemas/LabelColor" },
+          "color": { "$ref": "#/components/schemas/AccentColor" },
           "userId": {
             "type": "string",
             "example": "6671743db85c96453e04a684"
@@ -1031,7 +1031,7 @@
           }
         }
       },
-      "LabelColor": {
+      "AccentColor": {
         "type": "string",
         "enum": [
           "blue",
