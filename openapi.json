@@ -156,7 +156,54 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TaskSettings"
+                "type": "object",
+                "properties": {
+                  "sortTasksBy": {
+                    "type": "string",
+                    "enum": [
+                      "manual",
+                      "priority",
+                      "deadline",
+                      "created",
+                      "alphabetical"
+                    ],
+                    "example": "manual"
+                  },
+                  "defaultPriority": {
+                    "type": "string",
+                    "$ref": "#/components/schemas/TaskPriority",
+                    "example": "without"
+                  },
+                  "defaultDeadlineDays": {
+                    "type": "string",
+                    "enum": [
+                      "none",
+                      "today",
+                      "tomorrow",
+                      "three_days",
+                      "one_week"
+                    ],
+                    "example": "none"
+                  },
+                  "cardDensity": {
+                    "type": "string",
+                    "enum": ["compact", "comfortable"],
+                    "example": "compact"
+                  },
+                  "showCompletedTasks": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "newTaskPosition": {
+                    "type": "string",
+                    "enum": ["top", "bottom"],
+                    "example": "bottom"
+                  },
+                  "naturalLanguageDates": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                }
               }
             }
           }

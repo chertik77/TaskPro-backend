@@ -10,18 +10,28 @@ import type { ZodType } from 'zod'
 
 import { prisma } from '@/prisma'
 
+import { redisClient } from '@/config'
+
 class SettingsController {
   getAll = async (req: Request, res: Response) => {
     const userId = req.user.id
 
-    const [general, task, label, accessibility] = await Promise.all([
-      prisma.userSettings.findUnique({ where: { userId } }),
-      prisma.taskSettings.findUnique({ where: { userId } }),
-      prisma.labelSettings.findUnique({ where: { userId } }),
-      prisma.accessibilitySettings.findUnique({ where: { userId } })
-    ])
+    const cacheKey = `settings:user:${userId}`
 
-    res.json({ general, task, label, accessibility })
+    const cachedSettings = await redisClient.get(cacheKey)
+
+    if (cachedSettings) {
+      res.json(JSON.parse(cachedSettings))
+    } else {
+      const [general, task, label, accessibility] = await Promise.all([
+        prisma.userSettings.findUnique({ where: { userId } }),
+        prisma.taskSettings.findUnique({ where: { userId } }),
+        prisma.labelSettings.findUnique({ where: { userId } }),
+        prisma.accessibilitySettings.findUnique({ where: { userId } })
+      ])
+
+      res.json({ general, task, label, accessibility })
+    }
   }
 
   updateGeneral = async (
@@ -35,6 +45,8 @@ class SettingsController {
       where: { userId: user.id },
       data: body
     })
+
+    await redisClient.del(`settings:user:${user.id}`)
 
     res.json(settings)
   }
@@ -51,6 +63,14 @@ class SettingsController {
       data: body
     })
 
+    // if (body.sortTasksBy) {
+    //   const keys = await redisClient.keys(`board:*:user:${user.id}`)
+
+    //   if (keys.length) await redisClient.del(keys)
+    // }
+
+    await redisClient.del(`settings:user:${user.id}`)
+
     res.json(settings)
   }
 
@@ -66,6 +86,8 @@ class SettingsController {
       data: body
     })
 
+    await redisClient.del(`settings:user:${user.id}`)
+
     res.json(settings)
   }
 
@@ -80,6 +102,8 @@ class SettingsController {
       where: { userId: user.id },
       data: body
     })
+
+    await redisClient.del(`settings:user:${user.id}`)
 
     res.json(settings)
   }

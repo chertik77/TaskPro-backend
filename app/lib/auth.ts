@@ -1,11 +1,15 @@
+import type { BetterAuthPlugin, Session } from 'better-auth'
+
 import { redisStorage } from '@better-auth/redis-storage'
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
+import { createAuthEndpoint, createAuthMiddleware } from 'better-auth/api'
 import { openAPI } from 'better-auth/plugins'
 
 import { env, redisClient } from '../config'
 import { prisma } from '../prisma'
 import { mapMicrosoftProfileToUser } from './map-microsoft-profile-to-user'
+import { parseUserAgent } from './parse-user-agent'
 
 export const auth = betterAuth({
   appName: 'Task Pro',
@@ -38,9 +42,35 @@ export const auth = betterAuth({
       }
     }
   },
+  hooks: {
+    after: createAuthMiddleware(async ctx => {
+      if (ctx.path.startsWith('/list-sessions')) {
+        const sessions = ctx.context.returned as Session[]
+
+        const currentSession = ctx.context.session?.session
+
+        const updatedSessions = sessions
+          .map(session => {
+            const { userAgent, ...rest } = session
+            const { browser, os } = parseUserAgent(userAgent)
+
+            return {
+              ...rest,
+              browser,
+              os,
+              isCurrent: session.id === currentSession?.id
+            }
+          })
+          .sort((a, b) => Number(b.isCurrent) - Number(a.isCurrent))
+
+        return updatedSessions
+      }
+    })
+  },
   user: {
     additionalFields: { imagePublicId: { type: 'string', input: true } }
   },
+  session: { storeSessionInDatabase: true },
   emailAndPassword: { enabled: true, requireEmailVerification: false },
   socialProviders: {
     google: {
@@ -59,5 +89,35 @@ export const auth = betterAuth({
   },
   trustedOrigins: env.ALLOWED_ORIGINS,
   disabledPaths: ['/verify-email', '/send-verification-email'],
-  plugins: [openAPI({ disableDefaultReference: true })]
+  plugins: [
+    revokeSessionByIdPLugin(),
+    openAPI({ disableDefaultReference: true })
+  ]
 })
+
+function revokeSessionByIdPLugin() {
+  return {
+    id: 'revoke-session-id',
+    endpoints: {
+      revokeSessionById: createAuthEndpoint(
+        '/revoke-session-id',
+        { method: 'POST' },
+        async ctx => {
+          if (!ctx.headers) return ctx.error(401, { message: 'Unauthorized' })
+
+          const sessionId = ctx.body.id
+
+          const session = await prisma.session.findUnique({
+            where: { id: sessionId }
+          })
+
+          if (!session) return ctx.error(404, { message: 'Session not found' })
+
+          await ctx.context.internalAdapter.deleteSession(session.token)
+
+          return ctx.json({ success: true })
+        }
+      )
+    }
+  } satisfies BetterAuthPlugin
+}

@@ -46,6 +46,13 @@ class BoardController {
     if (cachedBoard) {
       res.json(JSON.parse(cachedBoard))
     } else {
+      // const taskSettings = await prisma.taskSettings.findUnique({
+      //   where: { userId: user.id },
+      //   select: { sortTasksBy: true }
+      // })
+
+      // const orderBy = this.getTaskOrderBy(taskSettings?.sortTasksBy)
+
       const board = await prisma.board.findUnique({
         where: { id: params.boardId, userId: user.id },
         include: {
@@ -136,6 +143,27 @@ class BoardController {
 
     res.sendStatus(204)
   }
+
+  // getTaskOrderBy = (
+  //   sort: TaskSort = TaskSort.manual
+  // ): Prisma.TaskOrderByWithRelationInput[] => {
+  //   switch (sort) {
+  //     case TaskSort.manual:
+  //       return [{ order: 'asc' }]
+
+  //     case TaskSort.priority:
+  //       return [{ priority: 'desc' }]
+
+  //     case TaskSort.deadline:
+  //       return [{ deadline: 'asc' }, { order: 'asc' }]
+
+  //     case TaskSort.created:
+  //       return [{ createdAt: 'desc' }]
+
+  //     case TaskSort.alphabetical:
+  //       return [{ title: 'asc' }]
+  //   }
+  // }
 }
 
 export const boardController = new BoardController()
