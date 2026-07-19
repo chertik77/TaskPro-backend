@@ -1132,29 +1132,29 @@
           "firstDayOfWeek": {
             "type": "string",
             "enum": ["monday", "sunday"],
-            "default": "monday"
+            "example": "monday"
           },
           "dateFormat": {
             "type": "string",
             "enum": ["dd_mm_yyyy", "mm_dd_yyyy", "yyyy_mm_dd"],
-            "default": "dd_mm_yyyy"
+            "example": "dd_mm_yyyy"
           },
           "boardBackgroundBlur": {
             "type": "string",
             "enum": ["off", "low", "medium"],
-            "default": "off"
+            "example": "off"
           },
           "usePointerCursors": {
             "type": "boolean",
-            "default": true
+            "example": true
           },
           "enableAnimations": {
             "type": "boolean",
-            "default": true
+            "example": true
           },
           "confirmBeforeDelete": {
             "type": "boolean",
-            "default": true
+            "example": true
           },
           "userId": {
             "type": "string",
@@ -1189,35 +1189,35 @@
               "created",
               "alphabetical"
             ],
-            "default": "manual"
+            "example": "manual"
           },
           "defaultPriority": {
             "type": "string",
             "$ref": "#/components/schemas/TaskPriority",
-            "default": "without"
+            "example": "without"
           },
           "defaultDeadlineDays": {
             "type": "string",
             "enum": ["none", "today", "tomorrow", "three_days", "one_week"],
-            "default": "none"
+            "example": "none"
           },
           "cardDensity": {
             "type": "string",
             "enum": ["compact", "comfortable"],
-            "default": "compact"
+            "example": "compact"
           },
           "showCompletedTasks": {
             "type": "boolean",
-            "default": true
+            "example": true
           },
           "newTaskPosition": {
             "type": "string",
             "enum": ["top", "bottom"],
-            "default": "bottom"
+            "example": "bottom"
           },
           "naturalLanguageDates": {
             "type": "boolean",
-            "default": true
+            "example": true
           },
           "userId": {
             "type": "string",
@@ -1241,17 +1241,17 @@
           },
           "showLabelsOnCard": {
             "type": "boolean",
-            "default": true
+            "example": true
           },
           "labelDisplay": {
             "type": "string",
             "enum": ["full", "compact"],
-            "default": "full"
+            "example": "full"
           },
           "maxLabelsShown": {
             "type": "string",
             "enum": ["one", "two", "three", "all"],
-            "default": "three"
+            "example": "three"
           },
           "userId": {
             "type": "string",
@@ -1278,23 +1278,23 @@
           "fontSize": {
             "type": "string",
             "enum": ["small", "medium", "large"],
-            "default": "medium"
+            "exmaple": "medium"
           },
           "reducedMotion": {
             "type": "boolean",
-            "default": false
+            "exmaple": false
           },
           "highContrast": {
             "type": "boolean",
-            "default": false
+            "exmaple": false
           },
           "focusIndicators": {
             "type": "boolean",
-            "default": true
+            "exmaple": true
           },
           "keyboardNavigationHints": {
             "type": "boolean",
-            "default": false
+            "exmaple": false
           },
           "userId": {
             "type": "string",
@@ -1396,6 +1396,7 @@
               "allOf": [
                 {
                   "type": "object",
+                  "required": ["general", "task", "label", "accessibility"],
                   "properties": {
                     "general": {
                       "$ref": "#/components/schemas/GeneralSettings"

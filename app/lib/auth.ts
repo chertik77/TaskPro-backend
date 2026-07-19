@@ -94,6 +94,7 @@ export const auth = betterAuth({
     revokeSessionByIdPLugin(),
     openAPI({ disableDefaultReference: true }),
     passkey({
+      rpID: env.RP_ID,
       rpName: 'Task Pro',
       advanced: { webAuthnChallengeCookie: 'task-pro-passkey' }
     })
