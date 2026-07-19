@@ -72,6 +72,11 @@ export const auth = betterAuth({
   },
   user: { additionalFields: { imagePublicId: { type: 'string' } } },
   session: { storeSessionInDatabase: true },
+  account: {
+    accountLinking: {
+      trustedProviders: ['google', 'microsoft', 'email-password']
+    }
+  },
   emailAndPassword: { enabled: true, requireEmailVerification: false },
   socialProviders: {
     google: {
