@@ -8,6 +8,7 @@ model User {
 
   sessions Session[]
   accounts Account[]
+  passkeys Passkey[]
   boards   Board[]
   labels   Label[]
 

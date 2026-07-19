@@ -1,7 +1,8 @@
 import type { BetterAuthPlugin, Session } from 'better-auth'
 
+import { passkey } from '@better-auth/passkey'
 import { redisStorage } from '@better-auth/redis-storage'
-import { betterAuth } from 'better-auth'
+import { APIError, betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { createAuthEndpoint, createAuthMiddleware } from 'better-auth/api'
 import { openAPI } from 'better-auth/plugins'
@@ -45,7 +46,9 @@ export const auth = betterAuth({
   hooks: {
     after: createAuthMiddleware(async ctx => {
       if (ctx.path.startsWith('/list-sessions')) {
-        const sessions = ctx.context.returned as Session[]
+        const sessions = ctx.context.returned as Session[] | APIError
+
+        if (sessions instanceof APIError) return ctx.context.returned
 
         const currentSession = ctx.context.session?.session
 
@@ -67,9 +70,7 @@ export const auth = betterAuth({
       }
     })
   },
-  user: {
-    additionalFields: { imagePublicId: { type: 'string', input: true } }
-  },
+  user: { additionalFields: { imagePublicId: { type: 'string' } } },
   session: { storeSessionInDatabase: true },
   emailAndPassword: { enabled: true, requireEmailVerification: false },
   socialProviders: {
@@ -91,7 +92,11 @@ export const auth = betterAuth({
   disabledPaths: ['/verify-email', '/send-verification-email'],
   plugins: [
     revokeSessionByIdPLugin(),
-    openAPI({ disableDefaultReference: true })
+    openAPI({ disableDefaultReference: true }),
+    passkey({
+      rpName: 'Task Pro',
+      advanced: { webAuthnChallengeCookie: 'task-pro-passkey' }
+    })
   ]
 })
 
