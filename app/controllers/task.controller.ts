@@ -10,13 +10,13 @@ import type { NextFunction, Response } from 'express'
 import type { ZodType } from 'zod'
 
 import { prisma } from '@/prisma'
+import { invalidate } from '@/redis'
 import { BadRequest, NotFound } from 'http-errors'
-
-import { redisClient } from '@/config'
 
 class TaskController {
   create = async (
     {
+      user,
       params,
       body
     }: TypedRequest<
@@ -46,13 +46,14 @@ class TaskController {
       include: { labels: true }
     })
 
-    await redisClient.del(`board:${column.boardId}:user:${column.board.userId}`)
+    await invalidate.board(user.id, column.boardId)
 
     res.json(newTask)
   }
 
   updateById = async (
     {
+      user,
       params,
       body
     }: TypedRequest<typeof TaskParamsSchema, ZodType, typeof UpdateTaskSchema>,
@@ -84,13 +85,14 @@ class TaskController {
 
     const { column, ...task } = updatedTask
 
-    await redisClient.del(`board:${column.boardId}:user:${column.board.userId}`)
+    await invalidate.board(user.id, column.boardId)
 
     res.json(task)
   }
 
   updateOrder = async (
     {
+      user,
       params,
       body
     }: TypedRequest<
@@ -118,9 +120,7 @@ class TaskController {
     try {
       const updatedTasks = await prisma.$transaction(transaction)
 
-      await redisClient.del(
-        `board:${column.boardId}:user:${column.board.userId}`
-      )
+      await invalidate.board(user.id, column.boardId)
 
       res.json(updatedTasks)
     } catch {
@@ -129,7 +129,7 @@ class TaskController {
   }
 
   deleteById = async (
-    { params }: TypedRequestParams<typeof TaskParamsSchema>,
+    { user, params }: TypedRequestParams<typeof TaskParamsSchema>,
     res: Response,
     next: NextFunction
   ) => {
@@ -140,9 +140,7 @@ class TaskController {
 
     if (!deletedTask) return next(NotFound('Task not found'))
 
-    await redisClient.del(
-      `board:${deletedTask.column.boardId}:user:${deletedTask.column.board.userId}`
-    )
+    await invalidate.board(user.id, deletedTask.column.boardId)
 
     res.sendStatus(204)
   }

@@ -5,6 +5,7 @@ import { objectIdSchema } from './object-id.schema'
 
 export const CreateLabelSchema = z.object({
   name: z.string().min(2),
+  description: z.optional(z.string().min(3)),
   color: z.enum(AccentColor)
 })
 

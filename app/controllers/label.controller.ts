@@ -12,13 +12,14 @@ import type { NextFunction, Request, Response } from 'express'
 import type { ZodType } from 'zod'
 
 import { prisma } from '@/prisma'
-import { NotFound } from 'http-errors'
+import { invalidate, redisKeys } from '@/redis'
+import { Conflict, NotFound } from 'http-errors'
 
 import { redisClient } from '@/config'
 
 class LabelController {
   getAll = async ({ user }: Request, res: Response) => {
-    const cacheKey = `labels:user:${user.id}`
+    const cacheKey = redisKeys.labels.byUser(user.id)
 
     const cachedLabels = await redisClient.get(cacheKey)
 
@@ -35,15 +36,24 @@ class LabelController {
 
   createLabel = async (
     { body, user }: TypedRequestBody<typeof CreateLabelSchema>,
-    res: Response
+    res: Response,
+    next: NextFunction
   ) => {
     const { name, color } = body
+
+    const labelWithSameName = await prisma.label.findUnique({
+      where: { userId_name: { userId: user.id, name } }
+    })
+
+    if (labelWithSameName) {
+      return next(Conflict('Label with same name already exists'))
+    }
 
     const label = await prisma.label.create({
       data: { name, color, userId: user.id }
     })
 
-    await redisClient.del(`labels:user:${user.id}`)
+    await invalidate.labels(user.id)
 
     res.json(label)
   }
@@ -68,7 +78,18 @@ class LabelController {
 
     if (!updatedLabel) return next(NotFound('Label not found'))
 
-    await redisClient.del(`labels:user:${user.id}`)
+    const affectedBoards = await this.findAffectedBoardsByLabelId(
+      user.id,
+      updatedLabel.id
+    )
+
+    await Promise.all([
+      invalidate.labels(user.id),
+      invalidate.boardMany(
+        user.id,
+        affectedBoards.map(board => board.id)
+      )
+    ])
 
     res.json(updatedLabel)
   }
@@ -78,15 +99,59 @@ class LabelController {
     res: Response,
     next: NextFunction
   ) => {
-    const deletedLabel = await prisma.label.deleteIgnoreNotFound({
+    const label = await prisma.label.findFirst({
       where: { id: params.labelId, userId: user.id }
     })
 
-    if (!deletedLabel) return next(NotFound('Label not found'))
+    if (!label) return next(NotFound('Label not found'))
 
-    await redisClient.del(`labels:user:${user.id}`)
+    const tasks = await prisma.task.findMany({
+      where: { labelIds: { has: label.id } },
+      select: { id: true, labelIds: true }
+    })
+
+    const affectedBoards = await this.findAffectedBoardsByLabelId(
+      user.id,
+      label.id
+    )
+
+    await prisma.$transaction([
+      ...tasks.map(task =>
+        prisma.task.update({
+          where: { id: task.id },
+          data: {
+            labelIds: {
+              set: task.labelIds.filter(id => id !== label.id)
+            }
+          }
+        })
+      ),
+      prisma.label.delete({ where: { id: label.id } })
+    ])
+
+    await Promise.all([
+      invalidate.labels(user.id),
+      invalidate.boardMany(
+        user.id,
+        affectedBoards.map(board => board.id)
+      )
+    ])
 
     res.sendStatus(204)
+  }
+
+  findAffectedBoardsByLabelId = async (userId: string, labelId: string) => {
+    return await prisma.board.findMany({
+      where: {
+        userId,
+        columns: {
+          some: {
+            tasks: { some: { labels: { some: { id: labelId } } } }
+          }
+        }
+      },
+      select: { id: true }
+    })
   }
 }
 

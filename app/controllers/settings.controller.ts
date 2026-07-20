@@ -9,14 +9,15 @@ import type { Request, Response } from 'express'
 import type { ZodType } from 'zod'
 
 import { prisma } from '@/prisma'
+import { invalidate, redisKeys } from '@/redis'
 
 import { redisClient } from '@/config'
 
 class SettingsController {
-  getAll = async (req: Request, res: Response) => {
-    const userId = req.user.id
+  getAll = async ({ user }: Request, res: Response) => {
+    const userId = user.id
 
-    const cacheKey = `settings:user:${userId}`
+    const cacheKey = redisKeys.settings.byUser(userId)
 
     const cachedSettings = await redisClient.get(cacheKey)
 
@@ -46,7 +47,7 @@ class SettingsController {
       data: body
     })
 
-    await redisClient.del(`settings:user:${user.id}`)
+    await invalidate.settings(user.id)
 
     res.json(settings)
   }
@@ -63,13 +64,7 @@ class SettingsController {
       data: body
     })
 
-    // if (body.sortTasksBy) {
-    //   const keys = await redisClient.keys(`board:*:user:${user.id}`)
-
-    //   if (keys.length) await redisClient.del(keys)
-    // }
-
-    await redisClient.del(`settings:user:${user.id}`)
+    await invalidate.settings(user.id)
 
     res.json(settings)
   }
@@ -86,7 +81,7 @@ class SettingsController {
       data: body
     })
 
-    await redisClient.del(`settings:user:${user.id}`)
+    await invalidate.settings(user.id)
 
     res.json(settings)
   }
@@ -103,7 +98,7 @@ class SettingsController {
       data: body
     })
 
-    await redisClient.del(`settings:user:${user.id}`)
+    await invalidate.settings(user.id)
 
     res.json(settings)
   }

@@ -10,9 +10,8 @@ import type { NextFunction, Response } from 'express'
 import type { ZodType } from 'zod'
 
 import { prisma } from '@/prisma'
+import { invalidate } from '@/redis'
 import { BadRequest, NotFound } from 'http-errors'
-
-import { redisClient } from '@/config'
 
 class ColumnController {
   create = async (
@@ -46,13 +45,14 @@ class ColumnController {
       data: { ...body, order: newOrder, boardId: board.id }
     })
 
-    await redisClient.del(`board:${params.boardId}:user:${user.id}`)
+    await invalidate.board(user.id, board.id)
 
     res.json(column)
   }
 
   updateById = async (
     {
+      user,
       params,
       body
     }: TypedRequest<
@@ -71,15 +71,14 @@ class ColumnController {
 
     if (!updatedColumn) return next(NotFound('Column not found'))
 
-    const { board, ...column } = updatedColumn
+    await invalidate.board(user.id, updatedColumn.boardId)
 
-    await redisClient.del(`board:${updatedColumn.boardId}:user:${board.userId}`)
-
-    res.json(column)
+    res.json(updatedColumn)
   }
 
   updateOrder = async (
     {
+      user,
       params,
       body
     }: TypedRequest<
@@ -106,7 +105,7 @@ class ColumnController {
     try {
       const updatedColumns = await prisma.$transaction(transaction)
 
-      await redisClient.del(`board:${board.id}:user:${board.userId}`)
+      await invalidate.board(user.id, board.id)
 
       res.json(updatedColumns)
     } catch {
@@ -115,7 +114,7 @@ class ColumnController {
   }
 
   deleteById = async (
-    { params }: TypedRequestParams<typeof ColumnParamsSchema>,
+    { user, params }: TypedRequestParams<typeof ColumnParamsSchema>,
     res: Response,
     next: NextFunction
   ) => {
@@ -126,9 +125,7 @@ class ColumnController {
 
     if (!deletedColumn) return next(NotFound('Column not found'))
 
-    await redisClient.del(
-      `board:${deletedColumn.boardId}:user:${deletedColumn.board.userId}`
-    )
+    await invalidate.board(user.id, deletedColumn.boardId)
 
     res.sendStatus(204)
   }

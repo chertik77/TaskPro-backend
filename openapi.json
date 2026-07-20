@@ -225,7 +225,23 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LabelSettings"
+                "type": "object",
+                "properties": {
+                  "showLabelsOnTask": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "labelDisplay": {
+                    "type": "string",
+                    "enum": ["full", "compact"],
+                    "example": "full"
+                  },
+                  "maxLabelsShown": {
+                    "type": "string",
+                    "enum": ["one", "two", "three", "all"],
+                    "example": "three"
+                  }
+                }
               }
             }
           }
@@ -771,6 +787,11 @@
                     "minLength": 2,
                     "example": "Bug"
                   },
+                  "description": {
+                    "type": "string",
+                    "minLength": 3,
+                    "example": "Description of the bug"
+                  },
                   "color": { "$ref": "#/components/schemas/AccentColor" }
                 }
               }
@@ -811,6 +832,11 @@
                     "type": "string",
                     "minLength": 2,
                     "example": "Bug"
+                  },
+                  "description": {
+                    "type": ["string", "null"],
+                    "minLength": 3,
+                    "example": "Description of the bug"
                   },
                   "color": { "$ref": "#/components/schemas/AccentColor" }
                 }
@@ -1057,6 +1083,10 @@
             "type": "string",
             "example": "Bug"
           },
+          "description": {
+            "type": ["string", "null"],
+            "example": "Description of the bug"
+          },
           "color": { "$ref": "#/components/schemas/AccentColor" },
           "userId": {
             "type": "string",
@@ -1229,7 +1259,7 @@
         "type": "object",
         "required": [
           "id",
-          "showLabelsOnCard",
+          "showLabelsOnTask",
           "labelDisplay",
           "maxLabelsShown",
           "userId"
@@ -1239,7 +1269,7 @@
             "type": "string",
             "example": "6672fdccc07147fc7ae1bb93"
           },
-          "showLabelsOnCard": {
+          "showLabelsOnTask": {
             "type": "boolean",
             "example": true
           },

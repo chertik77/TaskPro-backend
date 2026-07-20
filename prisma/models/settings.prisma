@@ -42,7 +42,7 @@ model TaskSettings {
 model LabelSettings {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  showLabelsOnCard Boolean        @default(true) @map("show_labels_on_card")
+  showLabelsOnTask Boolean        @default(true) @map("show_labels_on_task")
   labelDisplay     LabelDisplay   @default(full) @map("label_display")
   maxLabelsShown   MaxLabelsShown @default(three) @map("max_labels_shown")
 

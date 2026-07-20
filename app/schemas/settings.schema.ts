@@ -37,7 +37,7 @@ export const UpdateTaskSettingsSchema = z.object({
 })
 
 export const UpdateLabelSettingsSchema = z.object({
-  showLabelsOnCard: z.boolean().optional(),
+  showLabelsOnTask: z.boolean().optional(),
   labelDisplay: z.enum(LabelDisplay).optional(),
   maxLabelShown: z.enum(MaxLabelsShown).optional()
 })
