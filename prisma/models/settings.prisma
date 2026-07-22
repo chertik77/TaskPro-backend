@@ -23,14 +23,15 @@ model TaskSettings {
 
   sortTasksBy TaskSort @default(manual) @map("sort_tasks_by")
 
-  defaultPriority     Priority        @default(without) @map("default_priority")
-  defaultDeadlineDays DefaultDeadline @default(none) @map("default_deadline_days")
+  defaultPriority Priority        @default(without) @map("default_priority")
+  defaultDeadline DefaultDeadline @default(none) @map("default_deadline")
 
-  cardDensity        CardDensity     @default(compact) @map("card_density")
-  showCompletedTasks Boolean         @default(true) @map("show_completed_tasks")
-  newTaskPosition    NewTaskPosition @default(bottom) @map("new_task_position")
+  cardDensity           CardDensity     @default(compact) @map("card_density")
+  showCompletedTasks    Boolean         @default(true) @map("show_completed_tasks")
+  showPriorityIndicator Boolean         @default(true) @map("show_priority_indicator")
+  newTaskPosition       NewTaskPosition @default(bottom) @map("new_task_position")
 
-  naturalLanguageDates Boolean @default(true) @map("natural_language_dates")
+  enableNaturalLanguageDates Boolean @default(true) @map("enable_natural_language_dates")
 
   userId String @map("user_id") @db.ObjectId
   user   User   @relation(fields: [userId], references: [id])

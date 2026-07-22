@@ -32,8 +32,9 @@ export const UpdateTaskSettingsSchema = z.object({
   defaultDeadline: z.enum(DefaultDeadline).optional(),
   cardDensity: z.enum(CardDensity).optional(),
   showCompletedTasks: z.boolean().optional(),
+  showPriorityIndicator: z.boolean().optional(),
   newTaskPosition: z.enum(NewTaskPosition).optional(),
-  naturalLanguageDates: z.boolean().optional()
+  enableNaturalLanguageDates: z.boolean().optional()
 })
 
 export const UpdateLabelSettingsSchema = z.object({

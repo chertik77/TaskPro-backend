@@ -1,6 +1,8 @@
-import 'dotenv/config'
+import { loadEnvFile } from 'node:process'
 
 import * as z from 'zod'
+
+loadEnvFile(process.cwd() + '/.env')
 
 const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string(),

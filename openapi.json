@@ -174,7 +174,7 @@
                     "$ref": "#/components/schemas/TaskPriority",
                     "example": "without"
                   },
-                  "defaultDeadlineDays": {
+                  "defaultDeadline": {
                     "type": "string",
                     "enum": [
                       "none",
@@ -194,12 +194,16 @@
                     "type": "boolean",
                     "example": true
                   },
+                  "showPriorityIndicator": {
+                    "type": "boolean",
+                    "example": true
+                  },
                   "newTaskPosition": {
                     "type": "string",
                     "enum": ["top", "bottom"],
                     "example": "bottom"
                   },
-                  "naturalLanguageDates": {
+                  "enableNaturalLanguageDates": {
                     "type": "boolean",
                     "example": true
                   }
@@ -1198,11 +1202,12 @@
           "id",
           "sortTasksBy",
           "defaultPriority",
-          "defaultDeadlineDays",
+          "defaultDeadline",
           "cardDensity",
           "showCompletedTasks",
+          "showPriorityIndicator",
           "newTaskPosition",
-          "naturalLanguageDates",
+          "enableNaturalLanguageDates",
           "userId"
         ],
         "properties": {
@@ -1226,7 +1231,7 @@
             "$ref": "#/components/schemas/TaskPriority",
             "example": "without"
           },
-          "defaultDeadlineDays": {
+          "defaultDeadline": {
             "type": "string",
             "enum": ["none", "today", "tomorrow", "three_days", "one_week"],
             "example": "none"
@@ -1240,12 +1245,16 @@
             "type": "boolean",
             "example": true
           },
+          "showPriorityIndicator": {
+            "type": "boolean",
+            "example": true
+          },
           "newTaskPosition": {
             "type": "string",
             "enum": ["top", "bottom"],
             "example": "bottom"
           },
-          "naturalLanguageDates": {
+          "enableNaturalLanguageDates": {
             "type": "boolean",
             "example": true
           },
