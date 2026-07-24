@@ -5,12 +5,10 @@ import { redisStorage } from '@better-auth/redis-storage'
 import { APIError, betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { createAuthEndpoint, createAuthMiddleware } from 'better-auth/api'
-import { openAPI } from 'better-auth/plugins'
 
 import { env, redisClient } from '../config'
 import { prisma } from '../prisma'
-import { mapMicrosoftProfileToUser } from './map-microsoft-profile-to-user'
-import { parseUserAgent } from './parse-user-agent'
+import { mapMicrosoftProfileToUser, parseUserAgent } from '../utils'
 
 export const auth = betterAuth({
   appName: 'Task Pro',
@@ -71,7 +69,6 @@ export const auth = betterAuth({
     })
   },
   user: { additionalFields: { imagePublicId: { type: 'string' } } },
-  session: { storeSessionInDatabase: true },
   account: {
     accountLinking: {
       trustedProviders: ['google', 'microsoft', 'email-password']
@@ -97,7 +94,6 @@ export const auth = betterAuth({
   disabledPaths: ['/verify-email', '/send-verification-email'],
   plugins: [
     revokeSessionByIdPLugin(),
-    openAPI({ disableDefaultReference: true }),
     passkey({
       rpID: env.RP_ID,
       rpName: 'Task Pro',
@@ -116,15 +112,20 @@ function revokeSessionByIdPLugin() {
         async ctx => {
           if (!ctx.headers) return ctx.error(401, { message: 'Unauthorized' })
 
-          const sessionId = ctx.body.id
+          const cookieHeader = ctx.headers.get('cookie')
 
-          const session = await prisma.session.findUnique({
-            where: { id: sessionId }
-          })
+          const token = cookieHeader
+            ?.split('; ')
+            .find(cookie => cookie.startsWith('taskpro.session_token='))
+            ?.split('=')[1]
 
-          if (!session) return ctx.error(404, { message: 'Session not found' })
+          const decodedToken = token ? decodeURIComponent(token) : null
 
-          await ctx.context.internalAdapter.deleteSession(session.token)
+          if (!decodedToken) {
+            return ctx.error(404, { message: 'Token not found' })
+          }
+
+          await ctx.context.internalAdapter.deleteSession(decodedToken)
 
           return ctx.json({ success: true })
         }

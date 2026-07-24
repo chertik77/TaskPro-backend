@@ -1,7 +1,7 @@
 import type {
   CreateColumnSchema,
-  UpdateColumnOrderSchema,
-  UpdateColumnSchema
+  UpdateColumnSchema,
+  UpdateColumnsOrderSchema
 } from '@/schemas'
 import type z from 'zod'
 
@@ -61,7 +61,7 @@ class ColumnService {
   }
 
   updateOrder = async (
-    data: z.infer<typeof UpdateColumnOrderSchema>,
+    data: z.infer<typeof UpdateColumnsOrderSchema>,
     boardId: string,
     userId: string
   ) => {

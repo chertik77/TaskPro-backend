@@ -1,5 +1,5 @@
 import type {
-  UpdateaccessibilitySettingsSchema,
+  UpdateAccessibilitySettingsSchema,
   UpdateGeneralSettingsSchema,
   UpdateLabelSettingsSchema,
   UpdateTaskSettingsSchema
@@ -79,7 +79,7 @@ class SettingsService {
   }
 
   updateAccessibility = async (
-    data: z.infer<typeof UpdateaccessibilitySettingsSchema>,
+    data: z.infer<typeof UpdateAccessibilitySettingsSchema>,
     userId: string
   ) => {
     const settings = await prisma.accessibilitySettings.update({

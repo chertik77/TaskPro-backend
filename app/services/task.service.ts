@@ -1,7 +1,7 @@
 import type {
   CreateTaskSchema,
-  UpdateTaskOrderSchema,
-  UpdateTaskSchema
+  UpdateTaskSchema,
+  UpdateTasksOrderSchema
 } from '@/schemas'
 import type { z } from 'zod'
 
@@ -77,7 +77,7 @@ class TaskService {
   }
 
   updateOrder = async (
-    data: z.infer<typeof UpdateTaskOrderSchema>,
+    data: z.infer<typeof UpdateTasksOrderSchema>,
     columnId: string,
     userId: string
   ) => {

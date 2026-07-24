@@ -1,35 +1,47 @@
-import fs from 'fs'
-import path from 'path'
-
 import { swaggerUI } from '@hono/swagger-ui'
-import { Hono } from 'hono'
+import { OpenAPIHono } from '@hono/zod-openapi'
 
 import { env } from '@/config'
 
-import { boardRouter } from './board'
-import { columnRouter } from './column'
-import { labelRouter } from './label'
-import { settingsRouter } from './settings'
-import { taskRouter } from './task'
-import { userRouter } from './user'
+import { boardRouter } from './board/route'
+import { columnRouter } from './column/route'
+import { labelRouter } from './label/route'
+import { settingsRouter } from './settings/route'
+import { taskRouter } from './task/route'
+import { userRouter } from './user/route'
 
-const apiRouter = new Hono()
+const apiRouter = new OpenAPIHono()
 
-const swaggerPath = path.join(process.cwd(), 'openapi.json')
-const swagger = JSON.parse(fs.readFileSync(swaggerPath, 'utf-8'))
+apiRouter.doc('/openapi.json', {
+  openapi: '3.1.0',
+  info: {
+    version: '2.3.0',
+    title: 'Task Pro API',
+    description:
+      'Task Pro API provides endpoints for managing projects, tasks, and user assignments with secure authentication and efficient workflows.',
+    contact: {
+      name: 'TaskPro',
+      url: 'https://www.taskpro.qzz.io'
+    }
+  },
+  servers: [
+    { url: 'http://localhost:9537/api' },
+    { url: 'https://api.taskpro.qzz.io' }
+  ]
+})
 
-apiRouter.get('/doc', c => c.json(swagger))
-apiRouter.get(
-  '/ui',
-  swaggerUI({
-    // url: `${env.API_PREFIX}/doc`,
-    title: 'TaskPro API Docs',
-    urls: [
-      { url: `${env.API_PREFIX}/auth/open-api/generate-schema`, name: 'Auth' },
-      { url: `${env.API_PREFIX}/doc`, name: 'Main API' }
-    ]
-  })
-)
+apiRouter.openAPIRegistry.registerComponent('securitySchemes', 'bearerAuth', {
+  type: 'http',
+  scheme: 'bearer',
+  bearerFormat: 'JWT'
+})
+
+if (env.NODE_ENV === 'development') {
+  apiRouter.get(
+    '/ui',
+    swaggerUI({ title: 'Task Pro API', url: `${env.API_PREFIX}/openapi.json` })
+  )
+}
 
 apiRouter.route('/user', userRouter)
 apiRouter.route('/user/settings', settingsRouter)

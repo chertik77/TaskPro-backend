@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@asteasolutions/zod-to-openapi@^8.5.0":
+  version "8.5.0"
+  resolved "https://registry.yarnpkg.com/@asteasolutions/zod-to-openapi/-/zod-to-openapi-8.5.0.tgz#f073822daad87c4ab2ae991ee86b1a5070ac9942"
+  integrity sha512-SABbKiObg5dLRiTFnqiW1WWwGcg1BJfmHtT2asIBnBHg6Smy/Ms2KHc650+JI4Hw7lSkdiNebEGXpwoxfben8Q==
+  dependencies:
+    openapi3-ts "^4.1.2"
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.29.7":
   version "7.29.7"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.29.7.tgz#f2fbbfea87c44a21590ec515b778b2c26d8866e7"
@@ -629,6 +636,15 @@
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/@hono/swagger-ui/-/swagger-ui-0.6.1.tgz#7eece7b346f208153e3122bae8316cdb3bee1c6e"
   integrity sha512-sJTvldu1GPeEPfyeLG7gRj+W4vEuD+JDi+JjJ3TJs/DvMUtBLs0KJO5yokGegWWdy5qrbdnQGekbhgNRmPmYKQ==
+
+"@hono/zod-openapi@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@hono/zod-openapi/-/zod-openapi-1.5.1.tgz#46689572ecaf9bf7fe501a72afe8a8c41c2f8a03"
+  integrity sha512-ZaDdEIkn6PEGjIYHXJeyByg6yhvLzI+UXn968pWtahpwcQ6HMjQYXI3zNffTl0Wl9QZ79nUnGqiN1erEIu23fA==
+  dependencies:
+    "@asteasolutions/zod-to-openapi" "^8.5.0"
+    "@hono/zod-validator" "^0.9.0"
+    openapi3-ts "^4.5.0"
 
 "@hono/zod-validator@^0.9.0":
   version "0.9.0"
@@ -2424,6 +2440,13 @@ oniguruma-to-es@^2.2.0:
     emoji-regex-xs "^1.0.0"
     regex "^5.1.1"
     regex-recursion "^5.1.1"
+
+openapi3-ts@^4.1.2, openapi3-ts@^4.5.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/openapi3-ts/-/openapi3-ts-4.6.0.tgz#a602c03b993f9e9081cc97d762966c8080f4d77c"
+  integrity sha512-a4sfn6L2sIShhtzJqmjGrARvxAW/3F2BJDdyRVvNF9VhAsZSh5hSyI3a9TNvmzBxXmq66nY5LNT5bQcBxYAZZg==
+  dependencies:
+    yaml "^2.9.0"
 
 optionator@^0.9.3:
   version "0.9.4"

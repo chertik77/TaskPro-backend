@@ -1,4 +1,4 @@
-import type { NeedHelpSchema } from '@/schemas'
+import type { HelpSchema } from '@/schemas'
 import type z from 'zod'
 
 import {
@@ -10,7 +10,7 @@ import { HTTPException } from 'hono/http-exception'
 import { env, resend } from '@/config'
 
 class UserService {
-  help = async (data: z.infer<typeof NeedHelpSchema>) => {
+  help = async (data: z.infer<typeof HelpSchema>) => {
     const supportRequestAdmin = supportRequestAdminTemplate({
       email: data.email,
       comment: data.comment

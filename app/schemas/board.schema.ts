@@ -1,9 +1,10 @@
+import { z } from '@hono/zod-openapi'
 import { Icon } from '@prisma/client'
-import * as z from 'zod'
 
 import boardImages from '@/data/board-bg-images.json'
 
-import { objectIdSchema } from './object-id.schema'
+import { ColumnSchema } from './column.schema'
+import { ObjectIdSchema } from './object-id.schema'
 
 const zObjectKeys = <T extends Record<string, unknown>>(obj: T) => {
   const keys = Object.keys(obj) as Extract<keyof T, string>[]
@@ -13,12 +14,35 @@ const zObjectKeys = <T extends Record<string, unknown>>(obj: T) => {
   )
 }
 
-export const CreateBoardSchema = z.object({
-  title: z.string().min(3),
-  icon: z.enum(Icon),
-  background: zObjectKeys(boardImages)
+const BoardIconSchema = z.enum(Icon).openapi('BoardIcon')
+const BoardBackgroundIdSchema =
+  zObjectKeys(boardImages).openapi('BoardBackground')
+const BoardBackground = z.object({
+  identifier: BoardBackgroundIdSchema,
+  url: z.url().nullable().openapi({
+    example:
+      'https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg'
+  })
 })
+
+export const BoardSchema = z
+  .object({
+    id: ObjectIdSchema,
+    title: z.string().min(3).openapi({ example: 'Project office' }),
+    icon: BoardIconSchema.openapi({ example: BoardIconSchema.enum.layout }),
+    background: BoardBackground,
+    userId: ObjectIdSchema,
+    columns: z.array(ColumnSchema),
+    createdAt: z.date(),
+    updatedAt: z.date()
+  })
+  .openapi('Board')
+
+export const CreateBoardSchema = BoardSchema.pick({
+  title: true,
+  icon: true
+}).extend({ background: BoardBackgroundIdSchema })
 
 export const UpdateBoardSchema = CreateBoardSchema.partial()
 
-export const BoardParamsSchema = z.object({ boardId: objectIdSchema() })
+export const BoardParamsSchema = z.object({ boardId: ObjectIdSchema })
