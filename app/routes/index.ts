@@ -25,8 +25,8 @@ const apiRouter = new OpenAPIHono({
   }
 })
 
-apiRouter.doc('/openapi.json', {
-  openapi: '3.0.0',
+apiRouter.doc31('/openapi.json', {
+  openapi: '3.1.0',
   info: {
     version: '2.3.0',
     title: 'Task Pro API',
