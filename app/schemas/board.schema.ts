@@ -16,20 +16,22 @@ const zObjectKeys = <T extends Record<string, unknown>>(obj: T) => {
 
 const BoardIconSchema = z.enum(Icon).openapi('BoardIcon')
 const BoardBackgroundIdSchema =
-  zObjectKeys(boardImages).openapi('BoardBackground')
-const BoardBackground = z.object({
-  identifier: BoardBackgroundIdSchema,
-  url: z.url().nullable().openapi({
-    example:
-      'https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg'
+  zObjectKeys(boardImages).openapi('BoardBackgroundId')
+const BoardBackground = z
+  .object({
+    identifier: BoardBackgroundIdSchema,
+    url: z.url().nullable().openapi({
+      example:
+        'https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg'
+    })
   })
-})
+  .openapi('BoardBackground')
 
 export const BoardSchema = z
   .object({
     id: ObjectIdSchema,
     title: z.string().min(3).openapi({ example: 'Project office' }),
-    icon: BoardIconSchema.openapi({ example: BoardIconSchema.enum.layout }),
+    icon: BoardIconSchema.openapi({ example: Icon.layout }),
     background: BoardBackground,
     userId: ObjectIdSchema,
     columns: z.array(ColumnSchema),

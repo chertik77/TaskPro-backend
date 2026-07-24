@@ -27,11 +27,14 @@ export const CreateLabelSchema = LabelSchema.pick({
   color: true
 })
 
-export const UpdateLabelSchema = LabelSchema.pick({
-  name: true,
-  color: true,
-  description: true
-}).partial()
+export const UpdateLabelSchema = z
+  .object({
+    ...CreateLabelSchema.shape,
+    description: z.nullable(z.string().min(3)).openapi({
+      example: 'Description of the bug'
+    })
+  })
+  .partial()
 
 export const LabelParamsSchema = z.object({ labelId: ObjectIdSchema })
 

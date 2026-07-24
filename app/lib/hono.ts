@@ -1,4 +1,4 @@
-import type { Variables } from '@/types'
+import type { AuthVariables } from '@/types'
 
 import { OpenAPIHono } from '@hono/zod-openapi'
 
@@ -6,7 +6,7 @@ import { requireAuth } from '@/middlewares'
 
 export const createProtectedRouter = () => {
   const router = new OpenAPIHono<{
-    Variables: Variables
+    Variables: AuthVariables
   }>()
 
   router.use('*', requireAuth)

@@ -37,7 +37,6 @@ export {
 } from './settings.schema'
 export {
   BadRequestResponse,
-  ConflictResponse,
   ErrorResponseSchema,
   NotFoundResponse,
   UnauthorizedResponse

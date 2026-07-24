@@ -39,17 +39,3 @@ export const NotFoundResponse = {
     }
   }
 }
-
-export const ConflictResponse = {
-  description: 'Conflict',
-  content: {
-    'application/json': {
-      schema: ErrorResponseSchema.openapi({
-        example: {
-          status: 409,
-          message: 'Provided email already exists'
-        }
-      })
-    }
-  }
-}

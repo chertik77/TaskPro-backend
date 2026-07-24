@@ -31,9 +31,12 @@ export const TaskSchema = z
 
 export const CreateTaskSchema = TaskSchema.pick({
   title: true,
-  priority: true,
-  description: true
+  priority: true
 }).extend({
+  description: z.optional(z.string().min(3)).openapi({
+    example:
+      'Review the project materials: Familiarize yourself with the project...'
+  }),
   labels: z.optional(z.array(ObjectIdSchema)).openapi({
     description: 'Array of Label ids to attach to the task',
     example: ['6672fdccc07147fc7ae1bb93']
@@ -57,7 +60,11 @@ export const CreateTaskSchema = TaskSchema.pick({
 export const UpdateTaskSchema = z
   .object({
     ...CreateTaskSchema.shape,
-    ...TaskSchema.pick({ completed: true }).shape,
+    completed: TaskSchema.shape.completed,
+    description: z.nullable(z.string().min(3)).openapi({
+      example:
+        'Review the project materials: Familiarize yourself with the project...'
+    }),
     deadline: z.nullable(z.iso.datetime()).openapi({ example: '2025-10-15' }),
     columnId: ObjectIdSchema
   })

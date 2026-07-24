@@ -1,4 +1,4 @@
-import type { Variables } from './types'
+import type { AuthVariables } from './types'
 
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
@@ -11,7 +11,7 @@ import { env, zodConfig } from './config'
 import { auth } from './lib'
 import { apiRouter } from './routes'
 
-export const app = new Hono<{ Variables: Variables }>()
+export const app = new Hono<{ Variables: AuthVariables }>()
 
 z.config(zodConfig)
 

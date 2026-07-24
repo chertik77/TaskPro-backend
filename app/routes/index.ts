@@ -1,5 +1,5 @@
 import { swaggerUI } from '@hono/swagger-ui'
-import { OpenAPIHono } from '@hono/zod-openapi'
+import { OpenAPIHono, z } from '@hono/zod-openapi'
 
 import { env } from '@/config'
 
@@ -10,10 +10,23 @@ import { settingsRouter } from './settings/route'
 import { taskRouter } from './task/route'
 import { userRouter } from './user/route'
 
-const apiRouter = new OpenAPIHono()
+const apiRouter = new OpenAPIHono({
+  defaultHook: (result, c) => {
+    if (result.success) return
+
+    return c.json(
+      {
+        status: 400,
+        message: 'Validation failed',
+        errors: z.flattenError(result.error).fieldErrors
+      },
+      400
+    )
+  }
+})
 
 apiRouter.doc('/openapi.json', {
-  openapi: '3.1.0',
+  openapi: '3.0.0',
   info: {
     version: '2.3.0',
     title: 'Task Pro API',
