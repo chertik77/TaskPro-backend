@@ -1,7 +1,8 @@
 model Label {
-  id    String     @id @default(auto()) @map("_id") @db.ObjectId
-  name  String
-  color LabelColor
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  color       AccentColor
 
   userId String @db.ObjectId
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -14,15 +15,4 @@ model Label {
 
   @@unique([userId, name])
   @@map("labels")
-}
-
-enum LabelColor {
-  blue
-  purple
-  red
-  gray
-  cyan
-  yellow
-  indigo
-  green
 }

@@ -1,47 +1,66 @@
-import fs from 'fs'
-import path from 'path'
-import type { SwaggerUiOptions } from 'swagger-ui-express'
-
-import { Router } from 'express'
-import swaggerUi from 'swagger-ui-express'
+import { swaggerUI } from '@hono/swagger-ui'
+import { OpenAPIHono, z } from '@hono/zod-openapi'
 
 import { env } from '@/config'
 
-import { boardRouter } from './api/board'
-import { columnRouter } from './api/column'
-import { labelRouter } from './api/label'
-import { taskRouter } from './api/task'
-import { userRouter } from './api/user'
+import { boardRouter } from './board/route'
+import { columnRouter } from './column/route'
+import { labelRouter } from './label/route'
+import { settingsRouter } from './settings/route'
+import { taskRouter } from './task/route'
+import { userRouter } from './user/route'
 
-export const apiRouter = Router()
+const apiRouter = new OpenAPIHono({
+  defaultHook: (result, c) => {
+    if (result.success) return
 
-const swaggerPath = path.join(process.cwd(), 'openapi.json')
-const swagger = JSON.parse(fs.readFileSync(swaggerPath, 'utf-8'))
-
-apiRouter.get('/openapi.json', (_, res) => {
-  res.json(swagger)
+    return c.json(
+      {
+        status: 400,
+        message: 'Validation failed',
+        errors: z.flattenError(result.error).fieldErrors
+      },
+      400
+    )
+  }
 })
 
-const swaggerOptions: SwaggerUiOptions = {
-  customSiteTitle: 'TaskPro API Docs',
-  explorer: true,
-  swaggerOptions: {
-    urls: [
-      { url: `${env.API_PREFIX}/openapi.json`, name: 'Main API' },
-      { url: `${env.API_PREFIX}/auth/open-api/generate-schema`, name: 'Auth' }
-    ],
-    'urls.primaryName': 'Main API'
-  }
+apiRouter.doc31('/openapi.json', {
+  openapi: '3.1.0',
+  info: {
+    version: '2.3.0',
+    title: 'Task Pro API',
+    description:
+      'Task Pro API provides endpoints for managing projects, tasks, and user assignments with secure authentication and efficient workflows.',
+    contact: {
+      name: 'TaskPro',
+      url: 'https://www.taskpro.qzz.io'
+    }
+  },
+  servers: [
+    { url: 'http://localhost:9537/api' },
+    { url: 'https://api.taskpro.qzz.io' }
+  ]
+})
+
+apiRouter.openAPIRegistry.registerComponent('securitySchemes', 'bearerAuth', {
+  type: 'http',
+  scheme: 'bearer',
+  bearerFormat: 'JWT'
+})
+
+if (env.NODE_ENV === 'development') {
+  apiRouter.get(
+    '/ui',
+    swaggerUI({ title: 'Task Pro API', url: `${env.API_PREFIX}/openapi.json` })
+  )
 }
 
-apiRouter.use(
-  '/docs',
-  swaggerUi.serve,
-  swaggerUi.setup(swagger, swaggerOptions)
-)
+apiRouter.route('/user', userRouter)
+apiRouter.route('/user/settings', settingsRouter)
+apiRouter.route('/board', boardRouter)
+apiRouter.route('/column', columnRouter)
+apiRouter.route('/task', taskRouter)
+apiRouter.route('/label', labelRouter)
 
-apiRouter.use('/user', userRouter)
-apiRouter.use('/board', boardRouter)
-apiRouter.use('/column', columnRouter)
-apiRouter.use('/task', taskRouter)
-apiRouter.use('/label', labelRouter)
+export { apiRouter }

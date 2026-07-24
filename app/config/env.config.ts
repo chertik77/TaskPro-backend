@@ -1,6 +1,8 @@
-import 'dotenv/config'
+import { loadEnvFile } from 'node:process'
 
 import * as z from 'zod'
+
+loadEnvFile(process.cwd() + '/.env')
 
 const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string(),
@@ -19,6 +21,7 @@ const envSchema = z.object({
   REDIS_PORT: z.coerce.number().int().positive().min(1000).max(65535),
   PORT: z.coerce.number().int().positive().min(1000).max(65535),
   API_PREFIX: z.string().default(''),
+  RP_ID: z.hostname(),
   NODE_ENV: z.enum(['development', 'production']).default('development'),
   ALLOWED_ORIGINS: z
     .string()

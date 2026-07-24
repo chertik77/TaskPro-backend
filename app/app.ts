@@ -1,30 +1,43 @@
-import express from 'express'
-import { toNodeHandler } from 'better-auth/node'
-import cookieParser from 'cookie-parser'
-import cors from 'cors'
-import helmet from 'helmet'
-import logger from 'morgan'
-import * as z from 'zod'
+import type { AuthVariables } from './types'
+
+import { Hono } from 'hono'
+import { cors } from 'hono/cors'
+import { HTTPException } from 'hono/http-exception'
+import { logger } from 'hono/logger'
+import { secureHeaders } from 'hono/secure-headers'
+import z from 'zod'
 
 import { env, zodConfig } from './config'
 import { auth } from './lib'
-import { globalErrorHandler, notFoundHandler } from './middlewares'
 import { apiRouter } from './routes'
 
-export const app = express()
+export const app = new Hono<{ Variables: AuthVariables }>()
 
 z.config(zodConfig)
 
-app.use(cors({ origin: env.ALLOWED_ORIGINS, credentials: true }))
+app.use('*', logger())
+app.use('*', secureHeaders())
 
-app.all(`${env.API_PREFIX}/auth/*splat`, toNodeHandler(auth))
+app.use('*', cors({ origin: env.ALLOWED_ORIGINS, credentials: true }))
 
-app.use(helmet())
-app.use(logger(app.get('env') === 'development' ? 'dev' : 'combined'))
-app.use(cookieParser())
-app.use(express.json())
+app.on(['GET', 'POST'], `${env.API_PREFIX}/auth/*`, c =>
+  auth.handler(c.req.raw)
+)
 
-app.use(env.API_PREFIX, apiRouter)
+app.route(env.API_PREFIX, apiRouter)
 
-app.use(notFoundHandler)
-app.use(globalErrorHandler)
+app.notFound(c => c.json({ status: 404, message: 'Not found' }, 404))
+
+app.onError((err, c) => {
+  if (err instanceof HTTPException) return err.getResponse()
+
+  console.error(err)
+
+  return c.json(
+    {
+      status: err instanceof HTTPException ? err.status : 500,
+      message: err.message || 'Server error'
+    },
+    err instanceof HTTPException ? err.status : 500
+  )
+})

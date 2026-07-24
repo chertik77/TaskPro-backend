@@ -1,16 +1,12 @@
-import { Theme } from '@prisma/client'
-import * as z from 'zod'
+import { z } from '@hono/zod-openapi'
 
-export const NeedHelpSchema = z.object({
-  email: z.email(),
-  comment: z.string().min(5)
+export const HelpSchema = z.object({
+  email: z.email().openapi({ example: 'user@example.com' }),
+  comment: z.string().min(5).openapi({
+    example: 'Need help with the Kanban board feature.'
+  })
 })
 
-export const UpdateUserSchema = z
-  .object({
-    name: z.string().min(2),
-    email: z.email(),
-    password: z.string().min(8).max(64),
-    theme: z.enum(Theme)
-  })
-  .partial()
+export const HelpResponseSchema = z.object({
+  message: z.string().openapi({ example: 'Email sent' })
+})

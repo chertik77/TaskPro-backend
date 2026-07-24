@@ -5,22 +5,21 @@ model User {
   emailVerified Boolean @default(false) @map("email_verified")
   image         String?
   imagePublicId String? @map("image_public_id")
-  theme         Theme   @default(light)
 
   sessions Session[]
   accounts Account[]
+  passkeys Passkey[]
   boards   Board[]
   labels   Label[]
+
+  settings              UserSettings?
+  taskSettings          TaskSettings?
+  labelSettings         LabelSettings?
+  accessibilitySettings AccessibilitySettings?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([email])
   @@map("users")
-}
-
-enum Theme {
-  light
-  dark
-  system
 }

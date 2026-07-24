@@ -1,12 +1,14 @@
+import type { BetterAuthPlugin, Session } from 'better-auth'
+
+import { passkey } from '@better-auth/passkey'
 import { redisStorage } from '@better-auth/redis-storage'
-import { Theme } from '@prisma/client'
-import { betterAuth } from 'better-auth'
+import { APIError, betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
-import { openAPI } from 'better-auth/plugins'
+import { createAuthEndpoint, createAuthMiddleware } from 'better-auth/api'
 
 import { env, redisClient } from '../config'
 import { prisma } from '../prisma'
-import { mapMicrosoftProfileToUser } from './map-microsoft-profile-to-user'
+import { mapMicrosoftProfileToUser, parseUserAgent } from '../utils'
 
 export const auth = betterAuth({
   appName: 'Task Pro',
@@ -26,14 +28,50 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        before: async user => ({ data: { ...user, emailVerified: true } })
+        before: async user => ({ data: { ...user, emailVerified: true } }),
+        after: async user => {
+          const userId = user.id
+          await prisma.$transaction([
+            prisma.userSettings.create({ data: { userId } }),
+            prisma.taskSettings.create({ data: { userId } }),
+            prisma.labelSettings.create({ data: { userId } }),
+            prisma.accessibilitySettings.create({ data: { userId } })
+          ])
+        }
       }
     }
   },
-  user: {
-    additionalFields: {
-      theme: { type: Object.values(Theme), input: true },
-      imagePublicId: { type: 'string', input: true }
+  hooks: {
+    after: createAuthMiddleware(async ctx => {
+      if (ctx.path.startsWith('/list-sessions')) {
+        const sessions = ctx.context.returned as Session[] | APIError
+
+        if (sessions instanceof APIError) return ctx.context.returned
+
+        const currentSession = ctx.context.session?.session
+
+        const updatedSessions = sessions
+          .map(session => {
+            const { userAgent, ...rest } = session
+            const { browser, os } = parseUserAgent(userAgent)
+
+            return {
+              ...rest,
+              browser,
+              os,
+              isCurrent: session.id === currentSession?.id
+            }
+          })
+          .sort((a, b) => Number(b.isCurrent) - Number(a.isCurrent))
+
+        return updatedSessions
+      }
+    })
+  },
+  user: { additionalFields: { imagePublicId: { type: 'string' } } },
+  account: {
+    accountLinking: {
+      trustedProviders: ['google', 'microsoft', 'email-password']
     }
   },
   emailAndPassword: { enabled: true, requireEmailVerification: false },
@@ -54,5 +92,44 @@ export const auth = betterAuth({
   },
   trustedOrigins: env.ALLOWED_ORIGINS,
   disabledPaths: ['/verify-email', '/send-verification-email'],
-  plugins: [openAPI({ disableDefaultReference: true })]
+  plugins: [
+    revokeSessionByIdPLugin(),
+    passkey({
+      rpID: env.RP_ID,
+      rpName: 'Task Pro',
+      advanced: { webAuthnChallengeCookie: 'task-pro-passkey' }
+    })
+  ]
 })
+
+function revokeSessionByIdPLugin() {
+  return {
+    id: 'revoke-session-id',
+    endpoints: {
+      revokeSessionById: createAuthEndpoint(
+        '/revoke-session-id',
+        { method: 'POST' },
+        async ctx => {
+          if (!ctx.headers) return ctx.error(401, { message: 'Unauthorized' })
+
+          const cookieHeader = ctx.headers.get('cookie')
+
+          const token = cookieHeader
+            ?.split('; ')
+            .find(cookie => cookie.startsWith('taskpro.session_token='))
+            ?.split('=')[1]
+
+          const decodedToken = token ? decodeURIComponent(token) : null
+
+          if (!decodedToken) {
+            return ctx.error(404, { message: 'Token not found' })
+          }
+
+          await ctx.context.internalAdapter.deleteSession(decodedToken)
+
+          return ctx.json({ success: true })
+        }
+      )
+    }
+  } satisfies BetterAuthPlugin
+}

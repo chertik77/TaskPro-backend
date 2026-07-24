@@ -1,23 +1,44 @@
 export {
+  BoardSchema,
   CreateBoardSchema,
   UpdateBoardSchema,
   BoardParamsSchema
 } from './board.schema'
 export {
+  TaskSchema,
   CreateTaskSchema,
   UpdateTaskSchema,
   TaskParamsSchema,
-  UpdateTaskOrderSchema
+  UpdateTasksOrderSchema
 } from './task.schema'
 export {
+  ColumnSchema,
   CreateColumnSchema,
   UpdateColumnSchema,
   ColumnParamsSchema,
-  UpdateColumnOrderSchema
+  UpdateColumnsOrderSchema
 } from './column.schema'
 export {
   CreateLabelSchema,
   UpdateLabelSchema,
-  LabelParamsSchema
+  LabelParamsSchema,
+  LabelConflictResponse
 } from './label.schema'
-export { UpdateUserSchema, NeedHelpSchema } from './user.schema'
+export {
+  GetAllSettingsResponseSchema,
+  GeneralSettingsSchema,
+  TaskSettingsSchema,
+  LabelSettingsSchema,
+  AccessibilitySettingsSchema,
+  UpdateGeneralSettingsSchema,
+  UpdateTaskSettingsSchema,
+  UpdateLabelSettingsSchema,
+  UpdateAccessibilitySettingsSchema
+} from './settings.schema'
+export {
+  BadRequestResponse,
+  ErrorResponseSchema,
+  NotFoundResponse,
+  UnauthorizedResponse
+} from './error-schema'
+export { HelpSchema, HelpResponseSchema } from './user.schema'
