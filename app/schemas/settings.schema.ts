@@ -5,6 +5,7 @@ import {
   CardDensity,
   DateFormat,
   DefaultDeadline,
+  FontSize,
   LabelDisplay,
   MaxLabelsShown,
   NewTaskPosition,
@@ -24,6 +25,7 @@ export const GeneralSettingsSchema = z
     theme: z.enum(Theme).openapi({ default: Theme.light }),
     accentColor: AccentColorSchema.openapi({ default: AccentColor.blue }),
     firstDayOfWeek: z.enum(WeekStart).openapi({ example: WeekStart.monday }),
+    fontSize: z.enum(FontSize).openapi({ example: FontSize.medium }),
     dateFormat: z.enum(DateFormat).openapi({ example: DateFormat.dd_mm_yyyy }),
     boardBackgroundBlur: z
       .enum(BoardBackgroundBlur)

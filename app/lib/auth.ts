@@ -4,7 +4,12 @@ import { passkey } from '@better-auth/passkey'
 import { redisStorage } from '@better-auth/redis-storage'
 import { APIError, betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
-import { createAuthEndpoint, createAuthMiddleware } from 'better-auth/api'
+import {
+  createAuthEndpoint,
+  createAuthMiddleware,
+  sessionMiddleware
+} from 'better-auth/api'
+import * as z from 'zod'
 
 import { env, redisClient } from '../config'
 import { prisma } from '../prisma'
@@ -84,7 +89,7 @@ export const auth = betterAuth({
   trustedOrigins: env.ALLOWED_ORIGINS,
   disabledPaths: ['/verify-email', '/send-verification-email'],
   plugins: [
-    revokeSessionByIdPLugin(),
+    revokeSessionByIdPlugin(),
     passkey({
       rpID: env.RP_ID,
       rpName: 'Task Pro',
@@ -93,22 +98,30 @@ export const auth = betterAuth({
   ]
 })
 
-function revokeSessionByIdPLugin() {
+function revokeSessionByIdPlugin() {
   return {
     id: 'revoke-session-id',
     endpoints: {
       revokeSessionById: createAuthEndpoint(
         '/revoke-session-id',
-        { method: 'POST' },
+        {
+          method: 'POST',
+          requireHeaders: true,
+          use: [sessionMiddleware],
+          body: z.object({ id: z.string() })
+        },
         async ctx => {
-          const token = await ctx.getSignedCookie(
-            ctx.context.authCookies.sessionToken.name,
-            ctx.context.secret
+          const { user } = ctx.context.session
+
+          const sessions = await ctx.context.internalAdapter.listSessions(
+            user.id
           )
 
-          if (!token) return ctx.error(401, { message: 'Unauthorized' })
+          const session = sessions.find(({ id }) => id === ctx.body.id)
 
-          await ctx.context.internalAdapter.deleteSession(token)
+          if (!session) throw ctx.error(404, { message: 'Session not found' })
+
+          await ctx.context.internalAdapter.deleteSession(session.token)
 
           return ctx.json({ success: true })
         }
