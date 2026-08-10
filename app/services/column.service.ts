@@ -46,8 +46,7 @@ class ColumnService {
     userId: string
   ) => {
     const updatedColumn = await prisma.column.updateIgnoreNotFound({
-      where: { id: columnId },
-      include: { board: { select: { userId: true } } },
+      where: { id: columnId, board: { userId } },
       data
     })
 
@@ -66,7 +65,7 @@ class ColumnService {
     userId: string
   ) => {
     const board = await prisma.board.findUnique({
-      where: { id: boardId }
+      where: { id: boardId, userId }
     })
 
     if (!board) {
@@ -93,8 +92,7 @@ class ColumnService {
 
   deleteById = async (columnId: string, userId: string) => {
     const deletedColumn = await prisma.column.deleteIgnoreNotFound({
-      where: { id: columnId },
-      include: { board: { select: { userId: true } } }
+      where: { id: columnId, board: { userId } }
     })
 
     if (!deletedColumn) {

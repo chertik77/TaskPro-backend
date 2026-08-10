@@ -3,7 +3,6 @@ import { settingsService } from '@/services'
 
 import {
   getAllSettingsRoute,
-  updateAccessibilitySettingsRoute,
   updateGeneralSettingsRoute,
   updateLabelSettingsRoute,
   updateTaskSettingsRoute
@@ -42,15 +41,6 @@ settingsRouter.openapi(updateLabelSettingsRoute, async c => {
   const user = c.get('user')
 
   const settings = await settingsService.updateLabels(json, user.id)
-
-  return c.json(settings, 200)
-})
-
-settingsRouter.openapi(updateAccessibilitySettingsRoute, async c => {
-  const json = c.req.valid('json')
-  const user = c.get('user')
-
-  const settings = await settingsService.updateAccessibility(json, user.id)
 
   return c.json(settings, 200)
 })

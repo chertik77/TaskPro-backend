@@ -4,7 +4,7 @@ model Label {
   description String?
   color       AccentColor
 
-  userId String @db.ObjectId
+  userId String @map("user_id") @db.ObjectId
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   taskIds String[] @db.ObjectId

@@ -29,15 +29,11 @@ app.route(env.API_PREFIX, apiRouter)
 app.notFound(c => c.json({ status: 404, message: 'Not found' }, 404))
 
 app.onError((err, c) => {
-  if (err instanceof HTTPException) return err.getResponse()
+  if (err instanceof HTTPException) {
+    return c.json({ status: err.status, message: err.message }, err.status)
+  }
 
   console.error(err)
 
-  return c.json(
-    {
-      status: err instanceof HTTPException ? err.status : 500,
-      message: err.message || 'Server error'
-    },
-    err instanceof HTTPException ? err.status : 500
-  )
+  return c.json({ status: 500, message: 'Server error' }, 500)
 })

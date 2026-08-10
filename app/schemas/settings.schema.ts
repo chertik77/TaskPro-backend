@@ -5,7 +5,6 @@ import {
   CardDensity,
   DateFormat,
   DefaultDeadline,
-  FontSize,
   LabelDisplay,
   MaxLabelsShown,
   NewTaskPosition,
@@ -29,7 +28,6 @@ export const GeneralSettingsSchema = z
     boardBackgroundBlur: z
       .enum(BoardBackgroundBlur)
       .openapi({ example: BoardBackgroundBlur.off }),
-    usePointerCursors: z.boolean().openapi({ example: true }),
     enableAnimations: z.boolean().openapi({ example: true }),
     confirmBeforeDelete: z.boolean().openapi({ example: true }),
     userId: ObjectIdSchema
@@ -67,23 +65,10 @@ export const LabelSettingsSchema = z
   })
   .openapi('LabelSettings')
 
-export const AccessibilitySettingsSchema = z
-  .object({
-    id: ObjectIdSchema,
-    fontSize: z.enum(FontSize).openapi({ example: FontSize.medium }),
-    reducedMotion: z.boolean().openapi({ example: false }),
-    highContrast: z.boolean().openapi({ example: false }),
-    focusIndicators: z.boolean().openapi({ example: true }),
-    keyboardNavigationHints: z.boolean().openapi({ example: false }),
-    userId: ObjectIdSchema
-  })
-  .openapi('AccessibilitySettings')
-
 export const GetAllSettingsResponseSchema = z.object({
   general: GeneralSettingsSchema,
   task: TaskSettingsSchema,
-  label: LabelSettingsSchema,
-  accessibility: AccessibilitySettingsSchema
+  label: LabelSettingsSchema
 })
 
 export const UpdateGeneralSettingsSchema = GeneralSettingsSchema.omit({
@@ -100,9 +85,3 @@ export const UpdateLabelSettingsSchema = LabelSettingsSchema.omit({
   id: true,
   userId: true
 }).partial()
-
-export const UpdateAccessibilitySettingsSchema =
-  AccessibilitySettingsSchema.omit({
-    id: true,
-    userId: true
-  }).partial()

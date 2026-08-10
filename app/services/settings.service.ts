@@ -1,5 +1,4 @@
 import type {
-  UpdateAccessibilitySettingsSchema,
   UpdateGeneralSettingsSchema,
   UpdateLabelSettingsSchema,
   UpdateTaskSettingsSchema
@@ -19,30 +18,42 @@ class SettingsService {
 
     if (cachedSettings) return JSON.parse(cachedSettings)
 
-    const [general, task, label, accessibility] = await Promise.all([
-      prisma.userSettings.findUnique({ where: { userId } }),
-      prisma.taskSettings.findUnique({ where: { userId } }),
-      prisma.labelSettings.findUnique({ where: { userId } }),
-      prisma.accessibilitySettings.findUnique({ where: { userId } })
+    const [general, task, label] = await Promise.all([
+      prisma.userSettings.upsert({
+        where: { userId },
+        create: { userId },
+        update: {}
+      }),
+      prisma.taskSettings.upsert({
+        where: { userId },
+        create: { userId },
+        update: {}
+      }),
+      prisma.labelSettings.upsert({
+        where: { userId },
+        create: { userId },
+        update: {}
+      })
     ])
 
     await redisClient.set(
       cacheKey,
-      JSON.stringify({ general, task, label, accessibility }),
+      JSON.stringify({ general, task, label }),
       'EX',
       REDIS_TTL.DEFAULT
     )
 
-    return { general, task, label, accessibility }
+    return { general, task, label }
   }
 
   updateGeneral = async (
     data: z.infer<typeof UpdateGeneralSettingsSchema>,
     userId: string
   ) => {
-    const settings = await prisma.userSettings.update({
+    const settings = await prisma.userSettings.upsert({
       where: { userId },
-      data
+      create: { userId, ...data },
+      update: data
     })
 
     await invalidate.settings(userId)
@@ -54,9 +65,10 @@ class SettingsService {
     data: z.infer<typeof UpdateTaskSettingsSchema>,
     userId: string
   ) => {
-    const settings = await prisma.taskSettings.update({
+    const settings = await prisma.taskSettings.upsert({
       where: { userId },
-      data
+      create: { userId, ...data },
+      update: data
     })
 
     await invalidate.settings(userId)
@@ -68,23 +80,10 @@ class SettingsService {
     data: z.infer<typeof UpdateLabelSettingsSchema>,
     userId: string
   ) => {
-    const settings = await prisma.labelSettings.update({
+    const settings = await prisma.labelSettings.upsert({
       where: { userId },
-      data
-    })
-
-    await invalidate.settings(userId)
-
-    return settings
-  }
-
-  updateAccessibility = async (
-    data: z.infer<typeof UpdateAccessibilitySettingsSchema>,
-    userId: string
-  ) => {
-    const settings = await prisma.accessibilitySettings.update({
-      where: { userId },
-      data
+      create: { userId, ...data },
+      update: data
     })
 
     await invalidate.settings(userId)

@@ -7,12 +7,12 @@ model UserSettings {
   firstDayOfWeek      WeekStart           @default(monday) @map("first_day_of_week")
   dateFormat          DateFormat          @default(dd_mm_yyyy) @map("date_format")
   boardBackgroundBlur BoardBackgroundBlur @default(off) @map("board_background_blur")
-  usePointerCursors   Boolean             @default(true) @map("use_pointer_cursors")
   enableAnimations    Boolean             @default(true) @map("enable_animations")
+  fontSize            FontSize            @default(medium) @map("font_size")
   confirmBeforeDelete Boolean             @default(true) @map("confirm_before_delete")
 
   userId String @map("user_id") @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId])
   @@map("user_settings")
@@ -34,7 +34,7 @@ model TaskSettings {
   enableNaturalLanguageDates Boolean @default(true) @map("enable_natural_language_dates")
 
   userId String @map("user_id") @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId])
   @@map("task_settings")
@@ -48,26 +48,10 @@ model LabelSettings {
   maxLabelsShown   MaxLabelsShown @default(three) @map("max_labels_shown")
 
   userId String @map("user_id") @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId])
   @@map("label_settings")
-}
-
-model AccessibilitySettings {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  fontSize                FontSize @default(medium) @map("font_size")
-  reducedMotion           Boolean  @default(false) @map("reduced_motion")
-  highContrast            Boolean  @default(false) @map("high_contrast")
-  focusIndicators         Boolean  @default(true) @map("focus_indicators")
-  keyboardNavigationHints Boolean  @default(false) @map("keyboard_navigation_hints")
-
-  userId String @map("user_id") @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id])
-
-  @@unique([userId])
-  @@map("accessibility_settings")
 }
 
 enum Theme {

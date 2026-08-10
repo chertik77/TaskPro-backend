@@ -29,11 +29,9 @@ export {
   GeneralSettingsSchema,
   TaskSettingsSchema,
   LabelSettingsSchema,
-  AccessibilitySettingsSchema,
   UpdateGeneralSettingsSchema,
   UpdateTaskSettingsSchema,
-  UpdateLabelSettingsSchema,
-  UpdateAccessibilitySettingsSchema
+  UpdateLabelSettingsSchema
 } from './settings.schema'
 export {
   BadRequestResponse,

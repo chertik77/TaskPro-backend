@@ -2,7 +2,11 @@ import { loadEnvFile } from 'node:process'
 
 import * as z from 'zod'
 
-loadEnvFile(process.cwd() + '/.env')
+try {
+  loadEnvFile(process.cwd() + '/.env')
+} catch {
+  /* platform-provided env */
+}
 
 const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string(),

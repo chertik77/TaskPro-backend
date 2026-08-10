@@ -12,10 +12,9 @@ model User {
   boards   Board[]
   labels   Label[]
 
-  settings              UserSettings?
-  taskSettings          TaskSettings?
-  labelSettings         LabelSettings?
-  accessibilitySettings AccessibilitySettings?
+  settings      UserSettings?
+  taskSettings  TaskSettings?
+  labelSettings LabelSettings?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

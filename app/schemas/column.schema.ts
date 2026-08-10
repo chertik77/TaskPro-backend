@@ -9,7 +9,7 @@ export const ColumnSchema = z
     title: z.string().min(3).openapi({ example: 'In progress' }),
     order: z.number().int().openapi({ example: 1 }),
     boardId: ObjectIdSchema,
-    tasks: z.array(TaskSchema),
+    tasks: z.array(TaskSchema).optional(),
     createdAt: z.date(),
     updatedAt: z.date()
   })

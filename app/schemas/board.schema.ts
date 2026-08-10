@@ -34,7 +34,7 @@ export const BoardSchema = z
     icon: BoardIconSchema.openapi({ example: Icon.layout }),
     background: BoardBackground,
     userId: ObjectIdSchema,
-    columns: z.array(ColumnSchema),
+    columns: z.array(ColumnSchema).optional(),
     createdAt: z.date(),
     updatedAt: z.date()
   })

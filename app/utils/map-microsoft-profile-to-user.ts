@@ -13,9 +13,7 @@ export const mapMicrosoftProfileToUser = async (
 
   if (!email) throw new Error('Microsoft profile has no email')
 
-  const user = await prisma.user.findUnique({
-    where: { email: profile.email }
-  })
+  const user = await prisma.user.findUnique({ where: { email } })
 
   let image: string | undefined
   let imagePublicId: string | undefined

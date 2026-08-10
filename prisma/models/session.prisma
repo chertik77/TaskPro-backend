@@ -5,7 +5,7 @@ model Session {
   ipAddress String? @map("ip_address")
   userAgent String? @map("user_agent")
 
-  userId String @map("user_id")
+  userId String @map("user_id") @db.ObjectId
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   expiresAt DateTime @map("expires_at")

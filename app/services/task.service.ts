@@ -16,7 +16,7 @@ class TaskService {
     userId: string
   ) => {
     const column = await prisma.column.findUnique({
-      where: { id: columnId },
+      where: { id: columnId, board: { userId } },
       include: { board: { select: { userId: true } } }
     })
 
@@ -46,17 +46,19 @@ class TaskService {
   ) => {
     if (data.columnId) {
       const column = await prisma.column.findUnique({
-        where: { id: data.columnId }
+        where: { id: data.columnId, board: { userId } }
       })
 
       if (!column) throw new HTTPException(404, { message: 'Column not found' })
     }
 
     const updatedTask = await prisma.task.updateIgnoreNotFound({
-      where: { id: taskId },
+      where: { id: taskId, column: { board: { userId } } },
       data: {
         ...data,
-        completedAt: data.completed ? new Date() : null,
+        ...(data.completed !== undefined && {
+          completedAt: data.completed ? new Date() : null
+        }),
         labels: { set: data.labels?.map(id => ({ id })) }
       },
       include: {
@@ -82,7 +84,7 @@ class TaskService {
     userId: string
   ) => {
     const column = await prisma.column.findUnique({
-      where: { id: columnId },
+      where: { id: columnId, board: { userId } },
       include: { board: { select: { userId: true } } }
     })
 
@@ -110,7 +112,7 @@ class TaskService {
 
   deleteById = async (taskId: string, userId: string) => {
     const deletedTask = await prisma.task.deleteIgnoreNotFound({
-      where: { id: taskId },
+      where: { id: taskId, column: { board: { userId } } },
       include: { column: { include: { board: { select: { userId: true } } } } }
     })
 

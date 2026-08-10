@@ -49,14 +49,16 @@ class LabelService {
     labelId: string,
     userId: string
   ) => {
-    const labelWithSameName = await prisma.label.findUnique({
-      where: { userId_name: { userId, name: data.name! } }
-    })
-
-    if (labelWithSameName) {
-      throw new HTTPException(409, {
-        message: 'Label with same name already exists'
+    if (data.name) {
+      const labelWithSameName = await prisma.label.findUnique({
+        where: { userId_name: { userId, name: data.name } }
       })
+
+      if (labelWithSameName) {
+        throw new HTTPException(409, {
+          message: 'Label with same name already exists'
+        })
+      }
     }
 
     const updatedLabel = await prisma.label.updateIgnoreNotFound({

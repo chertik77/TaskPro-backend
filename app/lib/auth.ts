@@ -28,16 +28,7 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        before: async user => ({ data: { ...user, emailVerified: true } }),
-        after: async user => {
-          const userId = user.id
-          await prisma.$transaction([
-            prisma.userSettings.create({ data: { userId } }),
-            prisma.taskSettings.create({ data: { userId } }),
-            prisma.labelSettings.create({ data: { userId } }),
-            prisma.accessibilitySettings.create({ data: { userId } })
-          ])
-        }
+        before: async user => ({ data: { ...user, emailVerified: true } })
       }
     }
   },
@@ -110,22 +101,14 @@ function revokeSessionByIdPLugin() {
         '/revoke-session-id',
         { method: 'POST' },
         async ctx => {
-          if (!ctx.headers) return ctx.error(401, { message: 'Unauthorized' })
+          const token = await ctx.getSignedCookie(
+            ctx.context.authCookies.sessionToken.name,
+            ctx.context.secret
+          )
 
-          const cookieHeader = ctx.headers.get('cookie')
+          if (!token) return ctx.error(401, { message: 'Unauthorized' })
 
-          const token = cookieHeader
-            ?.split('; ')
-            .find(cookie => cookie.startsWith('taskpro.session_token='))
-            ?.split('=')[1]
-
-          const decodedToken = token ? decodeURIComponent(token) : null
-
-          if (!decodedToken) {
-            return ctx.error(404, { message: 'Token not found' })
-          }
-
-          await ctx.context.internalAdapter.deleteSession(decodedToken)
+          await ctx.context.internalAdapter.deleteSession(token)
 
           return ctx.json({ success: true })
         }

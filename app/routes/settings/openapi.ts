@@ -1,14 +1,12 @@
 import { createRoute } from '@hono/zod-openapi'
 
 import {
-  AccessibilitySettingsSchema,
   BadRequestResponse,
   GeneralSettingsSchema,
   GetAllSettingsResponseSchema,
   LabelSettingsSchema,
   TaskSettingsSchema,
   UnauthorizedResponse,
-  UpdateAccessibilitySettingsSchema,
   UpdateGeneralSettingsSchema,
   UpdateLabelSettingsSchema,
   UpdateTaskSettingsSchema
@@ -93,31 +91,6 @@ export const updateLabelSettingsRoute = createRoute({
     200: {
       description: 'Updated',
       content: { 'application/json': { schema: LabelSettingsSchema } }
-    },
-    400: BadRequestResponse,
-    401: UnauthorizedResponse
-  }
-})
-
-export const updateAccessibilitySettingsRoute = createRoute({
-  method: 'patch',
-  path: '/accessibility',
-  operationId: 'updateAccessibilitySettings',
-  tags: ['User'],
-  summary: 'Update accessibility settings',
-  security: [{ bearerAuth: [] }],
-  request: {
-    body: {
-      required: true,
-      content: {
-        'application/json': { schema: UpdateAccessibilitySettingsSchema }
-      }
-    }
-  },
-  responses: {
-    200: {
-      description: 'Updated',
-      content: { 'application/json': { schema: AccessibilitySettingsSchema } }
     },
     400: BadRequestResponse,
     401: UnauthorizedResponse
