@@ -3,13 +3,13 @@ import { createRoute } from '@hono/zod-openapi'
 import {
   BadRequestResponse,
   GeneralSettingsSchema,
-  GetAllSettingsResponseSchema,
   LabelSettingsSchema,
   TaskSettingsSchema,
   UnauthorizedResponse,
   UpdateGeneralSettingsSchema,
   UpdateLabelSettingsSchema,
-  UpdateTaskSettingsSchema
+  UpdateTaskSettingsSchema,
+  UserSettingsSchema
 } from '@/schemas'
 
 export const getAllSettingsRoute = createRoute({
@@ -22,7 +22,7 @@ export const getAllSettingsRoute = createRoute({
   responses: {
     200: {
       description: 'Success',
-      content: { 'application/json': { schema: GetAllSettingsResponseSchema } }
+      content: { 'application/json': { schema: UserSettingsSchema } }
     },
     401: UnauthorizedResponse
   }

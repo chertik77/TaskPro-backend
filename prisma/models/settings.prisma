@@ -1,15 +1,9 @@
 model UserSettings {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  theme       Theme       @default(light)
-  accentColor AccentColor @default(blue) @map("accent_color")
-
-  firstDayOfWeek      WeekStart           @default(monday) @map("first_day_of_week")
-  dateFormat          DateFormat          @default(dd_mm_yyyy) @map("date_format")
-  boardBackgroundBlur BoardBackgroundBlur @default(off) @map("board_background_blur")
-  enableAnimations    Boolean             @default(true) @map("enable_animations")
-  fontSize            FontSize            @default(medium) @map("font_size")
-  confirmBeforeDelete Boolean             @default(true) @map("confirm_before_delete")
+  general GeneralSettings
+  task    TaskSettings
+  label   LabelSettings
 
   userId String @map("user_id") @db.ObjectId
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -18,9 +12,19 @@ model UserSettings {
   @@map("user_settings")
 }
 
-model TaskSettings {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+type GeneralSettings {
+  theme       Theme       @default(light)
+  accentColor AccentColor @default(blue) @map("accent_color")
 
+  firstDayOfWeek      WeekStart           @default(monday) @map("first_day_of_week")
+  dateFormat          DateFormat          @default(dd_mm_yyyy) @map("date_format")
+  boardBackgroundBlur BoardBackgroundBlur @default(off) @map("board_background_blur")
+  enableAnimations    Animations          @default(system) @map("enable_animations")
+  fontSize            FontSize            @default(medium) @map("font_size")
+  confirmBeforeDelete Boolean             @default(true) @map("confirm_before_delete")
+}
+
+type TaskSettings {
   sortTasksBy TaskSort @default(manual) @map("sort_tasks_by")
 
   defaultPriority Priority        @default(without) @map("default_priority")
@@ -30,34 +34,23 @@ model TaskSettings {
   showCompletedTasks    Boolean         @default(true) @map("show_completed_tasks")
   showPriorityIndicator Boolean         @default(true) @map("show_priority_indicator")
   newTaskPosition       NewTaskPosition @default(bottom) @map("new_task_position")
-
-  enableNaturalLanguageDates Boolean @default(true) @map("enable_natural_language_dates")
-
-  userId String @map("user_id") @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId])
-  @@map("task_settings")
 }
 
-model LabelSettings {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  showLabelsOnTask Boolean        @default(true) @map("show_labels_on_task")
-  labelDisplay     LabelDisplay   @default(full) @map("label_display")
-  maxLabelsShown   MaxLabelsShown @default(three) @map("max_labels_shown")
-
-  userId String @map("user_id") @db.ObjectId
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId])
-  @@map("label_settings")
+type LabelSettings {
+  labelDisplay   LabelDisplay @default(full) @map("label_display")
+  maxLabelsShown Int          @default(3) @map("max_labels_shown")
 }
 
 enum Theme {
   light
   dark
   system
+}
+
+enum Animations {
+  system
+  on
+  off
 }
 
 enum AccentColor {
@@ -101,13 +94,6 @@ enum FontSize {
   large
 }
 
-enum MaxLabelsShown {
-  one
-  two
-  three
-  all
-}
-
 enum CardDensity {
   compact
   comfortable
@@ -122,6 +108,7 @@ enum TaskSort {
 }
 
 enum LabelDisplay {
+  hidden
   full
   compact
 }

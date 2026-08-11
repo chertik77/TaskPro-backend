@@ -1,13 +1,14 @@
 import { z } from '@hono/zod-openapi'
 import {
   AccentColor,
+  Animations,
   BoardBackgroundBlur,
   CardDensity,
   DateFormat,
   DefaultDeadline,
   FontSize,
   LabelDisplay,
-  MaxLabelsShown,
+  LabelSort,
   NewTaskPosition,
   Priority,
   TaskSort,
@@ -21,7 +22,6 @@ export const AccentColorSchema = z.enum(AccentColor).openapi('AccentColor')
 
 export const GeneralSettingsSchema = z
   .object({
-    id: ObjectIdSchema,
     theme: z.enum(Theme).openapi({ default: Theme.light }),
     accentColor: AccentColorSchema.openapi({ default: AccentColor.blue }),
     firstDayOfWeek: z.enum(WeekStart).openapi({ example: WeekStart.monday }),
@@ -30,15 +30,17 @@ export const GeneralSettingsSchema = z
     boardBackgroundBlur: z
       .enum(BoardBackgroundBlur)
       .openapi({ example: BoardBackgroundBlur.off }),
-    enableAnimations: z.boolean().openapi({ example: true }),
-    confirmBeforeDelete: z.boolean().openapi({ example: true }),
-    userId: ObjectIdSchema
+    enableAnimations: z.enum(Animations).openapi({
+      description:
+        '`system` defers to the client `prefers-reduced-motion` media query',
+      example: Animations.system
+    }),
+    confirmBeforeDelete: z.boolean().openapi({ example: true })
   })
   .openapi('GeneralSettings')
 
 export const TaskSettingsSchema = z
   .object({
-    id: ObjectIdSchema,
     sortTasksBy: z.enum(TaskSort).openapi({ example: TaskSort.manual }),
     defaultPriority: z.enum(Priority).openapi({ example: Priority.without }),
     defaultDeadline: z
@@ -49,41 +51,35 @@ export const TaskSettingsSchema = z
     showPriorityIndicator: z.boolean().openapi({ example: true }),
     newTaskPosition: z
       .enum(NewTaskPosition)
-      .openapi({ example: NewTaskPosition.bottom }),
-    enableNaturalLanguageDates: z.boolean().openapi({ example: true }),
-    userId: ObjectIdSchema
+      .openapi({ example: NewTaskPosition.bottom })
   })
   .openapi('TaskSettings')
 
 export const LabelSettingsSchema = z
   .object({
-    id: ObjectIdSchema,
-    showLabelsOnTask: z.boolean().openapi({ example: true }),
+    sortLabelsBy: z
+      .enum(LabelSort)
+      .openapi({ example: LabelSort.alphabetical }),
     labelDisplay: z.enum(LabelDisplay).openapi({ example: LabelDisplay.full }),
-    maxLabelsShown: z
-      .enum(MaxLabelsShown)
-      .openapi({ example: MaxLabelsShown.three }),
-    userId: ObjectIdSchema
+    maxLabelsShown: z.number().int().min(0).max(10).openapi({
+      description: 'Labels rendered on a task card before collapsing. 0 = all',
+      example: 3
+    })
   })
   .openapi('LabelSettings')
 
-export const GetAllSettingsResponseSchema = z.object({
-  general: GeneralSettingsSchema,
-  task: TaskSettingsSchema,
-  label: LabelSettingsSchema
-})
+export const UserSettingsSchema = z
+  .object({
+    id: ObjectIdSchema,
+    general: GeneralSettingsSchema,
+    task: TaskSettingsSchema,
+    label: LabelSettingsSchema,
+    userId: ObjectIdSchema
+  })
+  .openapi('UserSettings')
 
-export const UpdateGeneralSettingsSchema = GeneralSettingsSchema.omit({
-  id: true,
-  userId: true
-}).partial()
+export const UpdateGeneralSettingsSchema = GeneralSettingsSchema.partial()
 
-export const UpdateTaskSettingsSchema = TaskSettingsSchema.omit({
-  id: true,
-  userId: true
-}).partial()
+export const UpdateTaskSettingsSchema = TaskSettingsSchema.partial()
 
-export const UpdateLabelSettingsSchema = LabelSettingsSchema.omit({
-  id: true,
-  userId: true
-}).partial()
+export const UpdateLabelSettingsSchema = LabelSettingsSchema.partial()

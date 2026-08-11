@@ -25,7 +25,7 @@ export {
   LabelConflictResponse
 } from './label.schema'
 export {
-  GetAllSettingsResponseSchema,
+  UserSettingsSchema,
   GeneralSettingsSchema,
   TaskSettingsSchema,
   LabelSettingsSchema,

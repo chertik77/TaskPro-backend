@@ -10,6 +10,8 @@ import { invalidate, REDIS_TTL, redisKeys } from '@/redis'
 
 import { redisClient } from '@/config'
 
+const EMPTY_SECTIONS = { general: {}, task: {}, label: {} }
+
 class SettingsService {
   getAll = async (userId: string) => {
     const cacheKey = redisKeys.settings.byUser(userId)
@@ -18,77 +20,65 @@ class SettingsService {
 
     if (cachedSettings) return JSON.parse(cachedSettings)
 
-    const [general, task, label] = await Promise.all([
-      prisma.userSettings.upsert({
-        where: { userId },
-        create: { userId },
-        update: {}
-      }),
-      prisma.taskSettings.upsert({
-        where: { userId },
-        create: { userId },
-        update: {}
-      }),
-      prisma.labelSettings.upsert({
-        where: { userId },
-        create: { userId },
-        update: {}
-      })
-    ])
+    const settings = await prisma.userSettings.upsert({
+      where: { userId },
+      create: { userId, ...EMPTY_SECTIONS },
+      update: {}
+    })
 
     await redisClient.set(
       cacheKey,
-      JSON.stringify({ general, task, label }),
+      JSON.stringify(settings),
       'EX',
       REDIS_TTL.DEFAULT
     )
 
-    return { general, task, label }
+    return settings
   }
 
   updateGeneral = async (
     data: z.infer<typeof UpdateGeneralSettingsSchema>,
     userId: string
   ) => {
-    const settings = await prisma.userSettings.upsert({
+    const { general } = await prisma.userSettings.upsert({
       where: { userId },
-      create: { userId, ...data },
-      update: data
+      create: { userId, ...EMPTY_SECTIONS, general: data },
+      update: { general: { update: data } }
     })
 
     await invalidate.settings(userId)
 
-    return settings
+    return general
   }
 
   updateTasks = async (
     data: z.infer<typeof UpdateTaskSettingsSchema>,
     userId: string
   ) => {
-    const settings = await prisma.taskSettings.upsert({
+    const { task } = await prisma.userSettings.upsert({
       where: { userId },
-      create: { userId, ...data },
-      update: data
+      create: { userId, ...EMPTY_SECTIONS, task: data },
+      update: { task: { update: data } }
     })
 
     await invalidate.settings(userId)
 
-    return settings
+    return task
   }
 
   updateLabels = async (
     data: z.infer<typeof UpdateLabelSettingsSchema>,
     userId: string
   ) => {
-    const settings = await prisma.labelSettings.upsert({
+    const { label } = await prisma.userSettings.upsert({
       where: { userId },
-      create: { userId, ...data },
-      update: data
+      create: { userId, ...EMPTY_SECTIONS, label: data },
+      update: { label: { update: data } }
     })
 
     await invalidate.settings(userId)
 
-    return settings
+    return label
   }
 }
 
