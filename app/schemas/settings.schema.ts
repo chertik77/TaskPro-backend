@@ -8,10 +8,7 @@ import {
   DefaultDeadline,
   FontSize,
   LabelDisplay,
-  LabelSort,
-  NewTaskPosition,
   Priority,
-  TaskSort,
   Theme,
   WeekStart
 } from '@prisma/client'
@@ -41,25 +38,18 @@ export const GeneralSettingsSchema = z
 
 export const TaskSettingsSchema = z
   .object({
-    sortTasksBy: z.enum(TaskSort).openapi({ example: TaskSort.manual }),
     defaultPriority: z.enum(Priority).openapi({ example: Priority.without }),
     defaultDeadline: z
       .enum(DefaultDeadline)
       .openapi({ example: DefaultDeadline.none }),
     cardDensity: z.enum(CardDensity).openapi({ example: CardDensity.compact }),
-    showCompletedTasks: z.boolean().openapi({ example: true }),
     showPriorityIndicator: z.boolean().openapi({ example: true }),
-    newTaskPosition: z
-      .enum(NewTaskPosition)
-      .openapi({ example: NewTaskPosition.bottom })
+    overdueHighlight: z.boolean().openapi({ example: true })
   })
   .openapi('TaskSettings')
 
 export const LabelSettingsSchema = z
   .object({
-    sortLabelsBy: z
-      .enum(LabelSort)
-      .openapi({ example: LabelSort.alphabetical }),
     labelDisplay: z.enum(LabelDisplay).openapi({ example: LabelDisplay.full }),
     maxLabelsShown: z.number().int().min(0).max(10).openapi({
       description: 'Labels rendered on a task card before collapsing. 0 = all',

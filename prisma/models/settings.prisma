@@ -25,15 +25,12 @@ type GeneralSettings {
 }
 
 type TaskSettings {
-  sortTasksBy TaskSort @default(manual) @map("sort_tasks_by")
-
   defaultPriority Priority        @default(without) @map("default_priority")
   defaultDeadline DefaultDeadline @default(none) @map("default_deadline")
 
-  cardDensity           CardDensity     @default(compact) @map("card_density")
-  showCompletedTasks    Boolean         @default(true) @map("show_completed_tasks")
-  showPriorityIndicator Boolean         @default(true) @map("show_priority_indicator")
-  newTaskPosition       NewTaskPosition @default(bottom) @map("new_task_position")
+  cardDensity           CardDensity @default(comfortable) @map("card_density")
+  showPriorityIndicator Boolean     @default(true) @map("show_priority_indicator")
+  overdueHighlight      Boolean     @default(true) @map("overdue_highlight")
 }
 
 type LabelSettings {
@@ -75,11 +72,6 @@ enum BoardBackgroundBlur {
   medium
 }
 
-enum NewTaskPosition {
-  top
-  bottom
-}
-
 enum DefaultDeadline {
   none
   today
@@ -97,14 +89,6 @@ enum FontSize {
 enum CardDensity {
   compact
   comfortable
-}
-
-enum TaskSort {
-  manual
-  priority
-  deadline
-  created
-  alphabetical
 }
 
 enum LabelDisplay {
