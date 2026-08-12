@@ -6,6 +6,17 @@ import { ObjectIdSchema } from './object-id.schema'
 
 const TaskPrioritySchema = z.enum(Priority).openapi('TaskPriority')
 
+const DeadlineSchema = z.iso
+  .datetime()
+  .transform(value => {
+    const date = new Date(value)
+
+    return new Date(
+      Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+    )
+  })
+  .openapi({ example: '2025-10-15T00:00:00.000Z' })
+
 export const TaskSchema = z
   .object({
     id: ObjectIdSchema,
@@ -41,20 +52,7 @@ export const CreateTaskSchema = TaskSchema.pick({
     description: 'Array of Label ids to attach to the task',
     example: ['6672fdccc07147fc7ae1bb93']
   }),
-  deadline: z
-    .optional(
-      z.iso.datetime().refine(value => {
-        const checkDate = new Date(value)
-        const today = new Date()
-
-        // Strip time down to the day level for fair comparison
-        checkDate.setHours(0, 0, 0, 0)
-        today.setHours(0, 0, 0, 0)
-
-        return checkDate >= today
-      }, 'Deadline must be today or in the future')
-    )
-    .transform(v => (v ? new Date(v) : null))
+  deadline: z.optional(DeadlineSchema)
 })
 
 export const UpdateTaskSchema = z
@@ -65,7 +63,7 @@ export const UpdateTaskSchema = z
       example:
         'Review the project materials: Familiarize yourself with the project...'
     }),
-    deadline: z.nullable(z.iso.datetime()).openapi({ example: '2025-10-15' }),
+    deadline: z.nullable(DeadlineSchema),
     columnId: ObjectIdSchema
   })
   .partial()
