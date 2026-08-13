@@ -13,7 +13,11 @@ import * as z from 'zod'
 
 import { env, redisClient } from '../config'
 import { prisma } from '../prisma'
-import { mapMicrosoftProfileToUser, parseUserAgent } from '../utils'
+import {
+  deleteUserData,
+  mapMicrosoftProfileToUser,
+  parseUserAgent
+} from '../utils'
 
 export const auth = betterAuth({
   appName: 'Task Pro',
@@ -64,7 +68,13 @@ export const auth = betterAuth({
       }
     })
   },
-  user: { additionalFields: { imagePublicId: { type: 'string' } } },
+  user: {
+    additionalFields: { imagePublicId: { type: 'string', required: false } },
+    deleteUser: {
+      enabled: true,
+      beforeDelete: async user => await deleteUserData(user.id)
+    }
+  },
   account: {
     accountLinking: {
       trustedProviders: ['google', 'microsoft', 'email-password']

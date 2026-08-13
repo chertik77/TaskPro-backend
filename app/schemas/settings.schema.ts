@@ -20,7 +20,7 @@ export const AccentColorSchema = z.enum(AccentColor).openapi('AccentColor')
 export const GeneralSettingsSchema = z
   .object({
     theme: z.enum(Theme).openapi({ default: Theme.light }),
-    accentColor: AccentColorSchema.openapi({ default: AccentColor.blue }),
+    accentColor: AccentColorSchema.openapi({ default: AccentColor.green }),
     firstDayOfWeek: z.enum(WeekStart).openapi({ example: WeekStart.monday }),
     fontSize: z.enum(FontSize).openapi({ example: FontSize.medium }),
     dateFormat: z.enum(DateFormat).openapi({ example: DateFormat.dd_mm_yyyy }),

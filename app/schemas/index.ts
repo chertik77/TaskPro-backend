@@ -39,4 +39,9 @@ export {
   NotFoundResponse,
   UnauthorizedResponse
 } from './error-schema'
-export { HelpSchema, HelpResponseSchema } from './user.schema'
+export {
+  HelpSchema,
+  HelpResponseSchema,
+  UploadAvatarSchema,
+  AvatarSchema
+} from './user.schema'

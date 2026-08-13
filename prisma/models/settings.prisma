@@ -14,7 +14,7 @@ model UserSettings {
 
 type GeneralSettings {
   theme       Theme       @default(light)
-  accentColor AccentColor @default(blue) @map("accent_color")
+  accentColor AccentColor @default(green) @map("accent_color")
 
   firstDayOfWeek      WeekStart           @default(monday) @map("first_day_of_week")
   dateFormat          DateFormat          @default(dd_mm_yyyy) @map("date_format")
