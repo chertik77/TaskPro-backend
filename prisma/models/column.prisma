@@ -11,5 +11,6 @@ model Column {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([boardId, order])
   @@map("columns")
 }

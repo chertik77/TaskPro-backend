@@ -1,0 +1,6 @@
+export { boardService } from './board.service'
+export { columnService } from './column.service'
+export { taskService } from './task.service'
+export { labelService } from './label.service'
+export { userService } from './user.service'
+export { settingsService } from './settings.service'

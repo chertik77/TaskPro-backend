@@ -1,0 +1,21 @@
+model Passkey {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  name       String?
+  aaguid     String?
+  transports String?
+  counter    Int
+
+  deviceType   String  @map("device_type")
+  backedUp     Boolean @map("backed_up")
+  publicKey    String  @map("public_key")
+  credentialID String  @map("credential_id")
+
+  createdAt DateTime? @map("created_at")
+
+  userId String @map("user_id") @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([credentialID])
+  @@map("passkeys")
+}

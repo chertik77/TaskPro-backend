@@ -1,41 +1,77 @@
+import { z } from '@hono/zod-openapi'
 import { Priority } from '@prisma/client'
-import * as z from 'zod'
 
-import { objectIdSchema } from './object-id.schema'
+import { LabelSchema } from './label.schema'
+import { ObjectIdSchema } from './object-id.schema'
 
-export const CreateTaskSchema = z.object({
-  title: z.string().min(3),
-  description: z.optional(z.string().min(3)),
-  priority: z.enum(Priority),
-  labels: z.optional(z.array(objectIdSchema())),
-  deadline: z
-    .optional(
-      z.iso.datetime().refine(value => {
-        const checkDate = new Date(value)
-        const today = new Date()
+const TaskPrioritySchema = z.enum(Priority).openapi('TaskPriority')
 
-        // Strip time down to the day level for fair comparison
-        checkDate.setHours(0, 0, 0, 0)
-        today.setHours(0, 0, 0, 0)
+const DeadlineSchema = z.iso
+  .datetime()
+  .transform(value => {
+    const date = new Date(value)
 
-        return checkDate >= today
-      }, 'Deadline must be today or in the future')
+    return new Date(
+      Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
     )
-    .transform(v => (v ? new Date(v) : null))
+  })
+  .openapi({ example: '2025-10-15T00:00:00.000Z' })
+
+export const TaskSchema = z
+  .object({
+    id: ObjectIdSchema,
+    title: z.string().min(3).openapi({ example: 'Publication of the project' }),
+    description: z.string().min(3).nullable().openapi({
+      example:
+        'Review the project materials: Familiarize yourself with the project...'
+    }),
+    priority: TaskPrioritySchema.openapi({ example: Priority.high }),
+    deadline: z
+      .date()
+      .nullable()
+      .openapi({ example: '2025-10-15T00:00:00.000Z' }),
+    order: z.number().int().openapi({ example: 1 }),
+    completed: z.boolean().openapi({ example: false }),
+    completedAt: z.date().nullable().openapi({ example: null }),
+    columnId: ObjectIdSchema,
+    labels: z.array(LabelSchema),
+    createdAt: z.date(),
+    updatedAt: z.date()
+  })
+  .openapi('Task')
+
+export const CreateTaskSchema = TaskSchema.pick({
+  title: true,
+  priority: true
+}).extend({
+  description: z.optional(z.string().min(3)).openapi({
+    example:
+      'Review the project materials: Familiarize yourself with the project...'
+  }),
+  labels: z.optional(z.array(ObjectIdSchema)).openapi({
+    description: 'Array of Label ids to attach to the task',
+    example: ['6672fdccc07147fc7ae1bb93']
+  }),
+  deadline: z.optional(DeadlineSchema)
 })
 
 export const UpdateTaskSchema = z
   .object({
     ...CreateTaskSchema.shape,
-    completed: z.boolean(),
-    description: z.nullable(z.string().min(3)),
-    deadline: z.nullable(z.iso.datetime()),
-    columnId: objectIdSchema()
+    completed: TaskSchema.shape.completed,
+    description: z.nullable(z.string().min(3)).openapi({
+      example:
+        'Review the project materials: Familiarize yourself with the project...'
+    }),
+    deadline: z.nullable(DeadlineSchema),
+    columnId: ObjectIdSchema
   })
   .partial()
 
-export const TaskParamsSchema = z.object({ taskId: objectIdSchema() })
+export const TaskParamsSchema = z.object({ taskId: ObjectIdSchema })
 
-export const UpdateTaskOrderSchema = z.object({
-  ids: z.array(objectIdSchema())
+export const UpdateTasksOrderSchema = z.object({
+  ids: z.array(ObjectIdSchema).openapi({
+    example: ['6672fdccc07147fc7ae1bb93', '6743474be4006eca6c8122e7']
+  })
 })

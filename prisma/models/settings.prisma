@@ -1,0 +1,104 @@
+model UserSettings {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  general GeneralSettings
+  task    TaskSettings
+  label   LabelSettings
+
+  userId String @map("user_id") @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+  @@map("user_settings")
+}
+
+type GeneralSettings {
+  theme       Theme       @default(light)
+  accentColor AccentColor @default(green) @map("accent_color")
+
+  firstDayOfWeek      WeekStart           @default(monday) @map("first_day_of_week")
+  dateFormat          DateFormat          @default(dd_mm_yyyy) @map("date_format")
+  boardBackgroundBlur BoardBackgroundBlur @default(off) @map("board_background_blur")
+  enableAnimations    Animations          @default(system) @map("enable_animations")
+  fontSize            FontSize            @default(medium) @map("font_size")
+  confirmBeforeDelete Boolean             @default(true) @map("confirm_before_delete")
+}
+
+type TaskSettings {
+  defaultPriority Priority        @default(without) @map("default_priority")
+  defaultDeadline DefaultDeadline @default(none) @map("default_deadline")
+
+  cardDensity           CardDensity @default(comfortable) @map("card_density")
+  showPriorityIndicator Boolean     @default(true) @map("show_priority_indicator")
+  overdueHighlight      Boolean     @default(true) @map("overdue_highlight")
+}
+
+type LabelSettings {
+  labelDisplay   LabelDisplay @default(full) @map("label_display")
+  maxLabelsShown Int          @default(3) @map("max_labels_shown")
+}
+
+enum Theme {
+  light
+  dark
+  system
+}
+
+enum Animations {
+  system
+  on
+  off
+}
+
+enum AccentColor {
+  blue
+  purple
+  red
+  gray
+  cyan
+  yellow
+  indigo
+  green
+}
+
+enum WeekStart {
+  sunday
+  monday
+}
+
+enum BoardBackgroundBlur {
+  off
+  low
+  medium
+}
+
+enum DefaultDeadline {
+  none
+  today
+  tomorrow
+  three_days
+  one_week
+}
+
+enum FontSize {
+  small
+  medium
+  large
+}
+
+enum CardDensity {
+  compact
+  comfortable
+}
+
+enum LabelDisplay {
+  hidden
+  full
+  compact
+}
+
+enum DateFormat {
+  dd_mm_yyyy
+  mm_dd_yyyy
+  yyyy_mm_dd
+}

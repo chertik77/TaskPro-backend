@@ -1,12 +1,23 @@
+import type { BetterAuthPlugin, Session } from 'better-auth'
+
+import { passkey } from '@better-auth/passkey'
 import { redisStorage } from '@better-auth/redis-storage'
-import { Theme } from '@prisma/client'
-import { betterAuth } from 'better-auth'
+import { APIError, betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
-import { openAPI } from 'better-auth/plugins'
+import {
+  createAuthEndpoint,
+  createAuthMiddleware,
+  sessionMiddleware
+} from 'better-auth/api'
+import * as z from 'zod'
 
 import { env, redisClient } from '../config'
 import { prisma } from '../prisma'
-import { mapMicrosoftProfileToUser } from './map-microsoft-profile-to-user'
+import {
+  deleteUserData,
+  mapMicrosoftProfileToUser,
+  parseUserAgent
+} from '../utils'
 
 export const auth = betterAuth({
   appName: 'Task Pro',
@@ -30,10 +41,43 @@ export const auth = betterAuth({
       }
     }
   },
+  hooks: {
+    after: createAuthMiddleware(async ctx => {
+      if (ctx.path.startsWith('/list-sessions')) {
+        const sessions = ctx.context.returned as Session[] | APIError
+
+        if (sessions instanceof APIError) return ctx.context.returned
+
+        const currentSession = ctx.context.session?.session
+
+        const updatedSessions = sessions
+          .map(session => {
+            const { userAgent, ...rest } = session
+            const { browser, os } = parseUserAgent(userAgent)
+
+            return {
+              ...rest,
+              browser,
+              os,
+              isCurrent: session.id === currentSession?.id
+            }
+          })
+          .sort((a, b) => Number(b.isCurrent) - Number(a.isCurrent))
+
+        return updatedSessions
+      }
+    })
+  },
   user: {
-    additionalFields: {
-      theme: { type: Object.values(Theme), input: true },
-      imagePublicId: { type: 'string', input: true }
+    additionalFields: { imagePublicId: { type: 'string', required: false } },
+    deleteUser: {
+      enabled: true,
+      beforeDelete: async user => await deleteUserData(user.id)
+    }
+  },
+  account: {
+    accountLinking: {
+      trustedProviders: ['google', 'microsoft', 'email-password']
     }
   },
   emailAndPassword: { enabled: true, requireEmailVerification: false },
@@ -54,5 +98,44 @@ export const auth = betterAuth({
   },
   trustedOrigins: env.ALLOWED_ORIGINS,
   disabledPaths: ['/verify-email', '/send-verification-email'],
-  plugins: [openAPI({ disableDefaultReference: true })]
+  plugins: [
+    revokeSessionByIdPlugin(),
+    passkey({
+      rpID: env.RP_ID,
+      rpName: 'Task Pro',
+      advanced: { webAuthnChallengeCookie: 'task-pro-passkey' }
+    })
+  ]
 })
+
+function revokeSessionByIdPlugin() {
+  return {
+    id: 'revoke-session-id',
+    endpoints: {
+      revokeSessionById: createAuthEndpoint(
+        '/revoke-session-id',
+        {
+          method: 'POST',
+          requireHeaders: true,
+          use: [sessionMiddleware],
+          body: z.object({ id: z.string() })
+        },
+        async ctx => {
+          const { user } = ctx.context.session
+
+          const sessions = await ctx.context.internalAdapter.listSessions(
+            user.id
+          )
+
+          const session = sessions.find(({ id }) => id === ctx.body.id)
+
+          if (!session) throw ctx.error(404, { message: 'Session not found' })
+
+          await ctx.context.internalAdapter.deleteSession(session.token)
+
+          return ctx.json({ success: true })
+        }
+      )
+    }
+  } satisfies BetterAuthPlugin
+}

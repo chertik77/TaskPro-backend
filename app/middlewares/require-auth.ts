@@ -1,22 +1,22 @@
-import type { NextFunction, Request, Response } from 'express'
+import type { AuthVariables } from '@/types'
 
 import { auth } from '@/lib'
-import { fromNodeHeaders } from 'better-auth/node'
-import { Unauthorized } from 'http-errors'
+import { createMiddleware } from 'hono/factory'
+import { HTTPException } from 'hono/http-exception'
 
-export const requireAuth = async (
-  req: Request,
-  _: Response,
-  next: NextFunction
-) => {
+export const requireAuth = createMiddleware<{
+  Variables: AuthVariables
+}>(async (c, next) => {
   const session = await auth.api.getSession({
-    headers: fromNodeHeaders(req.headers)
+    headers: c.req.raw.headers
   })
 
-  if (!session) return next(Unauthorized())
+  if (!session) {
+    throw new HTTPException(401, { message: 'Unauthorized' })
+  }
 
-  req.user = session.user
-  req.session = session.session
+  c.set('user', session.user)
+  c.set('session', session.session)
 
-  next()
-}
+  await next()
+})
