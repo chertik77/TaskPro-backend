@@ -8,5 +8,5 @@ export const parseUserAgent = (userAgent: string | null | undefined) => {
   const browser = parser.getBrowser()
   const os = parser.getOS()
 
-  return { browser: browser.name, os: os.name }
+  return { browser: browser.name ?? '', os: os.name ?? '' }
 }

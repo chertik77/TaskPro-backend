@@ -19,7 +19,7 @@ export const getAllLabelsRoute = createRoute({
   tags: ['Label'],
   operationId: 'getAllLabels',
   summary: 'Get all labels',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   responses: {
     200: {
       description: 'Success',
@@ -35,7 +35,7 @@ export const createLabelRoute = createRoute({
   tags: ['Label'],
   operationId: 'createLabel',
   summary: 'Create new label',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     body: {
       required: true,
@@ -59,7 +59,7 @@ export const updateLabelRoute = createRoute({
   tags: ['Label'],
   operationId: 'updateLabel',
   summary: 'Update label by id',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     params: LabelParamsSchema,
     body: {
@@ -85,7 +85,7 @@ export const deleteLabelRoute = createRoute({
   tags: ['Label'],
   operationId: 'deleteLabel',
   summary: 'Delete label by id',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: { params: LabelParamsSchema },
   responses: {
     204: { description: 'The resource was deleted successfully.' },

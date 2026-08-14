@@ -43,5 +43,7 @@ export {
   HelpSchema,
   HelpResponseSchema,
   UploadAvatarSchema,
-  AvatarSchema
+  AvatarSchema,
+  AVATAR_MAX_SIZE
 } from './user.schema'
+export { HealthSchema } from './health.schema'

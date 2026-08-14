@@ -11,13 +11,11 @@ export async function uploadToCloudinary({
   folder = 'uploads',
   public_id
 }: UploadInput) {
-  const result = await cloudinary.uploader.upload(
-    file,
-    { folder, public_id, resource_type: 'auto' },
-    err => {
-      if (err) throw new Error(err.message)
-    }
-  )
+  const result = await cloudinary.uploader.upload(file, {
+    folder,
+    public_id,
+    resource_type: 'auto'
+  })
 
   return {
     url: result.secure_url,

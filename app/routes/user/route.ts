@@ -1,9 +1,21 @@
 import { createProtectedRouter } from '@/lib'
 import { userService } from '@/services'
+import { bodyLimit } from 'hono/body-limit'
+
+import { AVATAR_MAX_SIZE } from '@/schemas'
 
 import { deleteAvatarRoute, helpRoute, uploadAvatarRoute } from './openapi'
 
 export const userRouter = createProtectedRouter()
+
+userRouter.post(
+  '/avatar',
+  bodyLimit({
+    maxSize: AVATAR_MAX_SIZE,
+    onError: c =>
+      c.json({ status: 413, message: 'Avatar must be 5MB or less' }, 413)
+  })
+)
 
 userRouter.openapi(helpRoute, async c => {
   const json = c.req.valid('json')

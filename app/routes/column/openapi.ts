@@ -18,7 +18,7 @@ export const createColumnRoute = createRoute({
   operationId: 'createColumn',
   tags: ['Column'],
   summary: 'Create new column',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     params: BoardParamsSchema,
     body: {
@@ -45,7 +45,7 @@ export const updateColumnsOrderRoute = createRoute({
   operationId: 'updateColumnsOrder',
   tags: ['Column'],
   summary: 'Update columns order',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     params: BoardParamsSchema,
     body: {
@@ -74,7 +74,7 @@ export const updateColumnRoute = createRoute({
   operationId: 'updateColumn',
   tags: ['Column'],
   summary: 'Update column by id',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     params: ColumnParamsSchema,
     body: {
@@ -101,7 +101,7 @@ export const deleteColumnRoute = createRoute({
   operationId: 'deleteColumn',
   tags: ['Column'],
   summary: 'Delete column by id',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: { params: ColumnParamsSchema },
   responses: {
     204: { description: 'The resource was deleted successfully.' },

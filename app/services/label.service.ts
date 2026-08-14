@@ -54,7 +54,7 @@ class LabelService {
         where: { userId_name: { userId, name: data.name } }
       })
 
-      if (labelWithSameName) {
+      if (labelWithSameName && labelWithSameName.id !== labelId) {
         throw new HTTPException(409, {
           message: 'Label with same name already exists'
         })

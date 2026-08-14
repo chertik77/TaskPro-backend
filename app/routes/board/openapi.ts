@@ -16,7 +16,7 @@ export const getAllBoardsRoute = createRoute({
   operationId: 'getAllBoards',
   tags: ['Board'],
   summary: 'Get all boards',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   responses: {
     200: {
       description: 'Success',
@@ -36,7 +36,7 @@ export const createBoardRoute = createRoute({
   operationId: 'createBoard',
   tags: ['Board'],
   summary: 'Create new board',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     body: {
       required: true,
@@ -59,7 +59,7 @@ export const getBoardByIdRoute = createRoute({
   operationId: 'getBoardById',
   tags: ['Board'],
   summary: 'Get board by id',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: { params: BoardParamsSchema },
   responses: {
     200: {
@@ -77,7 +77,7 @@ export const updateBoardRoute = createRoute({
   operationId: 'updateBoard',
   tags: ['Board'],
   summary: 'Update board by id',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     params: BoardParamsSchema,
     body: {
@@ -102,7 +102,7 @@ export const deleteBoardRoute = createRoute({
   operationId: 'deleteBoard',
   tags: ['Board'],
   summary: 'Delete board by id',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: { params: BoardParamsSchema },
   responses: {
     204: { description: 'The resource was deleted successfully.' },

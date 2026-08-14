@@ -16,11 +16,12 @@ class TaskService {
     userId: string
   ) => {
     const column = await prisma.column.findUnique({
-      where: { id: columnId, board: { userId } },
-      include: { board: { select: { userId: true } } }
+      where: { id: columnId, board: { userId } }
     })
 
     if (!column) throw new HTTPException(404, { message: 'Column not found' })
+
+    await this.assertLabelsOwned(data.labels, userId)
 
     const newOrder = await this.getNewTaskOrder(column.id)
 
@@ -52,6 +53,8 @@ class TaskService {
       if (!column) throw new HTTPException(404, { message: 'Column not found' })
     }
 
+    await this.assertLabelsOwned(data.labels, userId)
+
     const updatedTask = await prisma.task.updateIgnoreNotFound({
       where: { id: taskId, column: { board: { userId } } },
       data: {
@@ -63,7 +66,7 @@ class TaskService {
       },
       include: {
         labels: true,
-        column: { include: { board: { select: { userId: true } } } }
+        column: { select: { boardId: true } }
       }
     })
 
@@ -84,8 +87,7 @@ class TaskService {
     userId: string
   ) => {
     const column = await prisma.column.findUnique({
-      where: { id: columnId, board: { userId } },
-      include: { board: { select: { userId: true } } }
+      where: { id: columnId, board: { userId } }
     })
 
     if (!column) {
@@ -113,7 +115,7 @@ class TaskService {
   deleteById = async (taskId: string, userId: string) => {
     const deletedTask = await prisma.task.deleteIgnoreNotFound({
       where: { id: taskId, column: { board: { userId } } },
-      include: { column: { include: { board: { select: { userId: true } } } } }
+      include: { column: { select: { boardId: true } } }
     })
 
     if (!deletedTask) {
@@ -121,6 +123,23 @@ class TaskService {
     }
 
     await invalidate.board(userId, deletedTask.column.boardId)
+  }
+
+  private assertLabelsOwned = async (
+    labelIds: string[] | undefined,
+    userId: string
+  ) => {
+    if (!labelIds?.length) return
+
+    const uniqueIds = [...new Set(labelIds)]
+
+    const ownedCount = await prisma.label.count({
+      where: { id: { in: uniqueIds }, userId }
+    })
+
+    if (ownedCount !== uniqueIds.length) {
+      throw new HTTPException(404, { message: 'Label not found' })
+    }
   }
 
   private getNewTaskOrder = async (columnId: string) => {

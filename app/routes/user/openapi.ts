@@ -15,7 +15,7 @@ export const helpRoute = createRoute({
   operationId: 'help',
   tags: ['User'],
   summary: 'Send email need help',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     body: {
       required: true,
@@ -38,7 +38,7 @@ export const uploadAvatarRoute = createRoute({
   operationId: 'uploadAvatar',
   tags: ['User'],
   summary: 'Upload user avatar',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     body: {
       required: true,
@@ -61,7 +61,7 @@ export const deleteAvatarRoute = createRoute({
   operationId: 'deleteAvatar',
   tags: ['User'],
   summary: 'Delete user avatar',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   responses: {
     200: {
       content: { 'application/json': { schema: AvatarSchema } },

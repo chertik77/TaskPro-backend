@@ -108,10 +108,14 @@ class UserService {
   private destroyAvatar = async (imagePublicId: string | null | undefined) => {
     if (!imagePublicId) return
 
-    await cloudinary.uploader.destroy(imagePublicId, {
-      type: 'upload',
-      resource_type: 'image'
-    })
+    try {
+      await cloudinary.uploader.destroy(imagePublicId, {
+        type: 'upload',
+        resource_type: 'image'
+      })
+    } catch (error) {
+      console.error('Failed to delete avatar', imagePublicId, error)
+    }
   }
 }
 

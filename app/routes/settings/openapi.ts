@@ -18,7 +18,7 @@ export const getAllSettingsRoute = createRoute({
   operationId: 'getAllSettings',
   tags: ['User'],
   summary: 'Get all user settings',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   responses: {
     200: {
       description: 'Success',
@@ -34,7 +34,7 @@ export const updateGeneralSettingsRoute = createRoute({
   operationId: 'updateGeneralSettings',
   tags: ['User'],
   summary: 'Update general settings',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     body: {
       required: true,
@@ -57,7 +57,7 @@ export const updateTaskSettingsRoute = createRoute({
   operationId: 'updateTaskSettings',
   tags: ['User'],
   summary: 'Update task settings',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     body: {
       required: true,
@@ -80,7 +80,7 @@ export const updateLabelSettingsRoute = createRoute({
   operationId: 'updateLabelSettings',
   tags: ['User'],
   summary: 'Update label settings',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     body: {
       required: true,

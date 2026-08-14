@@ -8,3 +8,5 @@ export const redisClient = new Redis({
   host: env.REDIS_HOST,
   port: env.REDIS_PORT
 })
+
+redisClient.on('error', err => console.error('[redis]', err.message))

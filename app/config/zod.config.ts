@@ -10,14 +10,16 @@ export const zodConfig: core.$ZodConfig = {
     format,
     values
   }) => {
-    if (!input) return 'The field is required'
+    if (code === 'invalid_type' && input === undefined) {
+      return 'The field is required'
+    }
 
     if (code === 'too_small') {
-      return `The field must be at least ${minimum} characters`
+      return `The field must be at least ${minimum}`
     }
 
     if (code === 'too_big') {
-      return `The field must be at most ${maximum} characters`
+      return `The field must be at most ${maximum}`
     }
 
     if (code === 'invalid_value') {

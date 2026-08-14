@@ -18,7 +18,7 @@ export const createTaskRoute = createRoute({
   operationId: 'createTask',
   tags: ['Task'],
   summary: 'Create new task',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     params: ColumnParamsSchema,
     body: {
@@ -43,7 +43,7 @@ export const updateTasksOrderRoute = createRoute({
   operationId: 'updateTasksOrder',
   tags: ['Task'],
   summary: 'Update tasks order',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     params: ColumnParamsSchema,
     body: {
@@ -72,7 +72,7 @@ export const updateTaskRoute = createRoute({
   operationId: 'updateTask',
   tags: ['Task'],
   summary: 'Update task by id',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: {
     params: TaskParamsSchema,
     body: {
@@ -97,7 +97,7 @@ export const deleteTaskRoute = createRoute({
   operationId: 'deleteTask',
   tags: ['Task'],
   summary: 'Delete task by id',
-  security: [{ bearerAuth: [] }],
+  security: [{ cookieAuth: [] }],
   request: { params: TaskParamsSchema },
   responses: {
     204: { description: 'The resource was deleted successfully.' },

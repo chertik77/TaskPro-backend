@@ -3,7 +3,11 @@ import { z } from '@hono/zod-openapi'
 export const ErrorResponseSchema = z
   .object({
     status: z.number().openapi({ example: 400 }),
-    message: z.union([z.string(), z.record(z.string(), z.array(z.string()))])
+    message: z.union([z.string(), z.record(z.string(), z.array(z.string()))]),
+    errors: z
+      .record(z.string(), z.array(z.string()))
+      .optional()
+      .openapi({ description: 'Per-field validation messages' })
   })
   .openapi('ErrorResponse')
 
@@ -12,7 +16,11 @@ export const BadRequestResponse = {
   content: {
     'application/json': {
       schema: ErrorResponseSchema.openapi({
-        example: { status: 400, message: 'Validation failed' }
+        example: {
+          status: 400,
+          message: 'Validation failed',
+          errors: { title: ['The field must be at least 3'] }
+        }
       })
     }
   }
