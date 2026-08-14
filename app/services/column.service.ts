@@ -9,6 +9,8 @@ import { prisma } from '@/prisma'
 import { invalidate } from '@/redis'
 import { HTTPException } from 'hono/http-exception'
 
+import { getRebalancedOrder, ORDER_STEP } from '@/utils'
+
 class ColumnService {
   create = async (
     data: z.infer<typeof CreateColumnSchema>,
@@ -29,7 +31,7 @@ class ColumnService {
       select: { order: true }
     })
 
-    const newOrder = lastColumn ? lastColumn.order + 1 : 1
+    const newOrder = lastColumn ? lastColumn.order + ORDER_STEP : 0
 
     const column = await prisma.column.create({
       data: { ...data, order: newOrder, boardId: board.id }
@@ -65,29 +67,38 @@ class ColumnService {
     userId: string
   ) => {
     const board = await prisma.board.findUnique({
-      where: { id: boardId, userId }
+      where: { id: boardId, userId },
+      select: { id: true }
     })
 
     if (!board) {
       throw new HTTPException(404, { message: 'Board not found' })
     }
 
-    const transaction = data.ids.map((id, order) =>
+    const uniqueIds = [...new Set(data.ids)]
+
+    const ownedCount = await prisma.column.count({
+      where: { id: { in: uniqueIds }, boardId: board.id }
+    })
+
+    if (ownedCount !== uniqueIds.length) {
+      throw new HTTPException(404, { message: 'Column not found' })
+    }
+
+    const transaction = uniqueIds.map((id, index) =>
       prisma.column.update({
-        where: { id },
-        data: { order, boardId: board.id }
+        where: { id, board: { userId } },
+        data: { order: getRebalancedOrder(index) }
       })
     )
 
     try {
-      const updatedColumns = await prisma.$transaction(transaction)
-
-      await invalidate.board(userId, board.id)
-
-      return updatedColumns
+      await prisma.$transaction(transaction)
     } catch {
       throw new HTTPException(400, { message: 'Invalid order' })
     }
+
+    await invalidate.board(userId, board.id)
   }
 
   deleteById = async (columnId: string, userId: string) => {

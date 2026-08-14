@@ -1,4 +1,4 @@
-import { createRoute, z } from '@hono/zod-openapi'
+import { createRoute } from '@hono/zod-openapi'
 
 import {
   BadRequestResponse,
@@ -54,14 +54,7 @@ export const updateColumnsOrderRoute = createRoute({
     }
   },
   responses: {
-    200: {
-      description: 'Success',
-      content: {
-        'application/json': {
-          schema: z.array(ColumnSchema.omit({ tasks: true }))
-        }
-      }
-    },
+    204: { description: 'The order was updated successfully.' },
     400: BadRequestResponse,
     401: UnauthorizedResponse,
     404: NotFoundResponse

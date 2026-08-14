@@ -6,8 +6,10 @@ const createKey = (...parts: (string | number)[]) =>
 export const redisKeys = {
   boards: {
     byUser: (userId: string) => createKey('boards', 'user', userId, 'all'),
-    byId: (boardId: string, userId: string) =>
-      createKey('board', boardId, 'user', userId)
+    version: (boardId: string, userId: string) =>
+      createKey('board', boardId, 'user', userId, 'ver'),
+    byId: (boardId: string, userId: string, version: string | number) =>
+      createKey('board', boardId, 'user', userId, 'v', version)
   },
   labels: {
     byUser: (userId: string) => createKey('labels', 'user', userId)

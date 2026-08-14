@@ -1,24 +1,30 @@
 import { redisClient } from '@/config'
 
 import { redisKeys } from './keys'
+import { REDIS_TTL } from './ttl'
+
+const bumpBoardVersion = async (userId: string, boardId: string) => {
+  const key = redisKeys.boards.version(boardId, userId)
+
+  await redisClient.incr(key)
+  await redisClient.expire(key, REDIS_TTL.VERSION)
+}
 
 export const invalidate = {
   board(userId: string, boardId: string) {
-    return redisClient.del(redisKeys.boards.byId(boardId, userId))
+    return bumpBoardVersion(userId, boardId)
   },
 
-  boardRelated(userId: string, boardId: string) {
-    return redisClient.del([
-      redisKeys.boards.byId(boardId, userId),
-      redisKeys.boards.byUser(userId)
-    ])
+  async boardRelated(userId: string, boardId: string) {
+    await bumpBoardVersion(userId, boardId)
+    await redisClient.del(redisKeys.boards.byUser(userId))
   },
 
-  boardMany(userId: string, boardIds: string[]) {
-    if (!boardIds.length) return Promise.resolve()
+  async boardMany(userId: string, boardIds: string[]) {
+    if (!boardIds.length) return
 
-    return redisClient.del(
-      boardIds.map(boardId => redisKeys.boards.byId(boardId, userId))
+    await Promise.all(
+      boardIds.map(boardId => bumpBoardVersion(userId, boardId))
     )
   },
 

@@ -7,7 +7,7 @@ export const ColumnSchema = z
   .object({
     id: ObjectIdSchema,
     title: z.string().min(3).openapi({ example: 'In progress' }),
-    order: z.number().int().openapi({ example: 1 }),
+    order: z.number().openapi({ example: 1024 }),
     boardId: ObjectIdSchema,
     tasks: z.array(TaskSchema).optional(),
     createdAt: z.date(),

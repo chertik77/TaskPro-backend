@@ -9,7 +9,8 @@ export {
   CreateTaskSchema,
   UpdateTaskSchema,
   TaskParamsSchema,
-  UpdateTasksOrderSchema
+  UpdateTasksOrderSchema,
+  MoveTaskSchema
 } from './task.schema'
 export {
   ColumnSchema,

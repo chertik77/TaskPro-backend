@@ -4,6 +4,7 @@ import { taskService } from '@/services'
 import {
   createTaskRoute,
   deleteTaskRoute,
+  moveTaskRoute,
   updateTaskRoute,
   updateTasksOrderRoute
 } from './openapi'
@@ -30,14 +31,24 @@ taskRouter.openapi(updateTaskRoute, async c => {
   return c.json(task, 200)
 })
 
+taskRouter.openapi(moveTaskRoute, async c => {
+  const { taskId } = c.req.valid('param')
+  const json = c.req.valid('json')
+  const user = c.get('user')
+
+  const task = await taskService.move(json, taskId, user.id)
+
+  return c.json(task, 200)
+})
+
 taskRouter.openapi(updateTasksOrderRoute, async c => {
   const { columnId } = c.req.valid('param')
   const json = c.req.valid('json')
   const user = c.get('user')
 
-  const tasks = await taskService.updateOrder(json, columnId, user.id)
+  await taskService.updateOrder(json, columnId, user.id)
 
-  return c.json(tasks, 200)
+  return c.body(null, 204)
 })
 
 taskRouter.openapi(deleteTaskRoute, async c => {

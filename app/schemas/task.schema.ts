@@ -30,7 +30,7 @@ export const TaskSchema = z
       .date()
       .nullable()
       .openapi({ example: '2025-10-15T00:00:00.000Z' }),
-    order: z.number().int().openapi({ example: 1 }),
+    order: z.number().openapi({ example: 1024 }),
     completed: z.boolean().openapi({ example: false }),
     completedAt: z.date().nullable().openapi({ example: null }),
     columnId: ObjectIdSchema,
@@ -73,5 +73,19 @@ export const TaskParamsSchema = z.object({ taskId: ObjectIdSchema })
 export const UpdateTasksOrderSchema = z.object({
   ids: z.array(ObjectIdSchema).openapi({
     example: ['6672fdccc07147fc7ae1bb93', '6743474be4006eca6c8122e7']
+  })
+})
+
+export const MoveTaskSchema = z.object({
+  columnId: ObjectIdSchema.openapi({
+    description: 'Column the task is being moved into'
+  }),
+  prevTaskId: z.optional(ObjectIdSchema).openapi({
+    description:
+      'Task the moved task is dropped after, within the target column. Omit when dropping at the top.'
+  }),
+  nextTaskId: z.optional(ObjectIdSchema).openapi({
+    description:
+      'Task the moved task is dropped before, within the target column. Omit when dropping at the bottom.'
   })
 })

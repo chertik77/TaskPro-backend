@@ -35,9 +35,9 @@ columnRouter.openapi(updateColumnsOrderRoute, async c => {
   const json = c.req.valid('json')
   const user = c.get('user')
 
-  const columns = await columnService.updateOrder(json, boardId, user.id)
+  await columnService.updateOrder(json, boardId, user.id)
 
-  return c.json(columns, 200)
+  return c.body(null, 204)
 })
 
 columnRouter.openapi(deleteColumnRoute, async c => {

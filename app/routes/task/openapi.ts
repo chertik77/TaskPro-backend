@@ -1,9 +1,10 @@
-import { createRoute, z } from '@hono/zod-openapi'
+import { createRoute } from '@hono/zod-openapi'
 
 import {
   BadRequestResponse,
   ColumnParamsSchema,
   CreateTaskSchema,
+  MoveTaskSchema,
   NotFoundResponse,
   TaskParamsSchema,
   TaskSchema,
@@ -37,12 +38,39 @@ export const createTaskRoute = createRoute({
   }
 })
 
+export const moveTaskRoute = createRoute({
+  method: 'patch',
+  path: '/{taskId}/move',
+  operationId: 'moveTask',
+  tags: ['Task'],
+  summary: 'Move a task between or within columns',
+  description:
+    'Repositions a single task relative to its new neighbours. Costs one write regardless of column size.',
+  security: [{ cookieAuth: [] }],
+  request: {
+    params: TaskParamsSchema,
+    body: {
+      required: true,
+      content: { 'application/json': { schema: MoveTaskSchema } }
+    }
+  },
+  responses: {
+    200: {
+      description: 'Moved',
+      content: { 'application/json': { schema: TaskSchema } }
+    },
+    400: BadRequestResponse,
+    401: UnauthorizedResponse,
+    404: NotFoundResponse
+  }
+})
+
 export const updateTasksOrderRoute = createRoute({
   method: 'patch',
   path: '/{columnId}/order',
   operationId: 'updateTasksOrder',
   tags: ['Task'],
-  summary: 'Update tasks order',
+  summary: 'Rewrite the full task order of a column',
   security: [{ cookieAuth: [] }],
   request: {
     params: ColumnParamsSchema,
@@ -52,14 +80,7 @@ export const updateTasksOrderRoute = createRoute({
     }
   },
   responses: {
-    200: {
-      description: 'Updated',
-      content: {
-        'application/json': {
-          schema: z.array(TaskSchema.omit({ labels: true }))
-        }
-      }
-    },
+    204: { description: 'The order was updated successfully.' },
     400: BadRequestResponse,
     401: UnauthorizedResponse,
     404: NotFoundResponse

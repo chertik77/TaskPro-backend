@@ -29,7 +29,10 @@ class BoardService {
   }
 
   getById = async (boardId: string, userId: string) => {
-    const cacheKey = redisKeys.boards.byId(boardId, userId)
+    const version =
+      (await redisClient.get(redisKeys.boards.version(boardId, userId))) ?? '0'
+
+    const cacheKey = redisKeys.boards.byId(boardId, userId, version)
 
     const cachedBoard = await redisClient.get(cacheKey)
 
@@ -39,9 +42,12 @@ class BoardService {
       where: { id: boardId, userId },
       include: {
         columns: {
-          orderBy: { order: 'asc' },
+          orderBy: [{ order: 'asc' }, { id: 'asc' }],
           include: {
-            tasks: { include: { labels: true }, orderBy: { order: 'asc' } }
+            tasks: {
+              include: { labels: true },
+              orderBy: [{ order: 'asc' }, { id: 'asc' }]
+            }
           }
         }
       }

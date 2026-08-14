@@ -4,7 +4,7 @@ model Task {
   description String?
   priority    Priority
   deadline    DateTime?
-  order       Int
+  order       Float
 
   columnId String @map("column_id") @db.ObjectId
   column   Column @relation(fields: [columnId], references: [id], onDelete: Cascade)
