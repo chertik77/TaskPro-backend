@@ -27,7 +27,7 @@
     "better-auth": "^1.6.23",
     "cloudinary": "^2.10.0",
     "hono": "^4.12.31",
-    "ioredis": "^5.11.1",
+    "ioredis": "^6.0.0",
     "resend": "^6.17.2",
     "ua-parser-js": "^2.0.10",
     "zod": "^4.4.3"
