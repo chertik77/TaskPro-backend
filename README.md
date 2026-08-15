@@ -1,37 +1,71 @@
-# Task Pro Backend
+<div align="center">
 
-Welcome to the Task Pro App Backend, the powerhouse behind the ultimate tool for managing your tasks efficiently. This backend repository handles all the server-side logic, data management, and API integrations needed to support Task Pro's seamless performance.
+# Task Pro — Backend
 
-_Link to the frontend repo:_ https://github.com/chertik77/TaskPro-frontend
+The API powering Task Pro, a Kanban-style task manager — authentication,
+persistence, caching and the REST endpoints behind the app.
+
+[![Code Quality](https://github.com/chertik77/TaskPro-backend/actions/workflows/code-quality.yml/badge.svg)](https://github.com/chertik77/TaskPro-backend/actions/workflows/code-quality.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D22-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+
+[Live App](https://www.taskpro.qzz.io) · [Frontend Repo](https://github.com/chertik77/TaskPro-frontend)
+
+</div>
 
 ## Features
 
 - **Authentication and Authorization:**
-  Implemented secure user authentication, allowing users to register, log in safely, and maintain active sessions. Applied best practices for protecting user data and access control.
+  Email and password, Google and Microsoft OAuth, and WebAuthn passkeys, built on
+  better-auth. Sessions are issued as `HttpOnly` cookies and stored in Redis, so
+  users can review their active devices and revoke any of them instantly.
 
 - **Board Management:**
-  Developed functionality for creating, updating, and deleting boards. Boards support custom settings and metadata, enabling users to organize their work in a flexible way.
+  Full CRUD for boards with custom icons and backgrounds, letting users organize
+  their work into separate, flexible workspaces.
 
 - **Task Management:**
-  Built scalable APIs for managing tasks within boards. Users can create, update, prioritize, and organize tasks with features such as filtering, sorting.
+  Scalable APIs for creating, updating, prioritizing and organizing tasks within
+  columns. Reordering uses fractional ordering, so dragging a card writes a
+  single value instead of rewriting the entire column, with an automatic
+  rebalance when neighbouring positions grow too close.
+
+- **Labels:**
+  Reusable, user-scoped labels with a many-to-many relation to tasks, so the same
+  label can be applied across boards without duplication.
+
+- **User Settings:**
+  Persisted preferences covering theme, accent color, date format, board
+  background blur, font size, animations, card density, default task priority and
+  deadline, and label display — keeping the experience consistent across devices.
 
 - **Database Integration:**
-  Integrated MongoDB for efficient and secure data storage. Designed data models to handle users, boards, and tasks with good performance and scalability in mind.
+  MongoDB through Prisma, with models designed for cascading deletes and indexed
+  on the fields boards and columns are actually read by.
 
-- **Theme Configuration:**
-  Added backend support for dynamic theme switching (light, dark, and system), ensuring smooth integration with the frontend and consistent user experience.
+- **Caching:**
+  Redis caching for read-heavy resources, using versioned keys so a single write
+  retires every stale board snapshot at once.
 
 - **Profile Management:**
-  Created APIs for managing user profiles, including updating avatars and personal information.
+  Avatar uploads through Cloudinary, tracking the stored asset so replaced or
+  deleted images are cleaned up rather than orphaned.
 
 - **Help Email Integration:**
-  Integrated email services to allow users to send support requests directly from the application. Built APIs to handle sending and processing help messages.
+  Support requests sent through Resend, delivering a confirmation to the user and
+  a notification to the support inbox.
 
 - **API Design:**
-  Designed clean and well-structured RESTful APIs with clear routes, controllers, and middleware to ensure maintainability and scalability.
+  Every endpoint is declared with `@hono/zod-openapi`, so validation, TypeScript
+  types and the published OpenAPI 3.1 schema all derive from one definition and
+  the documentation can never drift from the implementation.
 
-- **Error Handling and Validation:**
-  Implemented consistent error handling and input validation to improve reliability and prevent invalid data from entering the system.
+- **Reliability:**
+  A health endpoint that probes MongoDB and Redis, graceful shutdown on
+  `SIGTERM`/`SIGINT`, fail-fast environment validation at boot, security headers,
+  a strict CORS allowlist, and consistent error handling that never leaks
+  internals.
 
 ## Project Contributors
 
@@ -45,3 +79,7 @@ _Link to the frontend repo:_ https://github.com/chertik77/TaskPro-frontend
 ## Languages and Tools
 
 ![Languages and Tools](https://skills.syvixor.com/api/icons?i=nodejs,ts,hono,prisma,mongodb,swagger,cloudinary,redis,zod,betterauth,resend,githubactions,yarn,commitlint,eslint,prettier,postman,vscode&perline=9)
+
+## License
+
+Released under the [MIT License](./LICENSE) — © 2026 Denys Babych.
