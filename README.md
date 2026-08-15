@@ -82,4 +82,4 @@ persistence, caching and the REST endpoints behind the app.
 
 ## License
 
-Released under the [MIT License](./LICENSE) — © 2026 Denys Babych.
+Released under the [MIT License](./LICENSE) — © 2024-2026 Denys Babych.
