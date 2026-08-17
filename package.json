@@ -21,7 +21,7 @@
   "dependencies": {
     "@better-auth/passkey": "^1.6.28",
     "@better-auth/redis-storage": "^1.6.28",
-    "@hono/node-server": "^2.1.0",
+    "@hono/node-server": "^2.1.1",
     "@hono/swagger-ui": "^0.6.1",
     "@hono/zod-openapi": "^1.6.0",
     "@prisma/client": "^6.19.3",
