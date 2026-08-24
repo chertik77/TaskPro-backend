@@ -6,7 +6,6 @@ model User {
   image         String?
   imagePublicId String? @map("image_public_id")
 
-  sessions Session[]
   accounts Account[]
   passkeys Passkey[]
   boards   Board[]
