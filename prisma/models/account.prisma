@@ -2,7 +2,6 @@ model Account {
   id         String  @id @default(auto()) @map("_id") @db.ObjectId
   accountId  String  @map("account_id")
   providerId String  @map("provider_id")
-  issuer     String
   scope      String?
   password   String?
 
