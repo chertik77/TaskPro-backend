@@ -1,4 +1,4 @@
-import type { MicrosoftEntraIDProfile, User } from 'better-auth'
+import type { MicrosoftEntraIDProfile } from 'better-auth'
 
 import { prisma } from '@/prisma'
 
@@ -8,7 +8,7 @@ import { uploadToCloudinary } from './upload-to-cloudinary'
 
 export const mapMicrosoftProfileToUser = async (
   profile: MicrosoftEntraIDProfile
-): Promise<Partial<User>> => {
+) => {
   const email = profile.email ?? profile.preferred_username ?? profile.upn
 
   if (!email) throw new Error('Microsoft profile has no email')
