@@ -1,23 +1,15 @@
-import type { BetterAuthPlugin, Session } from 'better-auth'
+import type { BetterAuthPlugin } from 'better-auth'
 
 import { passkey } from '@better-auth/passkey'
 import { redisStorage } from '@better-auth/redis-storage'
-import { APIError, betterAuth } from 'better-auth'
+import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
-import {
-  createAuthEndpoint,
-  createAuthMiddleware,
-  sessionMiddleware
-} from 'better-auth/api'
+import { createAuthEndpoint, sessionMiddleware } from 'better-auth/api'
 import * as z from 'zod'
 
 import { env, redisClient } from '../config'
 import { prisma } from '../prisma'
-import {
-  deleteUserData,
-  mapMicrosoftProfileToUser,
-  parseUserAgent
-} from '../utils'
+import { deleteUserData, mapMicrosoftProfileToUser } from '../utils'
 
 export const auth = betterAuth({
   appName: 'Task Pro',
@@ -40,33 +32,6 @@ export const auth = betterAuth({
         before: async user => ({ data: { ...user, emailVerified: true } })
       }
     }
-  },
-  hooks: {
-    after: createAuthMiddleware(async ctx => {
-      if (ctx.path.startsWith('/list-sessions')) {
-        const sessions = ctx.context.returned as Session[] | APIError
-
-        if (sessions instanceof APIError) return ctx.context.returned
-
-        const currentSession = ctx.context.session?.session
-
-        const updatedSessions = sessions
-          .map(session => {
-            const { userAgent, ...rest } = session
-            const { browser, os } = parseUserAgent(userAgent)
-
-            return {
-              ...rest,
-              browser,
-              os,
-              isCurrent: session.id === currentSession?.id
-            }
-          })
-          .sort((a, b) => Number(b.isCurrent) - Number(a.isCurrent))
-
-        return updatedSessions
-      }
-    })
   },
   user: {
     additionalFields: { imagePublicId: { type: 'string', required: false } },

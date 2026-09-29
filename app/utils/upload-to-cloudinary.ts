@@ -17,11 +17,5 @@ export async function uploadToCloudinary({
     resource_type: 'auto'
   })
 
-  return {
-    url: result.secure_url,
-    public_id: result.public_id,
-    width: result.width,
-    height: result.height,
-    format: result.format
-  }
+  return result
 }

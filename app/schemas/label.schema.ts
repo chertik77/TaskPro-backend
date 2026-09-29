@@ -22,17 +22,14 @@ export const LabelSchema = z
   })
   .openapi('Label')
 
-export const CreateLabelSchema = LabelSchema.pick({
-  name: true,
-  color: true
-})
+export const CreateLabelSchema = LabelSchema.pick({ name: true, color: true })
 
 export const UpdateLabelSchema = z
   .object({
     ...CreateLabelSchema.shape,
-    description: z.nullable(z.string().min(3)).openapi({
-      example: 'Description of the bug'
-    })
+    description: z
+      .nullable(z.string().min(3))
+      .openapi({ example: 'Description of the bug' })
   })
   .partial()
 

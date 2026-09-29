@@ -32,11 +32,9 @@ export const UploadAvatarSchema = z.object({
     .openapi({ type: 'string', format: 'binary' })
 })
 
-export const AvatarSchema = z
-  .object({
-    image: z.url().nullable().openapi({
-      example:
-        'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatars/avatar.png'
-    })
+export const AvatarSchema = z.object({
+  image: z.url().nullable().openapi({
+    example:
+      'https://res.cloudinary.com/dmbnnewoy/image/upload/v1706958682/TaskPro/user_avatars/avatar.png'
   })
-  .openapi('Avatar')
+})

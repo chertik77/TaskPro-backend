@@ -20,10 +20,10 @@ const BoardBackgroundIdSchema =
 const BoardBackground = z
   .object({
     identifier: BoardBackgroundIdSchema,
-    url: z.url().nullable().openapi({
-      example:
-        'https://res.cloudinary.com/dmbnnewoy/image/upload/v1707099093/TaskPro/board_bg_images/desk/nfxep55xgvpq7xitemq1.jpg'
-    })
+    url: z
+      .url()
+      .nullable()
+      .openapi({ example: 'https://res.cloudinary.com/dmbnnewoy/.....' })
   })
   .openapi('BoardBackground')
 

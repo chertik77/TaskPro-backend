@@ -84,14 +84,14 @@ class UserService {
     await auth.api.updateUser({
       headers,
       body: {
-        image: uploadedImage.url,
+        image: uploadedImage.secure_url,
         imagePublicId: uploadedImage.public_id
       }
     })
 
     await this.destroyAvatar(user.imagePublicId)
 
-    return { image: uploadedImage.url }
+    return { image: uploadedImage.secure_url }
   }
 
   deleteAvatar = async (user: AuthVariables['user'], headers: Headers) => {

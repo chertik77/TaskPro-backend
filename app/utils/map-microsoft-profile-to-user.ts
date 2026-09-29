@@ -24,7 +24,7 @@ export const mapMicrosoftProfileToUser = async (
       folder: 'TaskPro/user_avatars'
     })
 
-    image = uploadedImage.url
+    image = uploadedImage.secure_url
     imagePublicId = uploadedImage.public_id
 
     if (user?.imagePublicId) {
