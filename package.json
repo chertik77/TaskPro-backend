@@ -37,7 +37,7 @@
     "@commitlint/config-conventional": "^21.2.3",
     "@eslint/js": "^10.0.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
-    "@types/node": "^25.9.8",
+    "@types/node": "^25.9.9",
     "eslint": "^10.11.0",
     "eslint-formatter-mo": "^2.4.1",
     "globals": "^17.13.0",
