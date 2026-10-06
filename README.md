@@ -5,10 +5,11 @@
 The API powering Task Pro, a Kanban-style task manager — authentication,
 persistence, caching and the REST endpoints behind the app.
 
-[![Code Quality](https://github.com/chertik77/TaskPro-backend/actions/workflows/code-quality.yml/badge.svg)](https://github.com/chertik77/TaskPro-backend/actions/workflows/code-quality.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D22-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&style=flat&colorA=000000&colorB=000000)](https://nodejs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&style=flat&colorA=000000&colorB=000000)](https://www.typescriptlang.org)
+[![Hono](https://img.shields.io/badge/Hono-E36002?logo=hono&style=flat&colorA=000000&colorB=000000)](https://hono.dev)
+[![Prisma](https://img.shields.io/badge/Prisma-2D3748?logo=prisma&style=flat&colorA=000000&colorB=000000)](https://www.prisma.io)
+[![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis&style=flat&colorA=000000&colorB=000000)](https://redis.io)
 
 [Live App](https://www.taskpro.qzz.io) · [Frontend Repo](https://github.com/chertik77/TaskPro-frontend)
 
