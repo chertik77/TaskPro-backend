@@ -79,7 +79,7 @@ persistence, caching and the REST endpoints behind the app.
 
 ## Languages and Tools
 
-![Languages and Tools](https://skills.syvixor.com/api/icons?i=nodejs,ts,hono,prisma,mongodb,swagger,cloudinary,redis,zod,betterauth,resend,githubactions,yarn,commitlint,eslint,prettier,postman,vscode&perline=9)
+![Languages and Tools](https://skills.syvixor.com/api/icons?i=nodejs,ts,hono,prisma,mongodb,swagger,cloudinary,redis,zod,betterauth,resend,githubactions,bun,commitlint,eslint,prettier,postman,vscode&perline=9)
 
 ## License
 
