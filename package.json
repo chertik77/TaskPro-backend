@@ -19,26 +19,26 @@
     "schema": "./prisma"
   },
   "dependencies": {
-    "@better-auth/passkey": "^1.7.10",
-    "@better-auth/redis-storage": "^1.7.10",
+    "@better-auth/passkey": "^1.7.12",
+    "@better-auth/redis-storage": "^1.7.12",
     "@hono/node-server": "^2.1.5",
     "@hono/swagger-ui": "^0.6.1",
     "@hono/zod-openapi": "^1.6.3",
     "@prisma/client": "^6.19.3",
-    "better-auth": "^1.7.10",
+    "better-auth": "^1.7.12",
     "cloudinary": "^2.11.0",
     "hono": "^4.13.13",
     "ioredis": "^6.0.0",
-    "resend": "^6.33.0",
+    "resend": "^6.34.1",
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@commitlint/cli": "^21.2.3",
-    "@commitlint/config-conventional": "^21.2.3",
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
     "@eslint/js": "^10.0.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@types/node": "^25.9.9",
-    "eslint": "^10.12.0",
+    "eslint": "^10.13.0",
     "eslint-formatter-mo": "^2.4.1",
     "globals": "^17.13.0",
     "husky": "^9.1.7",
@@ -49,6 +49,6 @@
     "tsup": "^9.0.0",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.71.2"
+    "typescript-eslint": "^8.72.0"
   }
 }
