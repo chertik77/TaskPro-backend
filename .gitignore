@@ -3,6 +3,4 @@ dist/
 .env
 .idea
 .vscode
-.vercel
-.env*.local
 .DS_Store

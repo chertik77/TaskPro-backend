@@ -1,21 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "target": "esnext",
+    "moduleResolution": "bundler",
     "strict": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "types": ["node"],
     "jsxImportSource": "hono/jsx",
-    "rootDir": "./app",
-    "outDir": "./dist",
-    "baseUrl": ".",
-    "paths": { "@/*": ["app/*"] },
+    "paths": { "@/*": ["./src/*"] },
     "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "ignoreDeprecations": "6.0"
+    "noImplicitOverride": true
   },
-  "include": ["app"]
+  "include": ["src"]
 }

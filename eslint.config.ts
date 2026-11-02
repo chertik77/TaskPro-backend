@@ -1,18 +1,10 @@
 import eslintPluginJs from '@eslint/js'
 import { defineConfig } from 'eslint/config'
-import globals from 'globals'
 import eslintTypescript from 'typescript-eslint'
 
 export default defineConfig(
   eslintPluginJs.configs.recommended,
   eslintTypescript.configs.recommended,
-  {
-    languageOptions: {
-      globals: { ...globals.node },
-      parser: eslintTypescript.parser,
-      parserOptions: { warnOnUnsupportedTypeScriptVersion: false }
-    }
-  },
   {
     rules: {
       'no-restricted-syntax': [
