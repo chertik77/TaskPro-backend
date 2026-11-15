@@ -2,16 +2,14 @@ import { createRoute, z } from '@hono/zod-openapi'
 
 import {
   BadRequestResponse,
-  NotFoundResponse,
-  UnauthorizedResponse
-} from '@/schemas'
-import {
   CreateLabelSchema,
   LabelConflictResponse,
   LabelParamsSchema,
   LabelSchema,
+  NotFoundResponse,
+  UnauthorizedResponse,
   UpdateLabelSchema
-} from '@/schemas/label.schema'
+} from '@/schemas'
 
 export const getAllLabelsRoute = createRoute({
   method: 'get',

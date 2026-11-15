@@ -3,7 +3,7 @@ import { z } from '@hono/zod-openapi'
 export const ErrorResponseSchema = z
   .object({
     status: z.number().openapi({ example: 400 }),
-    message: z.union([z.string(), z.record(z.string(), z.array(z.string()))]),
+    message: z.string(),
     errors: z
       .record(z.string(), z.array(z.string()))
       .optional()

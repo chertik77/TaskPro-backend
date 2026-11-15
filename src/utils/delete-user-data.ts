@@ -1,7 +1,7 @@
 import { prisma } from '@/prisma'
 import { invalidate } from '@/redis'
 
-import cloudinary from '@/config'
+import { deleteFromCloudinary } from './cloudinary'
 
 export const deleteUserData = async (userId: string) => {
   const [user, boards] = await Promise.all([
@@ -12,16 +12,7 @@ export const deleteUserData = async (userId: string) => {
     prisma.board.findMany({ where: { userId }, select: { id: true } })
   ])
 
-  if (user?.imagePublicId) {
-    try {
-      await cloudinary.uploader.destroy(user.imagePublicId, {
-        type: 'upload',
-        resource_type: 'image'
-      })
-    } catch (error) {
-      console.error('Failed to delete avatar for user', userId, error)
-    }
-  }
+  await deleteFromCloudinary(user?.imagePublicId)
 
   await Promise.all([
     invalidate.boards(userId),

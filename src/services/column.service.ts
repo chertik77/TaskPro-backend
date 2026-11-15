@@ -3,12 +3,12 @@ import type {
   UpdateColumnSchema,
   UpdateColumnsOrderSchema
 } from '@/schemas'
-import type z from 'zod'
+import type { z } from '@hono/zod-openapi'
+
+import { HTTPException } from 'hono/http-exception'
 
 import { prisma } from '@/prisma'
 import { invalidate } from '@/redis'
-import { HTTPException } from 'hono/http-exception'
-
 import { getRebalancedOrder, ORDER_STEP } from '@/utils'
 
 class ColumnService {
@@ -87,7 +87,7 @@ class ColumnService {
 
     const transaction = uniqueIds.map((id, index) =>
       prisma.column.update({
-        where: { id, board: { userId } },
+        where: { id },
         data: { order: getRebalancedOrder(index) }
       })
     )

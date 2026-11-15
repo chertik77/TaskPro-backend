@@ -11,6 +11,7 @@
     "build": "tsup src/server.ts",
     "dev": "tsx watch src/server.ts",
     "lint": "eslint --fix src",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write src",
     "format:check": "prettier --check src",
     "prepare": "husky"

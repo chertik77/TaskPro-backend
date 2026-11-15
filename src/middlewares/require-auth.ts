@@ -1,8 +1,9 @@
 import type { AuthVariables } from '@/types'
 
-import { auth } from '@/lib'
 import { createMiddleware } from 'hono/factory'
 import { HTTPException } from 'hono/http-exception'
+
+import { auth } from '@/lib/auth'
 
 export const requireAuth = createMiddleware<{
   Variables: AuthVariables

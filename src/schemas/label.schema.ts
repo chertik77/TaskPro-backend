@@ -1,5 +1,5 @@
+import { z } from '@hono/zod-openapi'
 import { AccentColor } from '@prisma/client'
-import * as z from 'zod'
 
 import { ErrorResponseSchema } from './error-schema'
 import { ObjectIdSchema } from './object-id.schema'

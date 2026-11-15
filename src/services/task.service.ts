@@ -4,12 +4,12 @@ import type {
   UpdateTaskSchema,
   UpdateTasksOrderSchema
 } from '@/schemas'
-import type { z } from 'zod'
+import type { z } from '@hono/zod-openapi'
+
+import { HTTPException } from 'hono/http-exception'
 
 import { prisma } from '@/prisma'
 import { invalidate } from '@/redis'
-import { HTTPException } from 'hono/http-exception'
-
 import { getOrderBetween, getRebalancedOrder, ORDER_STEP } from '@/utils'
 
 class TaskService {
@@ -157,7 +157,7 @@ class TaskService {
 
     const transaction = uniqueIds.map((id, index) =>
       prisma.task.update({
-        where: { id, column: { board: { userId } } },
+        where: { id },
         data: { order: getRebalancedOrder(index), columnId: column.id }
       })
     )

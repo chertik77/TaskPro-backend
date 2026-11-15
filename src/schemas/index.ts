@@ -20,6 +20,7 @@ export {
   UpdateColumnsOrderSchema
 } from './column.schema'
 export {
+  LabelSchema,
   CreateLabelSchema,
   UpdateLabelSchema,
   LabelParamsSchema,

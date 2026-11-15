@@ -1,7 +1,7 @@
-import { prisma } from '@/prisma'
 import { OpenAPIHono } from '@hono/zod-openapi'
 
 import { redisClient } from '@/config'
+import { prisma } from '@/prisma'
 
 import { healthRoute } from './openapi'
 

@@ -1,5 +1,5 @@
 export { resend } from './resend.config'
-export { default } from './cloudinary.config'
+export { cloudinary } from './cloudinary.config'
 export { env } from './env.config'
 export { redisClient } from './redis.config'
 export { zodConfig } from './zod.config'

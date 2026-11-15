@@ -1,43 +1,33 @@
 import type { CreateLabelSchema, UpdateLabelSchema } from '@/schemas'
-import type { z } from 'zod'
+import type { z } from '@hono/zod-openapi'
 
-import { prisma } from '@/prisma'
-import { invalidate, redisKeys } from '@/redis'
 import { HTTPException } from 'hono/http-exception'
 
-import { redisClient } from '@/config'
+import { isUniqueConstraintError, prisma } from '@/prisma'
+import { cached, invalidate, REDIS_TTL, redisKeys } from '@/redis'
+
+const rethrowNameConflict = (err: unknown): never => {
+  if (isUniqueConstraintError(err)) {
+    throw new HTTPException(409, {
+      message: 'Label with same name already exists'
+    })
+  }
+
+  throw err
+}
 
 class LabelService {
-  getAll = async (userId: string) => {
-    const cacheKey = redisKeys.labels.byUser(userId)
-
-    const cachedLabels = await redisClient.get(cacheKey)
-
-    if (cachedLabels) return JSON.parse(cachedLabels)
-
-    const labels = await prisma.label.findMany({ where: { userId } })
-
-    await redisClient.set(cacheKey, JSON.stringify(labels), 'EX', 5 * 60)
-
-    return labels
-  }
+  getAll = (userId: string) =>
+    cached(redisKeys.labels.byUser(userId), REDIS_TTL.DEFAULT, () =>
+      prisma.label.findMany({ where: { userId } })
+    )
 
   create = async (data: z.infer<typeof CreateLabelSchema>, userId: string) => {
     const { name, color } = data
 
-    const labelWithSameName = await prisma.label.findUnique({
-      where: { userId_name: { userId, name } }
-    })
-
-    if (labelWithSameName) {
-      throw new HTTPException(409, {
-        message: 'Label with same name already exists'
-      })
-    }
-
-    const label = await prisma.label.create({
-      data: { name, color, userId }
-    })
+    const label = await prisma.label
+      .create({ data: { name, color, userId } })
+      .catch(rethrowNameConflict)
 
     await invalidate.labels(userId)
 
@@ -49,22 +39,9 @@ class LabelService {
     labelId: string,
     userId: string
   ) => {
-    if (data.name) {
-      const labelWithSameName = await prisma.label.findUnique({
-        where: { userId_name: { userId, name: data.name } }
-      })
-
-      if (labelWithSameName && labelWithSameName.id !== labelId) {
-        throw new HTTPException(409, {
-          message: 'Label with same name already exists'
-        })
-      }
-    }
-
-    const updatedLabel = await prisma.label.updateIgnoreNotFound({
-      where: { id: labelId, userId },
-      data
-    })
+    const updatedLabel = await prisma.label
+      .updateIgnoreNotFound({ where: { id: labelId, userId }, data })
+      .catch(rethrowNameConflict)
 
     if (!updatedLabel) {
       throw new HTTPException(404, { message: 'Label not found' })

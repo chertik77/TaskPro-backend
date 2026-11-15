@@ -5,7 +5,7 @@ import { redisStorage } from '@better-auth/redis-storage'
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { createAuthEndpoint, sessionMiddleware } from 'better-auth/api'
-import * as z from 'zod'
+import { z } from 'zod'
 
 import { env, redisClient } from '../config'
 import { prisma } from '../prisma'

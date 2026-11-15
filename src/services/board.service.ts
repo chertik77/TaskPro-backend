@@ -1,32 +1,29 @@
-import type { CreateBoardSchema, UpdateBoardSchema } from '@/schemas'
-import type { z } from 'zod'
+import type {
+  BoardSchema,
+  CreateBoardSchema,
+  UpdateBoardSchema
+} from '@/schemas'
+import type { z } from '@hono/zod-openapi'
 
-import { prisma } from '@/prisma'
-import { invalidate, REDIS_TTL, redisKeys } from '@/redis'
 import { HTTPException } from 'hono/http-exception'
 
 import { redisClient } from '@/config'
 import boardImages from '@/data/board-bg-images.json'
+import { prisma } from '@/prisma'
+import { cached, invalidate, REDIS_TTL, redisKeys } from '@/redis'
+
+type Board = z.infer<typeof BoardSchema>
 
 class BoardService {
-  getAll = async (userId: string) => {
-    const cacheKey = redisKeys.boards.byUser(userId)
-
-    const cachedBoards = await redisClient.get(cacheKey)
-
-    if (cachedBoards) return JSON.parse(cachedBoards)
-
-    const boards = await prisma.board.findMany({ where: { userId } })
-
-    await redisClient.set(
-      cacheKey,
-      JSON.stringify(boards),
-      'EX',
-      REDIS_TTL.DEFAULT
+  getAll = (userId: string) =>
+    cached(
+      redisKeys.boards.byUser(userId),
+      REDIS_TTL.DEFAULT,
+      () =>
+        prisma.board.findMany({ where: { userId } }) as Promise<
+          Omit<Board, 'columns'>[]
+        >
     )
-
-    return boards
-  }
 
   getById = async (boardId: string, userId: string) => {
     const version =
@@ -34,37 +31,28 @@ class BoardService {
 
     const cacheKey = redisKeys.boards.byId(boardId, userId, version)
 
-    const cachedBoard = await redisClient.get(cacheKey)
-
-    if (cachedBoard) return JSON.parse(cachedBoard)
-
-    const board = await prisma.board.findUnique({
-      where: { id: boardId, userId },
-      include: {
-        columns: {
-          orderBy: [{ order: 'asc' }, { id: 'asc' }],
-          include: {
-            tasks: {
-              include: { labels: true },
-              orderBy: [{ order: 'asc' }, { id: 'asc' }]
+    return cached(cacheKey, REDIS_TTL.DEFAULT, async () => {
+      const board = await prisma.board.findUnique({
+        where: { id: boardId, userId },
+        include: {
+          columns: {
+            orderBy: [{ order: 'asc' }, { id: 'asc' }],
+            include: {
+              tasks: {
+                include: { labels: true },
+                orderBy: [{ order: 'asc' }, { id: 'asc' }]
+              }
             }
           }
         }
+      })
+
+      if (!board) {
+        throw new HTTPException(404, { message: 'Board not found' })
       }
+
+      return board as Board
     })
-
-    if (!board) {
-      throw new HTTPException(404, { message: 'Board not found' })
-    }
-
-    await redisClient.set(
-      cacheKey,
-      JSON.stringify(board),
-      'EX',
-      REDIS_TTL.DEFAULT
-    )
-
-    return board
   }
 
   create = async (data: z.infer<typeof CreateBoardSchema>, userId: string) => {
@@ -81,7 +69,7 @@ class BoardService {
 
     await invalidate.boards(userId)
 
-    return newBoard
+    return newBoard as Board
   }
 
   updateById = async (
@@ -108,7 +96,7 @@ class BoardService {
 
     await invalidate.boardRelated(userId, updatedBoard.id)
 
-    return updatedBoard
+    return updatedBoard as Board
   }
 
   deleteById = async (boardId: string, userId: string) => {

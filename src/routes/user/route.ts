@@ -1,8 +1,8 @@
-import { createProtectedRouter } from '@/lib'
-import { userService } from '@/services'
 import { bodyLimit } from 'hono/body-limit'
 
+import { createProtectedRouter } from '@/lib'
 import { AVATAR_MAX_SIZE } from '@/schemas'
+import { userService } from '@/services'
 
 import { deleteAvatarRoute, helpRoute, uploadAvatarRoute } from './openapi'
 

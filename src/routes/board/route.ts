@@ -1,6 +1,3 @@
-import type { BoardSchema } from '@/schemas'
-import type { z } from '@hono/zod-openapi'
-
 import { createProtectedRouter } from '@/lib'
 import { boardService } from '@/services'
 
@@ -28,16 +25,14 @@ boardRouter.openapi(getBoardByIdRoute, async c => {
 
   const board = await boardService.getById(boardId, user.id)
 
-  return c.json(board)
+  return c.json(board, 200)
 })
 
 boardRouter.openapi(createBoardRoute, async c => {
   const json = c.req.valid('json')
   const user = c.get('user')
 
-  const board = (await boardService.create(json, user.id)) as z.infer<
-    typeof BoardSchema
-  >
+  const board = await boardService.create(json, user.id)
 
   return c.json(board, 201)
 })
@@ -47,11 +42,7 @@ boardRouter.openapi(updateBoardRoute, async c => {
   const json = c.req.valid('json')
   const user = c.get('user')
 
-  const board = (await boardService.updateById(
-    json,
-    boardId,
-    user.id
-  )) as z.infer<typeof BoardSchema>
+  const board = await boardService.updateById(json, boardId, user.id)
 
   return c.json(board, 200)
 })

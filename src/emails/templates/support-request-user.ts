@@ -1,8 +1,9 @@
-import type { SupportRequestEmail } from '@/types'
+import type { HelpSchema } from '@/schemas'
+import type { z } from '@hono/zod-openapi'
 
 export const supportRequestUserTemplate = ({
   comment
-}: Omit<SupportRequestEmail, 'email'>) => {
+}: Pick<z.infer<typeof HelpSchema>, 'comment'>) => {
   return `
 <!DOCTYPE html>
 <html>

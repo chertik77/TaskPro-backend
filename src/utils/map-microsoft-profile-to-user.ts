@@ -2,9 +2,7 @@ import type { MicrosoftEntraIDProfile } from 'better-auth'
 
 import { prisma } from '@/prisma'
 
-import cloudinary from '@/config'
-
-import { uploadToCloudinary } from './upload-to-cloudinary'
+import { AVATAR_FOLDER, uploadToCloudinary } from './cloudinary'
 
 export const mapMicrosoftProfileToUser = async (
   profile: MicrosoftEntraIDProfile
@@ -13,31 +11,25 @@ export const mapMicrosoftProfileToUser = async (
 
   if (!email) throw new Error('Microsoft profile has no email')
 
-  const user = await prisma.user.findUnique({ where: { email } })
+  if (!profile.picture) return { email }
 
-  let image: string | undefined
-  let imagePublicId: string | undefined
+  const existingUser = await prisma.user.findUnique({
+    where: { email: email.toLowerCase() },
+    select: { id: true }
+  })
 
-  if (profile.picture) {
-    const uploadedImage = await uploadToCloudinary({
-      file: profile.picture.trim().replace(/\s/g, ''),
-      folder: 'TaskPro/user_avatars'
-    })
+  if (existingUser) return { email }
 
-    image = uploadedImage.secure_url
-    imagePublicId = uploadedImage.public_id
+  const base64 = profile.picture.slice(profile.picture.indexOf(',') + 1)
 
-    if (user?.imagePublicId) {
-      await cloudinary.uploader.destroy(user.imagePublicId, {
-        type: 'upload',
-        resource_type: 'image'
-      })
-    }
-  }
+  const uploadedImage = await uploadToCloudinary(
+    Buffer.from(base64, 'base64'),
+    AVATAR_FOLDER
+  )
 
   return {
     email,
-    ...(image && { image }),
-    ...(imagePublicId && { imagePublicId })
+    image: uploadedImage.secure_url,
+    imagePublicId: uploadedImage.public_id
   }
 }

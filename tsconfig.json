@@ -6,7 +6,6 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "types": ["node"],
-    "jsxImportSource": "hono/jsx",
     "paths": { "@/*": ["./src/*"] },
     "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": true,

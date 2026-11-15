@@ -3,38 +3,22 @@ import type {
   UpdateLabelSettingsSchema,
   UpdateTaskSettingsSchema
 } from '@/schemas'
-import type { z } from 'zod'
+import type { z } from '@hono/zod-openapi'
 
 import { prisma } from '@/prisma'
-import { invalidate, REDIS_TTL, redisKeys } from '@/redis'
-
-import { redisClient } from '@/config'
+import { cached, invalidate, REDIS_TTL, redisKeys } from '@/redis'
 
 const EMPTY_SECTIONS = { general: {}, task: {}, label: {} }
 
 class SettingsService {
-  getAll = async (userId: string) => {
-    const cacheKey = redisKeys.settings.byUser(userId)
-
-    const cachedSettings = await redisClient.get(cacheKey)
-
-    if (cachedSettings) return JSON.parse(cachedSettings)
-
-    const settings = await prisma.userSettings.upsert({
-      where: { userId },
-      create: { userId, ...EMPTY_SECTIONS },
-      update: {}
-    })
-
-    await redisClient.set(
-      cacheKey,
-      JSON.stringify(settings),
-      'EX',
-      REDIS_TTL.DEFAULT
+  getAll = (userId: string) =>
+    cached(redisKeys.settings.byUser(userId), REDIS_TTL.DEFAULT, () =>
+      prisma.userSettings.upsert({
+        where: { userId },
+        create: { userId, ...EMPTY_SECTIONS },
+        update: {}
+      })
     )
-
-    return settings
-  }
 
   updateGeneral = async (
     data: z.infer<typeof UpdateGeneralSettingsSchema>,

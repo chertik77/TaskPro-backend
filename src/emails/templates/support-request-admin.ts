@@ -1,9 +1,10 @@
-import type { SupportRequestEmail } from '@/types'
+import type { HelpSchema } from '@/schemas'
+import type { z } from '@hono/zod-openapi'
 
 export const supportRequestAdminTemplate = ({
   email,
   comment
-}: SupportRequestEmail) => {
+}: z.infer<typeof HelpSchema>) => {
   return `
 <!DOCTYPE html>
 <html>

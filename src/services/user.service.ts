@@ -1,21 +1,22 @@
 import type { HelpSchema } from '@/schemas'
 import type { AuthVariables } from '@/types'
-import type z from 'zod'
+import type { z } from '@hono/zod-openapi'
 
+import { HTTPException } from 'hono/http-exception'
+
+import { env, resend } from '@/config'
 import {
   supportRequestAdminTemplate,
   supportRequestUserTemplate
 } from '@/emails/templates'
 import { auth } from '@/lib'
-import { HTTPException } from 'hono/http-exception'
-
-import cloudinary, { env, resend } from '@/config'
-
-import { uploadToCloudinary } from '@/utils'
+import {
+  AVATAR_FOLDER,
+  deleteFromCloudinary,
+  uploadToCloudinary
+} from '@/utils'
 
 class UserService {
-  private readonly AVATAR_FOLDER = 'TaskPro/user_avatars'
-
   help = async (data: z.infer<typeof HelpSchema>) => {
     const supportRequestAdmin = supportRequestAdminTemplate({
       email: data.email,
@@ -73,10 +74,7 @@ class UserService {
     let uploadedImage
 
     try {
-      uploadedImage = await uploadToCloudinary({
-        file: `data:${file.type};base64,${buffer.toString('base64')}`,
-        folder: this.AVATAR_FOLDER
-      })
+      uploadedImage = await uploadToCloudinary(buffer, AVATAR_FOLDER)
     } catch {
       throw new HTTPException(500, { message: 'Uploading avatar error' })
     }
@@ -89,7 +87,7 @@ class UserService {
       }
     })
 
-    await this.destroyAvatar(user.imagePublicId)
+    await deleteFromCloudinary(user.imagePublicId)
 
     return { image: uploadedImage.secure_url }
   }
@@ -100,22 +98,9 @@ class UserService {
       body: { image: null, imagePublicId: null }
     })
 
-    await this.destroyAvatar(user.imagePublicId)
+    await deleteFromCloudinary(user.imagePublicId)
 
     return { image: null }
-  }
-
-  private destroyAvatar = async (imagePublicId: string | null | undefined) => {
-    if (!imagePublicId) return
-
-    try {
-      await cloudinary.uploader.destroy(imagePublicId, {
-        type: 'upload',
-        resource_type: 'image'
-      })
-    } catch (error) {
-      console.error('Failed to delete avatar', imagePublicId, error)
-    }
   }
 }
 

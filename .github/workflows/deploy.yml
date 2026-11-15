@@ -1,14 +1,19 @@
 name: Deploy
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Code Quality & Standards Check"]
+    types: [completed]
     branches: ["main"]
 
 jobs:
   deploy:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
       - name: Deploy to production
         uses: JorgeLNJunior/render-deploy@v1.5.0
         with:

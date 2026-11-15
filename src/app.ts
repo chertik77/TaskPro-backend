@@ -5,7 +5,7 @@ import { cors } from 'hono/cors'
 import { HTTPException } from 'hono/http-exception'
 import { logger } from 'hono/logger'
 import { secureHeaders } from 'hono/secure-headers'
-import z from 'zod'
+import { z } from 'zod'
 
 import { env, zodConfig } from './config'
 import { auth } from './lib'
