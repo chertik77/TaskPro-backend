@@ -2,6 +2,7 @@ import type { AuthVariables } from './types'
 
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { csrf } from 'hono/csrf'
 import { HTTPException } from 'hono/http-exception'
 import { logger } from 'hono/logger'
 import { secureHeaders } from 'hono/secure-headers'
@@ -23,6 +24,8 @@ app.use('*', cors({ origin: env.ALLOWED_ORIGINS, credentials: true }))
 app.on(['GET', 'POST'], `${env.API_PREFIX}/auth/*`, c =>
   auth.handler(c.req.raw)
 )
+
+app.use(`${env.API_PREFIX}/*`, csrf({ origin: env.ALLOWED_ORIGINS }))
 
 app.route(env.API_PREFIX, apiRouter)
 
